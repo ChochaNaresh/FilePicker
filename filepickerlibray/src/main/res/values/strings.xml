@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">File Picker</string>
+
+    // Dialog title permission
+    <string name="err_permission_denied">Permission Denied</string>
+
+    <string name="err_permission_result">Permission not allowed</string>
+
+    <string name="file_permission">Please allow Read media permission for selecting image/video.</string>
+    <string name="err_write_storage_permission">Please allow <b>%1$s</b> permission for capture image/video.</string>
+    <string name="err_write_storage_setting"><b>%1$s</b> permission is not granted. Please allow it from setting.</string>
+
+    <string name="str_cancel">Cancel</string>
+    <string name="str_ok">OK</string>
+    <string name="str_choose_option">Choose option</string>
+    <string name="str_document_config_null">DocumentFilePickerConfig data is set</string>
+    <string name="str_go_to_setting">Go To Setting</string>
+</resources>

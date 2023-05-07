@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- See table below.  The external-files-path DOES NOT require external storage permissions. -->
+    <external-files-path name="medias" path="." />
+    <external-files-path name="my_images" path="/" />
+    <external-path name="secure_name" path="DCIM/" />
+
+
+
+</paths>
