@@ -12,10 +12,10 @@ This library is designed to simplify the process of selecting and retrieving med
 # Features
 * Handle Runtime Permissions
 * Retrieve Result as Uri, File Path as String
-* Custome Popup Or BottomSheet with custom text and icon and custom layout file for items
+* Custom Popup Or BottomSheet with custom text and icon and custom layout file for items
 * Capture Image / Video
 * Pick Image / Video
-* Pick Any File with Mimitype
+* Pick Any File with Mimetype
 * All multiple file to pick
 
 # Usage
@@ -39,7 +39,7 @@ Where `$libVersion` = [![libVersion](https://img.shields.io/github/release/Choch
 
 
 # Customization
-**If you want to multipal option with BottomSheet:**
+**If you want to Multiple option with BottomSheet Or Dialog:**
 ```kotlin
     FilePicker.Builder(this)
                     .setPopUpConfig()
