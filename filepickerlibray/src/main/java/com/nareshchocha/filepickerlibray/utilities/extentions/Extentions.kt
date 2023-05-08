@@ -16,7 +16,7 @@ import com.nareshchocha.filepickerlibray.models.DocumentFilePickerConfig
 import com.nareshchocha.filepickerlibray.models.PickMediaConfig
 import com.nareshchocha.filepickerlibray.utilities.appConst.Const
 
-fun Context.showMyDialog(
+internal fun Context.showMyDialog(
     title: String,
     message: String,
     positiveButtonText: String? = null,
@@ -46,14 +46,14 @@ fun Context.showMyDialog(
     alertDialog.show()
 }
 
-fun Context.getImageCaptureIntent(outputFileUri: Uri): Intent {
+internal fun Context.getImageCaptureIntent(outputFileUri: Uri): Intent {
     return Intent(MediaStore.ACTION_IMAGE_CAPTURE).also {
         it.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
         it.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri)
     }
 }
 
-fun Context.getVideoCaptureIntent(
+internal fun Context.getVideoCaptureIntent(
     outputFileUri: Uri,
     maxSeconds: Int? = null,
     maxSizeLimit: Long? = null,
@@ -81,7 +81,7 @@ fun Context.getVideoCaptureIntent(
     }
 }
 
-fun getDocumentFilePick(mDocumentFilePickerConfig: DocumentFilePickerConfig): Intent {
+internal fun getDocumentFilePick(mDocumentFilePickerConfig: DocumentFilePickerConfig): Intent {
     return Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
         type = "*/*"
         putExtra(Intent.EXTRA_ALLOW_MULTIPLE, mDocumentFilePickerConfig.allowMultiple)
@@ -92,7 +92,7 @@ fun getDocumentFilePick(mDocumentFilePickerConfig: DocumentFilePickerConfig): In
     }
 }
 
-fun Context.getMediaIntent(mPickMediaConfig: PickMediaConfig): Intent {
+internal fun Context.getMediaIntent(mPickMediaConfig: PickMediaConfig): Intent {
     val mPickMediaType = mPickMediaConfig.getPickMediaType(mPickMediaConfig.mPickMediaType)
     return if (mPickMediaConfig.allowMultiple) {
         ActivityResultContracts.PickMultipleVisualMedia(mPickMediaConfig.maxFiles).createIntent(
@@ -123,14 +123,14 @@ fun Context.getMediaIntent(mPickMediaConfig: PickMediaConfig): Intent {
     }
 }
 
-fun Context.getSettingIntent(): Intent {
+internal fun Context.getSettingIntent(): Intent {
     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
     val uri = Uri.fromParts("package", packageName, null)
     intent.data = uri
     return intent
 }
 
-fun Activity.setSuccessResult(fileUri: Uri?, filePath: String? = null) {
+internal fun Activity.setSuccessResult(fileUri: Uri?, filePath: String? = null) {
     setResult(
         Activity.RESULT_OK,
         Intent().also { mIntent ->
@@ -142,7 +142,7 @@ fun Activity.setSuccessResult(fileUri: Uri?, filePath: String? = null) {
     finish()
 }
 
-fun Activity.setSuccessResult(fileUri: List<Uri>?, filePath: ArrayList<String>? = null) {
+internal fun Activity.setSuccessResult(fileUri: List<Uri>?, filePath: ArrayList<String>? = null) {
     setResult(
         Activity.RESULT_OK,
         Intent().also { mIntent ->
@@ -165,7 +165,7 @@ fun Activity.setSuccessResult(fileUri: List<Uri>?, filePath: ArrayList<String>? 
     finish()
 }
 
-fun Activity.setCanceledResult(error: String? = null) {
+internal fun Activity.setCanceledResult(error: String? = null) {
     setResult(
         Activity.RESULT_CANCELED,
         Intent().also { mIntent ->

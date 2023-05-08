@@ -24,17 +24,17 @@ import com.nareshchocha.filepickerlibray.utilities.extentions.setSuccessResult
 import com.nareshchocha.filepickerlibray.utilities.extentions.showMyDialog
 import timber.log.Timber
 
-class DocumentFilePickerActivity : AppCompatActivity() {
+internal class DocumentFilePickerActivity : AppCompatActivity() {
 
     private val mDocumentFilePickerConfig: DocumentFilePickerConfig? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(
-                Const.BundleExtras.PICK_DOCUMENT,
+                Const.BundleInternalExtras.PICK_DOCUMENT,
                 DocumentFilePickerConfig::class.java,
             )
         } else {
             @Suppress("DEPRECATION")
-            intent.getParcelableExtra(Const.BundleExtras.PICK_DOCUMENT) as DocumentFilePickerConfig?
+            intent.getParcelableExtra(Const.BundleInternalExtras.PICK_DOCUMENT) as DocumentFilePickerConfig?
         }
     }
     private val checkPermission =
@@ -197,7 +197,7 @@ class DocumentFilePickerActivity : AppCompatActivity() {
         ): Intent {
             val filePickerIntent = Intent(mContext, DocumentFilePickerActivity::class.java)
             mDocumentFilePickerConfig?.let {
-                filePickerIntent.putExtra(Const.BundleExtras.PICK_DOCUMENT, it)
+                filePickerIntent.putExtra(Const.BundleInternalExtras.PICK_DOCUMENT, it)
             }
             return filePickerIntent
         }

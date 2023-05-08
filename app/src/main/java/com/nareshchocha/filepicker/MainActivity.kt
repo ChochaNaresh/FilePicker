@@ -17,7 +17,6 @@ import com.nareshchocha.filepickerlibray.models.PopUpType
 import com.nareshchocha.filepickerlibray.models.PupConfig
 import com.nareshchocha.filepickerlibray.models.VideoOnly
 import com.nareshchocha.filepickerlibray.ui.FilePicker
-import com.nareshchocha.filepickerlibray.utilities.appConst.Const
 import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
@@ -73,7 +72,7 @@ class MainActivity : AppCompatActivity() {
                     .pickMediaBuild(
                         PickMediaConfig(
                             mPickMediaType = ImageAndVideo,
-                            allowMultiple = true
+                            allowMultiple = true,
                         ),
                     ),
             )
@@ -130,6 +129,7 @@ class MainActivity : AppCompatActivity() {
 
     private val captureImageResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+
             if (result != null && result.resultCode == RESULT_OK) {
                 uriList.clear()
                 if (result.data?.data != null) {
@@ -138,14 +138,14 @@ class MainActivity : AppCompatActivity() {
                     }
                 } else {
                     val listData = result.data?.getClipDataUris()
-                    //val listData = result.data?.getStringArrayListExtra(Const.BundleExtras.FILE_PATH_LIST)
+                    // val listData = result.data?.getStringArrayListExtra(Const.BundleExtras.FILE_PATH_LIST)
                     listData?.let { uriList.addAll(it) }
                 }
                 mMediaAdapter.notifyDataSetChanged()
-                Timber.tag(Const.LogTag.FILE_RESULT).w(result.toString())
-                Timber.tag(Const.LogTag.FILE_RESULT).w(result.data?.extras?.toString())
+                Timber.tag("FILE_RESULT").w(result.toString())
+                Timber.tag("FILE_RESULT").w(result.data?.extras?.toString())
             } else {
-                Timber.tag(Const.LogTag.FILE_PICKER_ERROR).e("capture Error")
+                Timber.tag("FILE_PICKER_ERROR").e("capture Error")
             }
         }
 

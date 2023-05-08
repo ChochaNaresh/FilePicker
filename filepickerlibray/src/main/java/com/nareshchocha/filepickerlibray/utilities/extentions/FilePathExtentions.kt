@@ -6,7 +6,7 @@ import android.net.Uri
  * @param uri The Uri to check.
  * @return Whether the Uri authority is ExternalStorageProvider.
  */
-fun Uri.isExternalStorageDocument(): Boolean {
+internal fun Uri.isExternalStorageDocument(): Boolean {
     return "com.android.externalstorage.documents" == authority
 }
 
@@ -14,7 +14,7 @@ fun Uri.isExternalStorageDocument(): Boolean {
  * @param uri The Uri to check.
  * @return Whether the Uri authority is DownloadsProvider.
  */
-fun Uri.isDownloadsDocument(): Boolean {
+internal fun Uri.isDownloadsDocument(): Boolean {
     return "com.android.providers.downloads.documents" == authority
 }
 
@@ -22,7 +22,7 @@ fun Uri.isDownloadsDocument(): Boolean {
  * @param uri The Uri to check.
  * @return Whether the Uri authority is MediaProvider.
  */
-fun Uri.isMediaDocument(): Boolean {
+internal fun Uri.isMediaDocument(): Boolean {
     return "com.android.providers.media.documents" == authority
 }
 
@@ -30,6 +30,6 @@ fun Uri.isMediaDocument(): Boolean {
  * @param uri The Uri to check.
  * @return Whether the Uri authority is Google Photos.
  */
-fun Uri.isGooglePhotosUri(): Boolean {
+internal fun Uri.isGooglePhotosUri(): Boolean {
     return "com.google.android.apps.photos.content" == authority
 }

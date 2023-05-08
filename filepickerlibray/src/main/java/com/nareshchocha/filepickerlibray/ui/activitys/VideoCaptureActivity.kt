@@ -26,19 +26,19 @@ import com.nareshchocha.filepickerlibray.utilities.extentions.showMyDialog
 import timber.log.Timber
 import java.io.File
 
-class VideoCaptureActivity : AppCompatActivity() {
+internal class VideoCaptureActivity : AppCompatActivity() {
     private var videoFileUri: Uri? = null
     private var videoFile: File? = null
 
     private val mVideoCaptureConfig: VideoCaptureConfig? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(
-                Const.BundleExtras.VIDEO_CAPTURE,
+                Const.BundleInternalExtras.VIDEO_CAPTURE,
                 VideoCaptureConfig::class.java,
             )
         } else {
             @Suppress("DEPRECATION")
-            intent.getParcelableExtra(Const.BundleExtras.VIDEO_CAPTURE) as VideoCaptureConfig?
+            intent.getParcelableExtra(Const.BundleInternalExtras.VIDEO_CAPTURE) as VideoCaptureConfig?
         }
     }
     private val checkPermission =
@@ -146,11 +146,11 @@ class VideoCaptureActivity : AppCompatActivity() {
         }
 
     companion object {
-        private const val PERMISSION = Manifest.permission.CAMERA
+        private const val PERMISSION = Manifest.permission.WRITE_EXTERNAL_STORAGE
         fun getInstance(mContext: Context, mVideoCaptureConfig: VideoCaptureConfig?): Intent {
             val filePickerIntent = Intent(mContext, VideoCaptureActivity::class.java)
             mVideoCaptureConfig?.let {
-                filePickerIntent.putExtra(Const.BundleExtras.VIDEO_CAPTURE, it)
+                filePickerIntent.putExtra(Const.BundleInternalExtras.VIDEO_CAPTURE, it)
             }
             return filePickerIntent
         }

@@ -11,7 +11,7 @@ import coil.load
 import com.nareshchocha.filepickerlibray.R
 import com.nareshchocha.filepickerlibray.models.BaseConfig
 
-class PopUpAdapter(
+internal class PopUpAdapter(
     @LayoutRes private val layoutID: Int,
     private var items: List<BaseConfig>,
     private val itemClicked: (item: BaseConfig, position: Int) -> Unit,

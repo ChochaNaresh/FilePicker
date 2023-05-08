@@ -13,7 +13,7 @@ import com.nareshchocha.filepickerlibray.utilities.extentions.isGooglePhotosUri
 import com.nareshchocha.filepickerlibray.utilities.extentions.isMediaDocument
 import java.io.File
 
-object FileUtils {
+internal object FileUtils {
     fun getRealPath(context: Context, fileUri: Uri): String? {
         return pathFromURI(context, fileUri)
     }

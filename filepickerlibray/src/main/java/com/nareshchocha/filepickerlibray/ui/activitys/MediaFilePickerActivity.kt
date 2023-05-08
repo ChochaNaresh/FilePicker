@@ -25,16 +25,16 @@ import com.nareshchocha.filepickerlibray.utilities.extentions.setSuccessResult
 import com.nareshchocha.filepickerlibray.utilities.extentions.showMyDialog
 import timber.log.Timber
 
-class MediaFilePickerActivity : AppCompatActivity() {
+internal class MediaFilePickerActivity : AppCompatActivity() {
 
     private val mPickMediaConfig: PickMediaConfig? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(
-                Const.BundleExtras.PICK_MEDIA,
+                Const.BundleInternalExtras.PICK_MEDIA,
                 PickMediaConfig::class.java,
             )
         } else {
-            intent.getParcelableExtra(Const.BundleExtras.PICK_MEDIA) as PickMediaConfig?
+            intent.getParcelableExtra(Const.BundleInternalExtras.PICK_MEDIA) as PickMediaConfig?
         }
     }
     private val checkPermission =
@@ -202,7 +202,7 @@ class MediaFilePickerActivity : AppCompatActivity() {
         fun getInstance(mContext: Context, mPickMediaConfig: PickMediaConfig?): Intent {
             val filePickerIntent = Intent(mContext, MediaFilePickerActivity::class.java)
             mPickMediaConfig?.let {
-                filePickerIntent.putExtra(Const.BundleExtras.PICK_MEDIA, it)
+                filePickerIntent.putExtra(Const.BundleInternalExtras.PICK_MEDIA, it)
             }
             return filePickerIntent
         }

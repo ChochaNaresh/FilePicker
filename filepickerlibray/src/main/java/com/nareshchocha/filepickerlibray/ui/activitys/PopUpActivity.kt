@@ -24,16 +24,16 @@ import com.nareshchocha.filepickerlibray.ui.adapter.PopUpAdapter
 import com.nareshchocha.filepickerlibray.utilities.appConst.Const
 import com.nareshchocha.filepickerlibray.utilities.extentions.setCanceledResult
 
-class PopUpActivity : AppCompatActivity() {
+internal class PopUpActivity : AppCompatActivity() {
     private val binding: ActivityPopUpBinding by lazy {
         ActivityPopUpBinding.inflate(layoutInflater)
     }
     private val mPickerData: PickerData? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(Const.BundleExtras.PICKER_DATA, PickerData::class.java)
+            intent.getParcelableExtra(Const.BundleInternalExtras.PICKER_DATA, PickerData::class.java)
         } else {
             @Suppress("DEPRECATION")
-            intent.getParcelableExtra(Const.BundleExtras.PICKER_DATA) as PickerData?
+            intent.getParcelableExtra(Const.BundleInternalExtras.PICKER_DATA) as PickerData?
         }
     }
 
@@ -140,7 +140,7 @@ class PopUpActivity : AppCompatActivity() {
         fun getInstance(mContext: Context, mPickerData: PickerData?): Intent {
             val filePickerIntent = Intent(mContext, PopUpActivity::class.java)
             mPickerData?.let {
-                filePickerIntent.putExtra(Const.BundleExtras.PICKER_DATA, it)
+                filePickerIntent.putExtra(Const.BundleInternalExtras.PICKER_DATA, it)
             }
             return filePickerIntent
         }

@@ -26,18 +26,18 @@ import com.nareshchocha.filepickerlibray.utilities.extentions.showMyDialog
 import timber.log.Timber
 import java.io.File
 
-class ImageCaptureActivity : AppCompatActivity() {
+internal class ImageCaptureActivity : AppCompatActivity() {
     private var imageFileUri: Uri? = null
     private var imageFile: File? = null
 
     private val mImageCaptureConfig: ImageCaptureConfig? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(
-                Const.BundleExtras.IMAGE_CAPTURE,
+                Const.BundleInternalExtras.IMAGE_CAPTURE,
                 ImageCaptureConfig::class.java,
             )
         } else {
-            intent.getParcelableExtra(Const.BundleExtras.IMAGE_CAPTURE) as ImageCaptureConfig?
+            intent.getParcelableExtra(Const.BundleInternalExtras.IMAGE_CAPTURE) as ImageCaptureConfig?
         }
     }
     private val checkPermission =
@@ -143,7 +143,7 @@ class ImageCaptureActivity : AppCompatActivity() {
         fun getInstance(mContext: Context, mImageCaptureConfig: ImageCaptureConfig?): Intent {
             val filePickerIntent = Intent(mContext, ImageCaptureActivity::class.java)
             mImageCaptureConfig?.let {
-                filePickerIntent.putExtra(Const.BundleExtras.IMAGE_CAPTURE, it)
+                filePickerIntent.putExtra(Const.BundleInternalExtras.IMAGE_CAPTURE, it)
             }
             return filePickerIntent
         }
