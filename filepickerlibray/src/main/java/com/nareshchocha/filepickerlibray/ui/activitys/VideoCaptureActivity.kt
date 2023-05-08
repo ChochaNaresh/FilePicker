@@ -37,6 +37,7 @@ class VideoCaptureActivity : AppCompatActivity() {
                 VideoCaptureConfig::class.java,
             )
         } else {
+            @Suppress("DEPRECATION")
             intent.getParcelableExtra(Const.BundleExtras.VIDEO_CAPTURE) as VideoCaptureConfig?
         }
     }
@@ -57,7 +58,7 @@ class VideoCaptureActivity : AppCompatActivity() {
 
     private val videoCapture =
         selectFile(ActivityResultContracts.StartActivityForResult(), resultCallBack = { result ->
-            if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+            if (result.resultCode == Activity.RESULT_OK) {
                 Timber.tag(Const.LogTag.FILE_RESULT)
                     .w("File Uri ::: ${videoFileUri?.toString()}")
                 Timber.tag(Const.LogTag.FILE_RESULT).w("filePath ::: ${videoFile?.absoluteFile}")
@@ -145,7 +146,7 @@ class VideoCaptureActivity : AppCompatActivity() {
         }
 
     companion object {
-        private const val PERMISSION = Manifest.permission.WRITE_EXTERNAL_STORAGE
+        private const val PERMISSION = Manifest.permission.CAMERA
         fun getInstance(mContext: Context, mVideoCaptureConfig: VideoCaptureConfig?): Intent {
             val filePickerIntent = Intent(mContext, VideoCaptureActivity::class.java)
             mVideoCaptureConfig?.let {

@@ -49,11 +49,7 @@ fun Context.showMyDialog(
 fun Context.getImageCaptureIntent(outputFileUri: Uri): Intent {
     return Intent(MediaStore.ACTION_IMAGE_CAPTURE).also {
         it.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            it.clipData = ClipData.newUri(contentResolver, "Video", outputFileUri)
-        } else {
-            it.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri)
-        }
+        it.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri)
     }
 }
 
@@ -77,11 +73,10 @@ fun Context.getVideoCaptureIntent(
                 maxSizeLimit,
             )
         }
-        it.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+        it.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+        it.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             it.clipData = ClipData.newUri(contentResolver, "Video", outputFileUri)
-        } else {
-            it.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri)
         }
     }
 }
@@ -156,7 +151,12 @@ fun Activity.setSuccessResult(fileUri: List<Uri>?, filePath: ArrayList<String>? 
                     mClipData.addItem(ClipData.Item(it))
                 }
                 mIntent.clipData = mClipData
-                filePath?.let { mIntent.putStringArrayListExtra(Const.BundleExtras.FILE_PATH_LIST, it) }
+                filePath?.let {
+                    mIntent.putStringArrayListExtra(
+                        Const.BundleExtras.FILE_PATH_LIST,
+                        it,
+                    )
+                }
             }
         },
     )
