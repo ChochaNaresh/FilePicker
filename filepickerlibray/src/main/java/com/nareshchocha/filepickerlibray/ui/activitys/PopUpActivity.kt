@@ -40,12 +40,12 @@ internal class PopUpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setAdapter()
-        binding.tbToolbar.title = if (!mPickerData?.mPupConfig?.chooserTitle.isNullOrEmpty()) {
-            mPickerData?.mPupConfig?.chooserTitle
+        binding.tbToolbar.title = if (!mPickerData?.mPopUpConfig?.chooserTitle.isNullOrEmpty()) {
+            mPickerData?.mPopUpConfig?.chooserTitle
         } else {
             getString(R.string.str_choose_option)
         }
-        if (mPickerData?.mPupConfig?.mPopUpType?.isDialog() == true) {
+        if (mPickerData?.mPopUpConfig?.mPopUpType?.isDialog() == true) {
             binding.root.radius = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
                 Const.CARD_RADIUS,
@@ -60,15 +60,15 @@ internal class PopUpActivity : AppCompatActivity() {
     private fun setAdapter() {
         val linearLayoutManager = LinearLayoutManager(
             this,
-            if (mPickerData?.mPupConfig?.mOrientation != null) {
-                mPickerData?.mPupConfig?.mOrientation!!
+            if (mPickerData?.mPopUpConfig?.mOrientation != null) {
+                mPickerData?.mPopUpConfig?.mOrientation!!
             } else {
                 RecyclerView.VERTICAL
             },
             false,
         )
         val popUpAdapter = PopUpAdapter(
-            mPickerData?.mPupConfig?.layoutId ?: R.layout.item_pop_up,
+            mPickerData?.mPopUpConfig?.layoutId ?: R.layout.item_pop_up,
             items = getAdapterItemList(),
             itemClicked = { item, _ ->
                 mBottomSheet.dismiss()

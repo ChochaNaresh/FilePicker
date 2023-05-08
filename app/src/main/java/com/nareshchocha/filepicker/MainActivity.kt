@@ -13,8 +13,8 @@ import com.nareshchocha.filepickerlibray.models.DocumentFilePickerConfig
 import com.nareshchocha.filepickerlibray.models.ImageAndVideo
 import com.nareshchocha.filepickerlibray.models.ImageOnly
 import com.nareshchocha.filepickerlibray.models.PickMediaConfig
+import com.nareshchocha.filepickerlibray.models.PopUpConfig
 import com.nareshchocha.filepickerlibray.models.PopUpType
-import com.nareshchocha.filepickerlibray.models.PupConfig
 import com.nareshchocha.filepickerlibray.models.VideoOnly
 import com.nareshchocha.filepickerlibray.ui.FilePicker
 import timber.log.Timber
@@ -93,8 +93,8 @@ class MainActivity : AppCompatActivity() {
         binding.mbtAllOption.setOnClickListener {
             captureImageResultLauncher.launch(
                 FilePicker.Builder(this)
-                    .setPupConfig(
-                        PupConfig(
+                    .setPopUpConfig(
+                        PopUpConfig(
                             mPopUpType = PopUpType.BOTTOM_SHEET,
                             mOrientation = RecyclerView.VERTICAL,
                             chooserTitle = "Choose Profile",

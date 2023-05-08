@@ -13,12 +13,12 @@ import java.io.File
 
 @Parcelize
 data class PickerData(
-    val mPupConfig: PupConfig? = null,
+    val mPopUpConfig: PopUpConfig? = null,
     val listIntents: List<BaseConfig> = emptyList(),
 ) : Parcelable
 
 @Parcelize
-data class PupConfig(
+data class PopUpConfig(
     val chooserTitle: String? = null,
     @LayoutRes val layoutId: Int = R.layout.item_pop_up,
     val mPopUpType: PopUpType = PopUpType.BOTTOM_SHEET,

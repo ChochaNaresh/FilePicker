@@ -7,7 +7,7 @@ import com.nareshchocha.filepickerlibray.models.DocumentFilePickerConfig
 import com.nareshchocha.filepickerlibray.models.ImageCaptureConfig
 import com.nareshchocha.filepickerlibray.models.PickMediaConfig
 import com.nareshchocha.filepickerlibray.models.PickerData
-import com.nareshchocha.filepickerlibray.models.PupConfig
+import com.nareshchocha.filepickerlibray.models.PopUpConfig
 import com.nareshchocha.filepickerlibray.models.VideoCaptureConfig
 import com.nareshchocha.filepickerlibray.ui.activitys.DocumentFilePickerActivity
 import com.nareshchocha.filepickerlibray.ui.activitys.ImageCaptureActivity
@@ -19,10 +19,10 @@ open class FilePicker {
 
     class Builder(private val context: Context) {
         private val listIntents: ArrayList<BaseConfig> = ArrayList()
-        private var mPupConfig: PupConfig? = null
+        private var mPopUpConfig: PopUpConfig? = null
 
-        fun setPupConfig(mPupConfig: PupConfig? = null): Builder {
-            this.mPupConfig = mPupConfig ?: PupConfig()
+        fun setPopUpConfig(mPopUpConfig: PopUpConfig? = null): Builder {
+            this.mPopUpConfig = mPopUpConfig ?: PopUpConfig()
             return this
         }
 
@@ -63,7 +63,7 @@ open class FilePicker {
 
         fun build(): Intent = PopUpActivity.getInstance(
             context,
-            PickerData(mPupConfig = mPupConfig, listIntents = listIntents),
+            PickerData(mPopUpConfig = mPopUpConfig, listIntents = listIntents),
         )
     }
 }
