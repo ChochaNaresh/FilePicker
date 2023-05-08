@@ -14,24 +14,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/ivImage"
-            android:visibility="gone"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvMedia"
             android:layout_width="match_parent"
-            android:layout_height="180dp" />
-
-        <VideoView
-            android:id="@+id/ivVideo"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="180dp" />
+            android:layout_height="wrap_content" />
 
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/mbtCaptureImage"
-            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:text="Capture Image"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

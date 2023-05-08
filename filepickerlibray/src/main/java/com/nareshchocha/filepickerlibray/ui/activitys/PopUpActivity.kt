@@ -8,8 +8,8 @@ import android.util.TypedValue
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.nareshchocha.filepickerlibray.R
 import com.nareshchocha.filepickerlibray.databinding.ActivityPopUpBinding
@@ -63,7 +63,7 @@ class PopUpActivity : AppCompatActivity() {
             if (mPickerData?.mPupConfig?.mOrientation != null) {
                 mPickerData?.mPupConfig?.mOrientation!!
             } else {
-                LinearLayoutCompat.VERTICAL
+                RecyclerView.VERTICAL
             },
             false,
         )

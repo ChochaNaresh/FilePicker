@@ -134,6 +134,7 @@ fun Activity.setSuccessResult(fileUri: Uri?, filePath: String? = null) {
     setResult(
         Activity.RESULT_OK,
         Intent().also { mIntent ->
+            mIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
             fileUri?.let { mIntent.data = fileUri }
             filePath?.let { mIntent.putExtra(Const.BundleExtras.FILE_PATH, it) }
         },
@@ -145,6 +146,7 @@ fun Activity.setSuccessResult(fileUri: List<Uri>?, filePath: ArrayList<String>? 
     setResult(
         Activity.RESULT_OK,
         Intent().also { mIntent ->
+            mIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
             if (!fileUri.isNullOrEmpty()) {
                 val mClipData = ClipData.newUri(contentResolver, "uris", fileUri.first())
                 fileUri.subList(1, fileUri.size).forEach {
