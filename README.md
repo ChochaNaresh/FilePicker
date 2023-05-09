@@ -42,12 +42,12 @@ Where `$libVersion` = [![libVersion](https://img.shields.io/github/release/Choch
 **If you want to Multiple option with BottomSheet Or Dialog:**
 ```kotlin
     FilePicker.Builder(this)
-    .setPopUpConfig()
-    .addPickDocumentFile()
-    .addImageCapture()
-    .addVideoCapture()
-    .addPickMedia()
-    .build()
+        .setPopUpConfig()
+        .addPickDocumentFile()
+        .addImageCapture()
+        .addVideoCapture()
+        .addPickMedia()
+        .build()
 ```
 **with custom PopUp Config**
 ```kotlin
@@ -139,7 +139,7 @@ setPopUpConfig(
             popUpText = "Video", 
             allowMultiple = false,// set Multiple pick file 
             maxFiles = 0,// max files working only in android latest version
-            mPickMediaType = ImageAndVideo
+            mPickMediaType = ImageAndVideo,
             askPermissionTitle = null, // set Permission ask Title
             askPermissionMessage = null,// set Permission ask Message
             settingPermissionTitle = null,// set Permission setting Title
@@ -180,9 +180,23 @@ setPopUpConfig(
     FilePicker.Builder(this)
         .pickMediaBuild(PickMediaConfig()) // Customization check Pick Media Config
 ```
-
-
-
 # Compatibility
 * Library - Android Lollipop 5.0+ (API 21)
 * Sample - Android Lollipop 5.0+ (API 21)
+
+# License
+```xml
+Copyright 2023 Naresh chocha
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    
+http://www.apache.org/licenses/LICENSE-2.0
+    
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
