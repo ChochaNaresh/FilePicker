@@ -20,10 +20,10 @@ This library is designed to simplify the process of selecting and retrieving med
 # Usage
 ```groovy
 	allprojects {
-        repositories {
-            mavenCentral() // For FilePicker library, this line is enough. Although, it has been published on jitpack as well
-            maven { url "https://jitpack.io" }  //Make sure to add this in your project
-        }
+		repositories {
+		    mavenCentral() // For FilePicker library, this line is enough. Although, it has been published on jitpack as well
+		    maven { url "https://jitpack.io" }  //Make sure to add this in your project
+		}
 }
 ```
 
