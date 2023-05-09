@@ -56,20 +56,20 @@ internal class DocumentFilePickerActivity : AppCompatActivity() {
             if (result.resultCode == Activity.RESULT_OK && result.data != null) {
                 if (mDocumentFilePickerConfig?.allowMultiple == true && result.data?.clipData != null) {
                     val uris = result.data?.getClipDataUris()
-                    Timber.tag(Const.LogTag.FILE_RESULT).w("File Uri ::: $uris")
                     val filePaths = uris?.getFilePathList(this)
+                    Timber.tag(Const.LogTag.FILE_RESULT).w("File Uri ::: $uris")
                     Timber.tag(Const.LogTag.FILE_RESULT).w("filePath ::: $filePaths")
                     setSuccessResult(uris, filePath = filePaths)
                 } else if (result.data?.data != null) {
                     val data = result.data?.data
-                    Timber.tag(Const.LogTag.FILE_RESULT).w("File Uri ::: ${data?.toString()}")
                     val filePath = data?.let { FileUtils.getRealPath(this, it) }
+                    Timber.tag(Const.LogTag.FILE_RESULT).w("File Uri ::: ${data?.toString()}")
                     Timber.tag(Const.LogTag.FILE_RESULT).w("filePath ::: $filePath")
                     setSuccessResult(data, filePath)
                 }
             } else {
-                Timber.tag(Const.LogTag.FILE_PICKER_ERROR).e("capture Error")
-                setCanceledResult("capture Error")
+                Timber.tag(Const.LogTag.FILE_PICKER_ERROR).e(getString(R.string.err_document_pick_error))
+                setCanceledResult(getString(R.string.err_document_pick_error))
             }
         })
 
@@ -106,7 +106,7 @@ internal class DocumentFilePickerActivity : AppCompatActivity() {
         if (mDocumentFilePickerConfig != null) {
             selectFile.launch(getDocumentFilePick(mDocumentFilePickerConfig!!))
         } else {
-            setCanceledResult(getString(R.string.str_document_config_null))
+            setCanceledResult(getString(R.string.err_config_null, this::mDocumentFilePickerConfig::class.java.name))
         }
     }
 
@@ -119,8 +119,9 @@ internal class DocumentFilePickerActivity : AppCompatActivity() {
 
     private fun showAskDialog() {
         showMyDialog(
-            getString(R.string.err_permission_denied),
-            getString(
+            mDocumentFilePickerConfig?.askPermissionTitle
+                ?: getString(R.string.err_permission_denied),
+            mDocumentFilePickerConfig?.askPermissionMessage ?: getString(
                 R.string.err_write_storage_permission,
                 getPermission().split(".").lastOrNull() ?: "",
             ),
@@ -136,8 +137,9 @@ internal class DocumentFilePickerActivity : AppCompatActivity() {
     private fun showGotoSettingDialog() {
         if (mDocumentFilePickerConfig != null) {
             showMyDialog(
-                getString(R.string.err_permission_denied),
-                getString(
+                mDocumentFilePickerConfig?.settingPermissionTitle
+                    ?: getString(R.string.err_permission_denied),
+                mDocumentFilePickerConfig?.settingPermissionMessage ?: getString(
                     R.string.err_write_storage_setting,
                     getPermission().split(".").lastOrNull() ?: "",
                 ),
@@ -150,7 +152,7 @@ internal class DocumentFilePickerActivity : AppCompatActivity() {
                 },
             )
         } else {
-            setCanceledResult(getString(R.string.str_document_config_null))
+            setCanceledResult(getString(R.string.err_config_null, this::mDocumentFilePickerConfig::class.java.name))
         }
     }
 
@@ -167,7 +169,7 @@ internal class DocumentFilePickerActivity : AppCompatActivity() {
                     setCanceledResult(getString(R.string.err_permission_result))
                 }
             } else {
-                setCanceledResult("PickMediaConfig data is set")
+                setCanceledResult(getString(R.string.err_config_null, this::mDocumentFilePickerConfig::class.java.name))
             }
         }
 
@@ -177,7 +179,7 @@ internal class DocumentFilePickerActivity : AppCompatActivity() {
                 getPermission(),
             )
         } else {
-            setCanceledResult("PickMediaConfig data is set")
+            setCanceledResult(getString(R.string.err_config_null, this::mDocumentFilePickerConfig::class.java.name))
         }
     }
 

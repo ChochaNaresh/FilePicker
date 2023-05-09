@@ -64,8 +64,8 @@ internal class ImageCaptureActivity : AppCompatActivity() {
                 Timber.tag(Const.LogTag.FILE_RESULT).w("file read:: ${imageFile?.canRead()}")
                 setSuccessResult(imageFileUri, imageFile?.absolutePath)
             } else {
-                Timber.tag(Const.LogTag.FILE_PICKER_ERROR).e("capture Error")
-                setCanceledResult("capture Error")
+                Timber.tag(Const.LogTag.FILE_PICKER_ERROR).e(getString(R.string.err_capture_error, "imageCapture"))
+                setCanceledResult(getString(R.string.err_capture_error, "imageCapture"))
             }
         })
 
@@ -97,8 +97,8 @@ internal class ImageCaptureActivity : AppCompatActivity() {
 
     private fun showAskDialog() {
         showMyDialog(
-            getString(R.string.err_permission_denied),
-            getString(
+            mImageCaptureConfig?.askPermissionTitle ?: getString(R.string.err_permission_denied),
+            mImageCaptureConfig?.askPermissionMessage ?: getString(
                 R.string.err_write_storage_permission,
                 PERMISSION.split(".").lastOrNull() ?: "",
             ),
@@ -113,9 +113,13 @@ internal class ImageCaptureActivity : AppCompatActivity() {
 
     private fun showGotoSettingDialog() {
         showMyDialog(
-            getString(R.string.err_permission_denied),
-            getString(R.string.err_write_storage_setting, PERMISSION.split(".").lastOrNull() ?: ""),
-            positiveButtonText = "Go To Setting",
+            mImageCaptureConfig?.settingPermissionTitle
+                ?: getString(R.string.err_permission_denied),
+            mImageCaptureConfig?.settingPermissionMessage ?: getString(
+                R.string.err_write_storage_setting,
+                PERMISSION.split(".").lastOrNull() ?: "",
+            ),
+            positiveButtonText = getString(R.string.str_go_to_setting),
             negativeClick = {
                 setCanceledResult(getString(R.string.err_permission_result))
             },

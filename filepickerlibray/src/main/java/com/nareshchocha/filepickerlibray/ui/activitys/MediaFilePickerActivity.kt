@@ -70,8 +70,8 @@ internal class MediaFilePickerActivity : AppCompatActivity() {
                     setSuccessResult(data, filePath)
                 }
             } else {
-                Timber.tag(Const.LogTag.FILE_PICKER_ERROR).e("capture Error")
-                setCanceledResult("capture Error")
+                Timber.tag(Const.LogTag.FILE_PICKER_ERROR).e(getString(R.string.err_media_pick_error))
+                setCanceledResult(getString(R.string.err_media_pick_error))
             }
         })
 
@@ -108,7 +108,7 @@ internal class MediaFilePickerActivity : AppCompatActivity() {
         if (mPickMediaConfig != null) {
             selectFile.launch(getMediaIntent(mPickMediaConfig!!))
         } else {
-            setCanceledResult("PickMediaConfig data is set")
+            setCanceledResult(getString(R.string.err_config_null, this::mPickMediaConfig::class.java.name))
         }
     }
 
@@ -121,8 +121,8 @@ internal class MediaFilePickerActivity : AppCompatActivity() {
 
     private fun showAskDialog() {
         showMyDialog(
-            getString(R.string.err_permission_denied),
-            getString(
+            mPickMediaConfig?.askPermissionTitle ?: getString(R.string.err_permission_denied),
+            mPickMediaConfig?.askPermissionMessage ?: getString(
                 R.string.err_write_storage_permission,
                 getPermission(mPickMediaConfig!!).split(".").lastOrNull() ?: "",
             ),
@@ -138,12 +138,12 @@ internal class MediaFilePickerActivity : AppCompatActivity() {
     private fun showGotoSettingDialog() {
         if (mPickMediaConfig != null) {
             showMyDialog(
-                getString(R.string.err_permission_denied),
-                getString(
+                mPickMediaConfig?.settingPermissionTitle ?: getString(R.string.err_permission_denied),
+                mPickMediaConfig?.settingPermissionMessage ?: getString(
                     R.string.err_write_storage_setting,
                     getPermission(mPickMediaConfig!!).split(".").lastOrNull() ?: "",
                 ),
-                positiveButtonText = "Go To Setting",
+                positiveButtonText = getString(R.string.str_go_to_setting),
                 negativeClick = {
                     setCanceledResult(getString(R.string.err_permission_result))
                 },
@@ -152,7 +152,7 @@ internal class MediaFilePickerActivity : AppCompatActivity() {
                 },
             )
         } else {
-            setCanceledResult("PickMediaConfig data is set")
+            setCanceledResult(getString(R.string.err_config_null, this::mPickMediaConfig::class.java.name))
         }
     }
 
@@ -169,7 +169,7 @@ internal class MediaFilePickerActivity : AppCompatActivity() {
                     setCanceledResult(getString(R.string.err_permission_result))
                 }
             } else {
-                setCanceledResult("PickMediaConfig data is set")
+                setCanceledResult(getString(R.string.err_config_null, this::mPickMediaConfig::class.java.name))
             }
         }
 
@@ -181,7 +181,7 @@ internal class MediaFilePickerActivity : AppCompatActivity() {
                 ),
             )
         } else {
-            setCanceledResult("PickMediaConfig data is set")
+            setCanceledResult(getString(R.string.err_config_null, this::mPickMediaConfig::class.java.name))
         }
     }
 
