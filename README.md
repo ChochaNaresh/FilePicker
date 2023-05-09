@@ -17,22 +17,21 @@ This library is designed to simplify the process of selecting and retrieving med
 * Pick Image / Video
 * Pick Any File with Mimetype
 * All multiple file to pick
-
 # Usage
 ```groovy
 	allprojects {
-    repositories {
-        mavenCentral() // For FilePicker library, this line is enough. Although, it has been published on jitpack as well
-        maven { url "https://jitpack.io" }  //Make sure to add this in your project
-    }
+        repositories {
+            mavenCentral() // For FilePicker library, this line is enough. Although, it has been published on jitpack as well
+            maven { url "https://jitpack.io" }  //Make sure to add this in your project
+        }
 }
 ```
 
 ```groovy
    dependencies {
-    // ...
-    implementation 'com.github.ChochaNaresh:FilePicker:$libVersion'
-    // ...
+        // ...
+        implementation 'com.github.ChochaNaresh:FilePicker:$libVersion'
+        // ...
 }
 ```
 Where `$libVersion` = [![libVersion](https://img.shields.io/github/release/ChochaNaresh/FilePicker/all.svg?style=flat-square)](https://github.com/ChochaNaresh/FilePicker/releases)
@@ -52,14 +51,14 @@ Where `$libVersion` = [![libVersion](https://img.shields.io/github/release/Choch
 **with custom PopUp Config**
 ```kotlin
     //..
-setPopUpConfig(
-    PopUpConfig(
-        chooserTitle = "Choose Profile",
-        // layoutId = 0, custom layout 
-        mPopUpType = PopUpType.BOTTOM_SHEET,// PopUpType.BOTTOM_SHEET Or PopUpType.DIALOG
-        mOrientation = RecyclerView.VERTICAL // RecyclerView.VERTICAL or RecyclerView.HORIZONTAL
+    setPopUpConfig(
+        PopUpConfig(
+            chooserTitle = "Choose Profile",
+            // layoutId = 0, custom layout 
+            mPopUpType = PopUpType.BOTTOM_SHEET,// PopUpType.BOTTOM_SHEET Or PopUpType.DIALOG
+            mOrientation = RecyclerView.VERTICAL // RecyclerView.VERTICAL or RecyclerView.HORIZONTAL
+        )
     )
-)
     //..
     .build()
 
