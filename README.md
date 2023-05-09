@@ -42,12 +42,12 @@ Where `$libVersion` = [![libVersion](https://img.shields.io/github/release/Choch
 **If you want to Multiple option with BottomSheet Or Dialog:**
 ```kotlin
     FilePicker.Builder(this)
-    .setPopUpConfig()
-    .addPickDocumentFile()
-    .addImageCapture()
-    .addVideoCapture()
-    .addPickMedia()
-    .build()
+        .setPopUpConfig()
+        .addPickDocumentFile()
+        .addImageCapture()
+        .addVideoCapture()
+        .addPickMedia()
+        .build()
 ```
 **with custom PopUp Config**
 ```kotlin
@@ -139,7 +139,7 @@ setPopUpConfig(
             popUpText = "Video", 
             allowMultiple = false,// set Multiple pick file 
             maxFiles = 0,// max files working only in android latest version
-            mPickMediaType = ImageAndVideo
+            mPickMediaType = ImageAndVideo,
             askPermissionTitle = null, // set Permission ask Title
             askPermissionMessage = null,// set Permission ask Message
             settingPermissionTitle = null,// set Permission setting Title
