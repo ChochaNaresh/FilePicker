@@ -68,7 +68,8 @@ internal class DocumentFilePickerActivity : AppCompatActivity() {
                     setSuccessResult(data, filePath)
                 }
             } else {
-                Timber.tag(Const.LogTag.FILE_PICKER_ERROR).e(getString(R.string.err_document_pick_error))
+                Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
+                    .e(getString(R.string.err_document_pick_error))
                 setCanceledResult(getString(R.string.err_document_pick_error))
             }
         })
@@ -106,7 +107,12 @@ internal class DocumentFilePickerActivity : AppCompatActivity() {
         if (mDocumentFilePickerConfig != null) {
             selectFile.launch(getDocumentFilePick(mDocumentFilePickerConfig!!))
         } else {
-            setCanceledResult(getString(R.string.err_config_null, this::mDocumentFilePickerConfig::class.java.name))
+            setCanceledResult(
+                getString(
+                    R.string.err_config_null,
+                    this::mDocumentFilePickerConfig::class.java.name,
+                ),
+            )
         }
     }
 
@@ -114,7 +120,11 @@ internal class DocumentFilePickerActivity : AppCompatActivity() {
         supportActionBar?.hide()
         super.onCreate(savedInstanceState)
         title = ""
-        checkPermission()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkPermission()
+        } else {
+            launchFilePicker()
+        }
     }
 
     private fun showAskDialog() {
@@ -152,7 +162,12 @@ internal class DocumentFilePickerActivity : AppCompatActivity() {
                 },
             )
         } else {
-            setCanceledResult(getString(R.string.err_config_null, this::mDocumentFilePickerConfig::class.java.name))
+            setCanceledResult(
+                getString(
+                    R.string.err_config_null,
+                    this::mDocumentFilePickerConfig::class.java.name,
+                ),
+            )
         }
     }
 
@@ -169,7 +184,12 @@ internal class DocumentFilePickerActivity : AppCompatActivity() {
                     setCanceledResult(getString(R.string.err_permission_result))
                 }
             } else {
-                setCanceledResult(getString(R.string.err_config_null, this::mDocumentFilePickerConfig::class.java.name))
+                setCanceledResult(
+                    getString(
+                        R.string.err_config_null,
+                        this::mDocumentFilePickerConfig::class.java.name,
+                    ),
+                )
             }
         }
 
@@ -179,7 +199,12 @@ internal class DocumentFilePickerActivity : AppCompatActivity() {
                 getPermission(),
             )
         } else {
-            setCanceledResult(getString(R.string.err_config_null, this::mDocumentFilePickerConfig::class.java.name))
+            setCanceledResult(
+                getString(
+                    R.string.err_config_null,
+                    this::mDocumentFilePickerConfig::class.java.name,
+                ),
+            )
         }
     }
 

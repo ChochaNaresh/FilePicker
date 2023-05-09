@@ -116,7 +116,11 @@ internal class MediaFilePickerActivity : AppCompatActivity() {
         supportActionBar?.hide()
         super.onCreate(savedInstanceState)
         title = ""
-        checkPermission()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkPermission()
+        } else {
+            launchFilePicker()
+        }
     }
 
     private fun showAskDialog() {

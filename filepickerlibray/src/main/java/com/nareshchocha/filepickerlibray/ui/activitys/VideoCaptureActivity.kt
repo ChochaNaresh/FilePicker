@@ -72,8 +72,12 @@ internal class VideoCaptureActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-            getPermission()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+                getPermission()
+            } else {
+                launchCamera()
+            }
         } else {
             launchCamera()
         }

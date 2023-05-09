@@ -57,22 +57,27 @@ internal class ImageCaptureActivity : AppCompatActivity() {
 
     private val imageCapture =
         selectFile(ActivityResultContracts.StartActivityForResult(), resultCallBack = { result ->
-            if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+            if (result.resultCode == Activity.RESULT_OK) {
                 Timber.tag(Const.LogTag.FILE_RESULT)
                     .w("File Uri ::: ${imageFileUri?.toString()}")
                 Timber.tag(Const.LogTag.FILE_RESULT).w("filePath ::: ${imageFile?.absoluteFile}")
                 Timber.tag(Const.LogTag.FILE_RESULT).w("file read:: ${imageFile?.canRead()}")
                 setSuccessResult(imageFileUri, imageFile?.absolutePath)
             } else {
-                Timber.tag(Const.LogTag.FILE_PICKER_ERROR).e(getString(R.string.err_capture_error, "imageCapture"))
+                Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
+                    .e(getString(R.string.err_capture_error, "imageCapture"))
                 setCanceledResult(getString(R.string.err_capture_error, "imageCapture"))
             }
         })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-            getPermission()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+                getPermission()
+            } else {
+                launchCamera()
+            }
         } else {
             launchCamera()
         }
