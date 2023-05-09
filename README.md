@@ -3,7 +3,7 @@
 
 
 [![](https://jitpack.io/v/ChochaNaresh/FilePicker.svg)](https://jitpack.io/#ChochaNaresh/FilePicker)
-[![API](https://img.shields.io/badge/API-24%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=24)
+[![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
 ![Language](https://img.shields.io/badge/language-Kotlin-orange.svg)
 ![Language](https://img.shields.io/badge/Kotlin-1.8.21-blue)
 
@@ -67,5 +67,5 @@ Where `$libVersion` = [![libVersion](https://img.shields.io/github/release/Choch
 
 
 # Compatibility
-* Library - Android Nougat 7+ (API 24)
-* Sample - Android Nougat 7+ (API 24)
+* Library - Android Lollipop 5.0+ (API 21)
+* Sample - Android Lollipop 5.0+ (API 21)
