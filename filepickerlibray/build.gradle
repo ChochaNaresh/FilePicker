@@ -12,14 +12,13 @@ android {
     compileSdk 33
 
     defaultConfig {
-        minSdk 24
+        minSdk 21
         targetSdk 33
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -27,6 +26,7 @@ android {
         }
     }
     buildFeatures {
+        buildConfig true
         viewBinding true
         dataBinding true
     }

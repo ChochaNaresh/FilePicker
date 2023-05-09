@@ -57,22 +57,27 @@ internal class ImageCaptureActivity : AppCompatActivity() {
 
     private val imageCapture =
         selectFile(ActivityResultContracts.StartActivityForResult(), resultCallBack = { result ->
-            if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+            if (result.resultCode == Activity.RESULT_OK) {
                 Timber.tag(Const.LogTag.FILE_RESULT)
                     .w("File Uri ::: ${imageFileUri?.toString()}")
                 Timber.tag(Const.LogTag.FILE_RESULT).w("filePath ::: ${imageFile?.absoluteFile}")
                 Timber.tag(Const.LogTag.FILE_RESULT).w("file read:: ${imageFile?.canRead()}")
                 setSuccessResult(imageFileUri, imageFile?.absolutePath)
             } else {
-                Timber.tag(Const.LogTag.FILE_PICKER_ERROR).e("capture Error")
-                setCanceledResult("capture Error")
+                Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
+                    .e(getString(R.string.err_capture_error, "imageCapture"))
+                setCanceledResult(getString(R.string.err_capture_error, "imageCapture"))
             }
         })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-            getPermission()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+                getPermission()
+            } else {
+                launchCamera()
+            }
         } else {
             launchCamera()
         }
@@ -97,8 +102,8 @@ internal class ImageCaptureActivity : AppCompatActivity() {
 
     private fun showAskDialog() {
         showMyDialog(
-            getString(R.string.err_permission_denied),
-            getString(
+            mImageCaptureConfig?.askPermissionTitle ?: getString(R.string.err_permission_denied),
+            mImageCaptureConfig?.askPermissionMessage ?: getString(
                 R.string.err_write_storage_permission,
                 PERMISSION.split(".").lastOrNull() ?: "",
             ),
@@ -113,9 +118,13 @@ internal class ImageCaptureActivity : AppCompatActivity() {
 
     private fun showGotoSettingDialog() {
         showMyDialog(
-            getString(R.string.err_permission_denied),
-            getString(R.string.err_write_storage_setting, PERMISSION.split(".").lastOrNull() ?: ""),
-            positiveButtonText = "Go To Setting",
+            mImageCaptureConfig?.settingPermissionTitle
+                ?: getString(R.string.err_permission_denied),
+            mImageCaptureConfig?.settingPermissionMessage ?: getString(
+                R.string.err_write_storage_setting,
+                PERMISSION.split(".").lastOrNull() ?: "",
+            ),
+            positiveButtonText = getString(R.string.str_go_to_setting),
             negativeClick = {
                 setCanceledResult(getString(R.string.err_permission_result))
             },

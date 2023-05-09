@@ -31,7 +31,18 @@ data class ImageCaptureConfig(
     override val popUpText: String = "Camera",
     val mFolder: File = Const.DefaultPaths.defaultFolder,
     val fileName: String = Const.DefaultPaths.defaultImageFile,
-) : Parcelable, BaseConfig(popUpIcon, popUpText)
+    override val askPermissionTitle: String? = null,
+    override val askPermissionMessage: String? = null,
+    override val settingPermissionTitle: String? = null,
+    override val settingPermissionMessage: String? = null,
+) : Parcelable, BaseConfig(
+    popUpIcon,
+    popUpText,
+    askPermissionTitle,
+    askPermissionMessage,
+    settingPermissionTitle,
+    settingPermissionMessage,
+)
 
 @Parcelize
 data class VideoCaptureConfig(
@@ -42,7 +53,18 @@ data class VideoCaptureConfig(
     val maxSeconds: Int? = null,
     val maxSizeLimit: Long? = null,
     val isHighQuality: Boolean? = null,
-) : Parcelable, BaseConfig(popUpIcon, popUpText)
+    override val askPermissionTitle: String? = null,
+    override val askPermissionMessage: String? = null,
+    override val settingPermissionTitle: String? = null,
+    override val settingPermissionMessage: String? = null,
+) : Parcelable, BaseConfig(
+    popUpIcon,
+    popUpText,
+    askPermissionTitle,
+    askPermissionMessage,
+    settingPermissionTitle,
+    settingPermissionMessage,
+)
 
 @Parcelize
 data class PickMediaConfig(
@@ -55,7 +77,18 @@ data class PickMediaConfig(
         Int.MAX_VALUE
     },
     val mPickMediaType: PickMediaType = ImageAndVideo,
-) : Parcelable, BaseConfig(popUpIcon, popUpText) {
+    override val askPermissionTitle: String? = null,
+    override val askPermissionMessage: String? = null,
+    override val settingPermissionTitle: String? = null,
+    override val settingPermissionMessage: String? = null,
+) : Parcelable, BaseConfig(
+    popUpIcon,
+    popUpText,
+    askPermissionTitle,
+    askPermissionMessage,
+    settingPermissionTitle,
+    settingPermissionMessage,
+) {
     fun getPickMediaType(input: PickMediaType): String? {
         return when (input) {
             is ImageOnly -> "image/*"
@@ -76,7 +109,18 @@ data class DocumentFilePickerConfig(
         Int.MAX_VALUE
     },
     val mMimeTypes: List<String> = listOf("*/*"),
-) : Parcelable, BaseConfig(popUpIcon, popUpText)
+    override val askPermissionTitle: String? = null,
+    override val askPermissionMessage: String? = null,
+    override val settingPermissionTitle: String? = null,
+    override val settingPermissionMessage: String? = null,
+) : Parcelable, BaseConfig(
+    popUpIcon,
+    popUpText,
+    askPermissionTitle,
+    askPermissionMessage,
+    settingPermissionTitle,
+    settingPermissionMessage,
+)
 
 @Parcelize
 enum class PopUpType : Parcelable {

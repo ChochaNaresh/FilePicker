@@ -62,18 +62,22 @@ internal class VideoCaptureActivity : AppCompatActivity() {
                 Timber.tag(Const.LogTag.FILE_RESULT)
                     .w("File Uri ::: ${videoFileUri?.toString()}")
                 Timber.tag(Const.LogTag.FILE_RESULT).w("filePath ::: ${videoFile?.absoluteFile}")
-                Timber.tag(Const.LogTag.FILE_RESULT).w("file read:: ${videoFile?.canRead()}")
                 setSuccessResult(videoFileUri, videoFile?.absolutePath)
             } else {
-                Timber.tag(Const.LogTag.FILE_PICKER_ERROR).e("capture Error")
-                setCanceledResult("capture Error")
+                Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
+                    .e(getString(R.string.err_capture_error, "videoCapture"))
+                setCanceledResult(getString(R.string.err_capture_error, "videoCapture"))
             }
         })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-            getPermission()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+                getPermission()
+            } else {
+                launchCamera()
+            }
         } else {
             launchCamera()
         }
@@ -107,8 +111,11 @@ internal class VideoCaptureActivity : AppCompatActivity() {
 
     private fun showAskDialog() {
         showMyDialog(
-            getString(R.string.err_permission_denied),
-            getString(R.string.err_write_storage_permission, PERMISSION.split(".").lastOrNull() ?: ""),
+            mVideoCaptureConfig?.askPermissionTitle ?: getString(R.string.err_permission_denied),
+            mVideoCaptureConfig?.askPermissionMessage ?: getString(
+                R.string.err_write_storage_permission,
+                PERMISSION.split(".").lastOrNull() ?: "",
+            ),
             negativeClick = {
                 setCanceledResult(getString(R.string.err_permission_result))
             },
@@ -120,9 +127,13 @@ internal class VideoCaptureActivity : AppCompatActivity() {
 
     private fun showGotoSettingDialog() {
         showMyDialog(
-            getString(R.string.err_permission_denied),
-            getString(R.string.err_write_storage_setting, PERMISSION.split(".").lastOrNull() ?: ""),
-            positiveButtonText = "Go To Setting",
+            mVideoCaptureConfig?.settingPermissionTitle
+                ?: getString(R.string.err_permission_denied),
+            mVideoCaptureConfig?.settingPermissionMessage ?: getString(
+                R.string.err_write_storage_setting,
+                PERMISSION.split(".").lastOrNull() ?: "",
+            ),
+            positiveButtonText = getString(R.string.str_go_to_setting),
             negativeClick = {
                 setCanceledResult(getString(R.string.err_permission_result))
             },
