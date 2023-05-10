@@ -9,14 +9,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.nareshchocha.filepicker.adapter.MediaAdapter
 import com.nareshchocha.filepicker.databinding.ActivityMainBinding
-import com.nareshchocha.filepickerlibray.models.DocumentFilePickerConfig
-import com.nareshchocha.filepickerlibray.models.ImageAndVideo
-import com.nareshchocha.filepickerlibray.models.ImageOnly
-import com.nareshchocha.filepickerlibray.models.PickMediaConfig
-import com.nareshchocha.filepickerlibray.models.PopUpConfig
-import com.nareshchocha.filepickerlibray.models.PopUpType
-import com.nareshchocha.filepickerlibray.models.VideoOnly
-import com.nareshchocha.filepickerlibray.ui.FilePicker
+import com.nareshchocha.filepickerlibrary.models.DocumentFilePickerConfig
+import com.nareshchocha.filepickerlibrary.models.ImageAndVideo
+import com.nareshchocha.filepickerlibrary.models.ImageOnly
+import com.nareshchocha.filepickerlibrary.models.PickMediaConfig
+import com.nareshchocha.filepickerlibrary.models.PopUpConfig
+import com.nareshchocha.filepickerlibrary.models.PopUpType
+import com.nareshchocha.filepickerlibrary.models.VideoOnly
+import com.nareshchocha.filepickerlibrary.ui.FilePicker
 import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
