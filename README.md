@@ -24,7 +24,7 @@ This library is designed to simplify the process of selecting and retrieving med
 		    mavenCentral() // For FilePicker library, this line is enough. Although, it has been published on jitpack as well
 		    maven { url "https://jitpack.io" }  //Make sure to add this in your project
 		}
-}
+    }
 ```
 
 ```groovy
@@ -32,7 +32,7 @@ This library is designed to simplify the process of selecting and retrieving med
         // ...
         implementation 'com.github.ChochaNaresh:FilePicker:$libVersion'
         // ...
-}
+   }
 ```
 Where `$libVersion` = [![libVersion](https://img.shields.io/github/release/ChochaNaresh/FilePicker/all.svg?style=flat-square)](https://github.com/ChochaNaresh/FilePicker/releases)
 
@@ -184,7 +184,7 @@ Where `$libVersion` = [![libVersion](https://img.shields.io/github/release/Choch
 * Sample - Android Lollipop 5.0+ (API 21)
 
 # License
-```xml
+```text
 Copyright 2023 Naresh chocha
 
 Licensed under the Apache License, Version 2.0 (the "License");

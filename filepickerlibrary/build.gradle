@@ -1,14 +1,17 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-parcelize'
+    id 'io.gitlab.arturbosch.detekt'
+    id 'maven-publish'
+
 }
 
 android {
-    namespace 'com.nareshchocha.filepicker'
+    namespace 'com.nareshchocha.filepickerlibrary'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.nareshchocha.filepicker"
         minSdk 21
         targetSdk 33
         versionCode 1
@@ -16,15 +19,14 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
     buildFeatures {
+        buildConfig true
         viewBinding true
         dataBinding true
     }
@@ -35,6 +37,12 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
 dependencies {
@@ -43,20 +51,41 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.10.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.core:core-ktx:1.10.0'
-
-    // File Picker
-    implementation project(path: ':filepickerlibrary')
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     //timber
     implementation 'com.jakewharton.timber:timber:5.0.1'
 
 
+    // flex layout
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
+
     //Coil
     implementation 'io.coil-kt:coil:2.2.2'
+
     // testing
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId = 'com.github.ChochaNaresh'
+            artifactId = 'FilePicker'
+            version = '0.0.1'
+
+            afterEvaluate {
+                from components.release
+            }
+        }
+    }
+}
+
+detekt {
+    toolVersion = "1.22.0"
+    config = files("config/detekt/detekt.yml")
+    buildUponDefaultConfig = true
 }
