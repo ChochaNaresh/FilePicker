@@ -13,5 +13,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "FilePicker"
-include ':app'
-include ':filepickerlibrary'
+include(":app",":filepickerlibrary")

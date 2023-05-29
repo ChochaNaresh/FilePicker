@@ -1,7 +1,4 @@
-
 # File Picker Library for Android
-
-
 [![](https://jitpack.io/v/ChochaNaresh/FilePicker.svg)](https://jitpack.io/#ChochaNaresh/FilePicker)
 [![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
 ![Language](https://img.shields.io/badge/language-Kotlin-orange.svg)
@@ -20,24 +17,50 @@ This library is designed to simplify the process of selecting and retrieving med
 # Usage
 ```groovy
 	allprojects {
-		repositories {
-		    mavenCentral() // For FilePicker library, this line is enough. Although, it has been published on jitpack as well
-		    maven { url "https://jitpack.io" }  //Make sure to add this in your project
-		}
+        repositories {
+            mavenCentral() // For FilePicker library, this line is enough. Although, it has been published on jitpack as well
+            maven { url "https://jitpack.io" }  //Make sure to add this in your project
+        }
     }
 ```
 
 ```groovy
-   dependencies {
+    dependencies {
         // ...
         implementation 'com.github.ChochaNaresh:FilePicker:$libVersion'
         // ...
-   }
+    }
 ```
 Where `$libVersion` = [![libVersion](https://img.shields.io/github/release/ChochaNaresh/FilePicker/all.svg?style=flat-square)](https://github.com/ChochaNaresh/FilePicker/releases)
 
 
 # Customization
+**If you want to get the result:**
+```kotlin
+    private val launcher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                // Use the uri to load the image
+                val uri = it.data?.data!!
+                // Use the file path to set image or upload 
+                val filePath= it.data.getStringExtra(Const.BundleExtras.FILE_PATH)
+
+                // for Multiple picks 
+                // first item 
+                val first = it.data?.data!!
+                // other items 
+                val  clipData = it.data?.clipData
+
+
+                // Multiple file paths list 
+                val filePaths = result.data?.getStringArrayListExtra(Const.BundleExtras.FILE_PATH_LIST) 
+                //////////////
+            }
+        }
+```
+
+
+
 **If you want to Multiple option with BottomSheet Or Dialog:**
 ```kotlin
     FilePicker.Builder(this)
@@ -70,7 +93,7 @@ Where `$libVersion` = [![libVersion](https://img.shields.io/github/release/Choch
     addPickDocumentFile(
         DocumentFilePickerConfig(
             popUpIcon = R.drawable.ic_file,// DrawableRes Id 
-            popUpText = "File Media", 
+            popUpText = "File Media",
             allowMultiple = false,// set Multiple pick file 
             maxFiles = 0,// max files working only in android latest version
             mMimeTypes = listOf("*/*"),// added Multiple MimeTypes
@@ -78,7 +101,7 @@ Where `$libVersion` = [![libVersion](https://img.shields.io/github/release/Choch
             askPermissionMessage = null,// set Permission ask Message
             settingPermissionTitle = null,// set Permission setting Title
             settingPermissionMessage = null,// set Permission setting Messag
-            ),
+        ),
     )
     //..
     .build()
@@ -91,14 +114,14 @@ Where `$libVersion` = [![libVersion](https://img.shields.io/github/release/Choch
     addImageCapture(
         ImageCaptureConfig(
             popUpIcon = R.drawable.ic_camera,// DrawableRes Id 
-            popUpText = "Camera", 
+            popUpText = "Camera",
             mFolder = File(),// set custom folder with write file permission
             fileName = "image.jpg",
             askPermissionTitle = null, // set Permission ask Title
             askPermissionMessage = null,// set Permission ask Message
             settingPermissionTitle = null,// set Permission setting Title
             settingPermissionMessage = null,// set Permission setting Messag
-            ),
+        ),
     )
     //..
     .build()
@@ -111,7 +134,7 @@ Where `$libVersion` = [![libVersion](https://img.shields.io/github/release/Choch
     addVideoCapture(
         VideoCaptureConfig(
             popUpIcon = R.drawable.ic_video,// DrawableRes Id 
-            popUpText = "Video", 
+            popUpText = "Video",
             mFolder=File(),// set custom folder with write file permission
             fileName = "video.mp4",
             maxSeconds = null,// set video duration in seconds
@@ -121,7 +144,7 @@ Where `$libVersion` = [![libVersion](https://img.shields.io/github/release/Choch
             askPermissionMessage = null,// set Permission ask Message
             settingPermissionTitle = null,// set Permission setting Title
             settingPermissionMessage = null,// set Permission setting Messag
-            ),
+        ),
     )
     //..
     .build()
@@ -135,7 +158,7 @@ Where `$libVersion` = [![libVersion](https://img.shields.io/github/release/Choch
     addPickMedia(
         PickMediaConfig(
             popUpIcon = R.drawable.ic_video,// DrawableRes Id 
-            popUpText = "Video", 
+            popUpText = "Video",
             allowMultiple = false,// set Multiple pick file 
             maxFiles = 0,// max files working only in android latest version
             mPickMediaType = ImageAndVideo,
@@ -143,14 +166,16 @@ Where `$libVersion` = [![libVersion](https://img.shields.io/github/release/Choch
             askPermissionMessage = null,// set Permission ask Message
             settingPermissionTitle = null,// set Permission setting Title
             settingPermissionMessage = null,// set Permission setting Messag
-            ),
+        ),
     )
     //..
     .build()
 ```
 
 **Pick Media Types**
-
+```kotlin
+    import com.nareshchocha.filepickerlibrary.models.*
+```
 * ImageOnly
 * VideoOnly
 * ImageAndVideo
