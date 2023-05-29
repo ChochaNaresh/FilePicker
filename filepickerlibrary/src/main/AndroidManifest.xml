@@ -38,13 +38,15 @@
             android:theme="@style/Theme.FilePicker.Dialog.NoActionBar" />
 
         <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.fileprovider"
+            android:name=".utilities.CustomFileProvider"
+            android:authorities="${applicationId}.filepicker.fileprovider"
             android:exported="false"
-            android:grantUriPermissions="true">
+            android:grantUriPermissions="true"
+            >
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_picker_library_provider" />
+                android:resource="@xml/file_picker_library_provider"
+                 />
         </provider>
         <provider
             android:name="androidx.startup.InitializationProvider"

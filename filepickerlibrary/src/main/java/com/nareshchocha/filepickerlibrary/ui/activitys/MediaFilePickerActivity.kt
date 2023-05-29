@@ -34,6 +34,7 @@ internal class MediaFilePickerActivity : AppCompatActivity() {
                 PickMediaConfig::class.java,
             )
         } else {
+            @Suppress("DEPRECATION")
             intent.getParcelableExtra(Const.BundleInternalExtras.PICK_MEDIA) as PickMediaConfig?
         }
     }

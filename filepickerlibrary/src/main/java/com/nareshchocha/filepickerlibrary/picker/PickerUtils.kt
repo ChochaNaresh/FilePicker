@@ -42,7 +42,7 @@ object PickerUtils {
     private fun Context.getUriForFile(mFile: File): Uri? {
         return FileProvider.getUriForFile(
             this,
-            "$packageName.fileprovider",
+            "$packageName.filepicker.fileprovider",
             mFile,
         )
     }
