@@ -10,7 +10,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { setUrl("https://jitpack.io") }
     }
 }
 rootProject.name = "FilePicker"
-include(":app",":filepickerlibrary")
+include(":app", ":filepickerlibrary")

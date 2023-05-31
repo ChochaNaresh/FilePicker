@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 33
+        // targetSdk = 33
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -69,15 +69,17 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }
+/*
 publishing {
     (publications) {
         create<MavenPublication>("release") {
             groupId = "com.github.ChochaNaresh"
             artifactId = "FilePicker"
             version = "${project.version}"
+            afterEvaluate(components.get("release"))
             // from(components["release"])
         }
-        /*release(MavenPublication) {
+        *//*release(MavenPublication) {
             groupId = "com.github.ChochaNaresh"
             artifactId = "FilePicker"
             version = "0.0.1"
@@ -85,7 +87,24 @@ publishing {
             afterEvaluate {
                 from = components . release
             }
-        }*/
+        }*//*
+    }
+}
+*/
+publishing {
+    publications {
+        create<MavenPublication>("release") {
+            groupId = "com.github.ChochaNaresh"
+            artifactId = "FilePicker"
+            version = "0.0.1"
+
+            afterEvaluate {
+                from(components["release"])
+              /* from {
+                   components.release
+               }*/
+            }
+        }
     }
 }
 
