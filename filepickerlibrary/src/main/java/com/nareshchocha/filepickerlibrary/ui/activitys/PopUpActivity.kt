@@ -99,7 +99,6 @@ internal class PopUpActivity : AppCompatActivity() {
                     is DocumentFilePickerConfig -> {
                         intentResultLauncher.launch(
                             FilePicker.Builder(this).pickDocumentFileBuild(item),
-
                         )
                     }
                 }
