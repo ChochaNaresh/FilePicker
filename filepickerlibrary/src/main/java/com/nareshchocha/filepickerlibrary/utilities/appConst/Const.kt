@@ -5,6 +5,7 @@ import java.io.File
 
 object Const {
     internal const val CARD_RADIUS = 10f
+    internal const val AUTHORITY = "com.nareshchocha.filepickerlibrary.fileprovider"
 
     internal object LogTag {
         const val FILE_RESULT = "FILE_RESULT ::"
@@ -27,6 +28,7 @@ object Const {
         const val PICK_MEDIA = "PICK_MEDIA"
         const val PICK_DOCUMENT = "PICK_DOCUMENT"
     }
+
     object BundleExtras {
         const val FILE_PATH = "FILE_PATH"
         const val FILE_PATH_LIST = "FILE_PATH_LIST"

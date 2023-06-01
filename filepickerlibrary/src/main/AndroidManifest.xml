@@ -39,14 +39,13 @@
 
         <provider
             android:name=".utilities.CustomFileProvider"
-            android:authorities="${applicationId}.filepicker.fileprovider"
+            android:authorities="com.nareshchocha.filepickerlibrary.fileprovider"
             android:exported="false"
-            android:grantUriPermissions="true"
-            >
+            android:grantUriPermissions="true">
+            <!--android:authorities="${applicationId}.filepicker.fileprovider"-->
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_picker_library_provider"
-                 />
+                android:resource="@xml/file_picker_library_provider" />
         </provider>
         <provider
             android:name="androidx.startup.InitializationProvider"
