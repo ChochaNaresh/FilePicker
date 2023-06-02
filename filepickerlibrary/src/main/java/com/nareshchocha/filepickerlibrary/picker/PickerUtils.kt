@@ -9,6 +9,7 @@ import androidx.core.content.FileProvider
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import timber.log.Timber
 import java.io.File
+import java.io.IOException
 
 object PickerUtils {
 
@@ -34,7 +35,13 @@ object PickerUtils {
 
     fun Context.createFileGetUri(mFile: File): Uri? {
         if (!mFile.exists()) {
-            mFile.createNewFile()
+            try {
+                mFile.createNewFile()
+            } catch (e: IOException) {
+                Timber.tag(Const.LogTag.FILE_PICKER_ERROR).d(e.toString())
+            } catch (e: SecurityException) {
+                Timber.tag(Const.LogTag.FILE_PICKER_ERROR).d(e.toString())
+            }
         }
         return getUriForFile(mFile)
     }
