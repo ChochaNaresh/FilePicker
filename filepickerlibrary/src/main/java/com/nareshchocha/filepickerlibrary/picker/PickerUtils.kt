@@ -43,13 +43,17 @@ object PickerUtils {
                 Timber.tag(Const.LogTag.FILE_PICKER_ERROR).d(e.toString())
             }
         }
-        return getUriForFile(mFile)
+        val uri = getUriForFile(mFile)?.apply {
+        }
+
+        return uri
     }
 
     private fun Context.getUriForFile(mFile: File): Uri? {
         return FileProvider.getUriForFile(
-            this,
-            Const.AUTHORITY,
+            this.applicationContext,
+            applicationContext.packageName +
+                Const.AUTHORITY,
             mFile,
         )
     }
