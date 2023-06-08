@@ -144,6 +144,7 @@ internal class PopUpActivity : AppCompatActivity() {
             mPickerData?.let {
                 filePickerIntent.putExtra(Const.BundleInternalExtras.PICKER_DATA, it)
             }
+            filePickerIntent.flags = Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
             return filePickerIntent
         }
     }

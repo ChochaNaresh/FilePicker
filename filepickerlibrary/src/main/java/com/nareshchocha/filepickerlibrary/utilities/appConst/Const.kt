@@ -1,11 +1,15 @@
 package com.nareshchocha.filepickerlibrary.utilities.appConst
 
+import android.content.Context
 import android.os.Environment
+import com.nareshchocha.filepickerlibrary.R
 import java.io.File
 
 object Const {
     internal const val CARD_RADIUS = 10f
-    internal const val AUTHORITY = "com.nareshchocha.filepickerlibrary.fileprovider"
+
+    // internal const val AUTHORITY = "com.nareshchocha.filepickerlibrary.fileprovider"
+    internal const val AUTHORITY = ".library.fileprovider"
 
     internal object LogTag {
         const val FILE_RESULT = "FILE_RESULT ::"
@@ -13,12 +17,12 @@ object Const {
     }
 
     internal object DefaultPaths {
-        val defaultFolder: File = File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
-            "FilePicker",
-        )
         val defaultImageFile = "tempImage_${System.currentTimeMillis()}.jpg"
         val defaultVideoFile = "tempVideo_${System.currentTimeMillis()}.mp4"
+        fun Context.defaultFolder() = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+            getString(R.string.app_name),
+        )
     }
 
     internal object BundleInternalExtras {

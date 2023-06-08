@@ -48,7 +48,7 @@ internal fun Context.showMyDialog(
 
 internal fun Context.getImageCaptureIntent(outputFileUri: Uri): Intent {
     return Intent(MediaStore.ACTION_IMAGE_CAPTURE).also {
-        it.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+        it.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
         it.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri)
     }
 }
@@ -73,11 +73,11 @@ internal fun Context.getVideoCaptureIntent(
                 maxSizeLimit,
             )
         }
-        it.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+        it.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION + Intent.FLAG_GRANT_READ_URI_PERMISSION
         it.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             it.clipData = ClipData.newUri(contentResolver, "Video", outputFileUri)
-        }
+        }*/
     }
 }
 
@@ -134,7 +134,7 @@ internal fun Activity.setSuccessResult(fileUri: Uri?, filePath: String? = null) 
     setResult(
         Activity.RESULT_OK,
         Intent().also { mIntent ->
-            mIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            mIntent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION + Intent.FLAG_GRANT_READ_URI_PERMISSION
             fileUri?.let { mIntent.data = fileUri }
             filePath?.let { mIntent.putExtra(Const.BundleExtras.FILE_PATH, it) }
         },
@@ -146,7 +146,7 @@ internal fun Activity.setSuccessResult(fileUri: List<Uri>?, filePath: ArrayList<
     setResult(
         Activity.RESULT_OK,
         Intent().also { mIntent ->
-            mIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            mIntent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION + Intent.FLAG_GRANT_READ_URI_PERMISSION
             if (!fileUri.isNullOrEmpty()) {
                 val mClipData = ClipData.newUri(contentResolver, "uris", fileUri.first())
                 fileUri.subList(1, fileUri.size).forEach {

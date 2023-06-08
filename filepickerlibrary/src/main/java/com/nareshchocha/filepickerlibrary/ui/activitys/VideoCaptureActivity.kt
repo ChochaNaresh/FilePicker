@@ -20,6 +20,7 @@ import com.nareshchocha.filepickerlibrary.picker.PickerUtils.createFileGetUri
 import com.nareshchocha.filepickerlibrary.picker.PickerUtils.createMediaFileFolder
 import com.nareshchocha.filepickerlibrary.picker.PickerUtils.selectFile
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
+import com.nareshchocha.filepickerlibrary.utilities.appConst.Const.DefaultPaths.defaultFolder
 import com.nareshchocha.filepickerlibrary.utilities.extentions.getSettingIntent
 import com.nareshchocha.filepickerlibrary.utilities.extentions.getVideoCaptureIntent
 import com.nareshchocha.filepickerlibrary.utilities.extentions.setCanceledResult
@@ -107,13 +108,13 @@ internal class VideoCaptureActivity : AppCompatActivity() {
     private fun launchCamera() {
         videoFileUri = if (mVideoCaptureConfig != null) {
             videoFile = createMediaFileFolder(
-                folderFile = mVideoCaptureConfig!!.mFolder,
+                folderFile = mVideoCaptureConfig!!.mFolder ?: this.defaultFolder(),
                 fileName = mVideoCaptureConfig!!.fileName,
             )
             createFileGetUri(videoFile!!)
         } else {
             videoFile = createMediaFileFolder(
-                folderFile = Const.DefaultPaths.defaultFolder,
+                folderFile = this.defaultFolder(),
                 fileName = Const.DefaultPaths.defaultVideoFile,
             )
             createFileGetUri(videoFile!!)
@@ -215,6 +216,7 @@ internal class VideoCaptureActivity : AppCompatActivity() {
             mVideoCaptureConfig?.let {
                 filePickerIntent.putExtra(Const.BundleInternalExtras.VIDEO_CAPTURE, it)
             }
+            filePickerIntent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
             return filePickerIntent
         }
     }

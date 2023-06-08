@@ -20,6 +20,7 @@ import com.nareshchocha.filepickerlibrary.picker.PickerUtils.createFileGetUri
 import com.nareshchocha.filepickerlibrary.picker.PickerUtils.createMediaFileFolder
 import com.nareshchocha.filepickerlibrary.picker.PickerUtils.selectFile
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
+import com.nareshchocha.filepickerlibrary.utilities.appConst.Const.DefaultPaths.defaultFolder
 import com.nareshchocha.filepickerlibrary.utilities.extentions.getImageCaptureIntent
 import com.nareshchocha.filepickerlibrary.utilities.extentions.getSettingIntent
 import com.nareshchocha.filepickerlibrary.utilities.extentions.setCanceledResult
@@ -104,13 +105,13 @@ internal class ImageCaptureActivity : AppCompatActivity() {
     private fun launchCamera() {
         imageFileUri = if (mImageCaptureConfig != null) {
             imageFile = createMediaFileFolder(
-                folderFile = mImageCaptureConfig!!.mFolder,
+                folderFile = mImageCaptureConfig!!.mFolder ?: defaultFolder(),
                 fileName = mImageCaptureConfig!!.fileName,
             )
             createFileGetUri(imageFile!!)
         } else {
             imageFile = createMediaFileFolder(
-                folderFile = Const.DefaultPaths.defaultFolder,
+                folderFile = defaultFolder(),
                 fileName = Const.DefaultPaths.defaultImageFile,
             )
             createFileGetUri(imageFile!!)

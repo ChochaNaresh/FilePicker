@@ -29,7 +29,7 @@ data class PopUpConfig(
 data class ImageCaptureConfig(
     @DrawableRes override val popUpIcon: Int = R.drawable.ic_camera,
     override val popUpText: String = "Camera",
-    val mFolder: File = Const.DefaultPaths.defaultFolder,
+    val mFolder: File? = null,
     val fileName: String = Const.DefaultPaths.defaultImageFile,
     override val askPermissionTitle: String? = null,
     override val askPermissionMessage: String? = null,
@@ -48,7 +48,7 @@ data class ImageCaptureConfig(
 data class VideoCaptureConfig(
     @DrawableRes override val popUpIcon: Int = R.drawable.ic_video,
     override val popUpText: String = "Video",
-    val mFolder: File = Const.DefaultPaths.defaultFolder,
+    val mFolder: File? = null,
     val fileName: String = Const.DefaultPaths.defaultVideoFile,
     val maxSeconds: Int? = null,
     val maxSizeLimit: Long? = null,
