@@ -130,11 +130,21 @@ internal fun Context.getSettingIntent(): Intent {
     return intent
 }
 
-internal fun Activity.setSuccessResult(fileUri: Uri?, filePath: String? = null) {
+internal fun Activity.setSuccessResult(
+    fileUri: Uri?,
+    filePath: String? = null,
+    isFromCapture: Boolean = false,
+) {
     setResult(
         Activity.RESULT_OK,
         Intent().also { mIntent ->
-            mIntent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION + Intent.FLAG_GRANT_READ_URI_PERMISSION
+            mIntent.flags =
+                if (isFromCapture) {
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION + Intent.FLAG_GRANT_READ_URI_PERMISSION
+                } else {
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                }
+
             fileUri?.let { mIntent.data = fileUri }
             filePath?.let { mIntent.putExtra(Const.BundleExtras.FILE_PATH, it) }
         },
@@ -142,11 +152,20 @@ internal fun Activity.setSuccessResult(fileUri: Uri?, filePath: String? = null) 
     finish()
 }
 
-internal fun Activity.setSuccessResult(fileUri: List<Uri>?, filePath: ArrayList<String>? = null) {
+internal fun Activity.setSuccessResult(
+    fileUri: List<Uri>?,
+    filePath: ArrayList<String>? = null,
+    isFromCapture: Boolean = false,
+) {
     setResult(
         Activity.RESULT_OK,
         Intent().also { mIntent ->
-            mIntent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION + Intent.FLAG_GRANT_READ_URI_PERMISSION
+            mIntent.flags =
+                if (isFromCapture) {
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION + Intent.FLAG_GRANT_READ_URI_PERMISSION
+                } else {
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                }
             if (!fileUri.isNullOrEmpty()) {
                 val mClipData = ClipData.newUri(contentResolver, "uris", fileUri.first())
                 fileUri.subList(1, fileUri.size).forEach {
