@@ -80,7 +80,7 @@ internal class VideoCaptureActivity : AppCompatActivity() {
                 Timber.tag(Const.LogTag.FILE_RESULT)
                     .w("File Uri ::: ${videoFileUri?.toString()}")
                 Timber.tag(Const.LogTag.FILE_RESULT).w("filePath ::: ${videoFile?.absoluteFile}")
-                setSuccessResult(videoFileUri, videoFile?.absolutePath)
+                setSuccessResult(videoFileUri, videoFile?.absolutePath, true)
             } else {
                 Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
                     .e(getString(R.string.err_capture_error, "videoCapture"))
