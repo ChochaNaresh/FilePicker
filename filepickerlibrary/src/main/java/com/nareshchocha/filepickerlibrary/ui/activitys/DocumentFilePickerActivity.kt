@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.Keep
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.nareshchocha.filepickerlibrary.R
@@ -57,19 +58,19 @@ internal class DocumentFilePickerActivity : AppCompatActivity() {
                 if (mDocumentFilePickerConfig?.allowMultiple == true && result.data?.clipData != null) {
                     val uris = result.data?.getClipDataUris()
                     val filePaths = uris?.getFilePathList(this)
-                    Timber.tag(Const.LogTag.FILE_RESULT).w("File Uri ::: $uris")
-                    Timber.tag(Const.LogTag.FILE_RESULT).w("filePath ::: $filePaths")
+                    Timber.tag(Const.LogTag.FILE_RESULT).v("File Uri ::: $uris")
+                    Timber.tag(Const.LogTag.FILE_RESULT).v("filePath ::: $filePaths")
                     setSuccessResult(uris, filePath = filePaths)
                 } else if (result.data?.data != null) {
                     val data = result.data?.data
                     val filePath = data?.let { FileUtils.getRealPath(this, it) }
-                    Timber.tag(Const.LogTag.FILE_RESULT).w("File Uri ::: ${data?.toString()}")
-                    Timber.tag(Const.LogTag.FILE_RESULT).w("filePath ::: $filePath")
+                    Timber.tag(Const.LogTag.FILE_RESULT).v("File Uri ::: ${data?.toString()}")
+                    Timber.tag(Const.LogTag.FILE_RESULT).v("filePath ::: $filePath")
                     setSuccessResult(data, filePath)
                 }
             } else {
                 Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
-                    .e(getString(R.string.err_document_pick_error))
+                    .v(getString(R.string.err_document_pick_error))
                 setCanceledResult(getString(R.string.err_document_pick_error))
             }
         })
@@ -218,6 +219,7 @@ internal class DocumentFilePickerActivity : AppCompatActivity() {
             }
         }
 
+        @Keep
         fun getInstance(
             mContext: Context,
             mDocumentFilePickerConfig: DocumentFilePickerConfig?,

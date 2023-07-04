@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Parcelable
 import android.provider.MediaStore
 import androidx.annotation.DrawableRes
+import androidx.annotation.Keep
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
 import com.nareshchocha.filepickerlibrary.R
@@ -11,12 +12,14 @@ import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import kotlinx.parcelize.Parcelize
 import java.io.File
 
+@Keep
 @Parcelize
 data class PickerData(
     val mPopUpConfig: PopUpConfig? = null,
     val listIntents: List<BaseConfig> = emptyList(),
 ) : Parcelable
 
+@Keep
 @Parcelize
 data class PopUpConfig(
     val chooserTitle: String? = null,
@@ -122,6 +125,7 @@ data class DocumentFilePickerConfig(
     settingPermissionMessage,
 )
 
+@Keep
 @Parcelize
 enum class PopUpType : Parcelable {
     BOTTOM_SHEET, DIALOG;

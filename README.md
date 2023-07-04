@@ -2,9 +2,13 @@
 [![](https://jitpack.io/v/ChochaNaresh/FilePicker.svg)](https://jitpack.io/#ChochaNaresh/FilePicker)
 [![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
 ![Language](https://img.shields.io/badge/language-Kotlin-orange.svg)
-![Language](https://img.shields.io/badge/Kotlin-1.8.21-blue)
+![Language](https://img.shields.io/badge/Kotlin-1.8.22-blue)
 
 This library is designed to simplify the process of selecting and retrieving media files from an Android device, and supports media capture for images and videos.
+
+**Support**
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/chochanaresh)
 
 # Features
 * Handle Runtime Permissions
@@ -203,6 +207,15 @@ Where `$libVersion` = [![libVersion](https://img.shields.io/github/release/Choch
 ```kotlin
     FilePicker.Builder(this)
         .pickMediaBuild(PickMediaConfig()) // Customization check Pick Media Config
+```
+**add proguard rules**
+```text
+    -keepclasseswithmembernames class com.nareshchocha.filepickerlibrary.models.**{
+        *;
+    }
+    -keepclassmembers class * extends androidx.appcompat.app.AppCompatActivity {
+        *;
+    }
 ```
 # Compatibility
 * Library - Android Lollipop 5.0+ (API 21)

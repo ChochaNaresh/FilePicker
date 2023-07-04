@@ -59,19 +59,20 @@ internal class MediaFilePickerActivity : AppCompatActivity() {
             if (result.resultCode == Activity.RESULT_OK && result.data != null) {
                 if (mPickMediaConfig?.allowMultiple == true && result.data?.clipData != null) {
                     val uris = result.data?.getClipDataUris()
-                    Timber.tag(Const.LogTag.FILE_RESULT).w("File Uri ::: $uris")
+                    Timber.tag(Const.LogTag.FILE_RESULT).v("File Uri ::: $uris")
                     val filePaths = uris?.getFilePathList(this)
-                    Timber.tag(Const.LogTag.FILE_RESULT).w("filePath ::: $filePaths")
+                    Timber.tag(Const.LogTag.FILE_RESULT).v("filePath ::: $filePaths")
                     setSuccessResult(uris, filePath = filePaths)
                 } else if (result.data?.data != null) {
                     val data = result.data?.data
-                    Timber.tag(Const.LogTag.FILE_RESULT).w("File Uri ::: ${data?.toString()}")
+                    Timber.tag(Const.LogTag.FILE_RESULT).v("File Uri ::: ${data?.toString()}")
                     val filePath = data?.let { FileUtils.getRealPath(this, it) }
-                    Timber.tag(Const.LogTag.FILE_RESULT).w("filePath ::: $filePath")
+                    Timber.tag(Const.LogTag.FILE_RESULT).v("filePath ::: $filePath")
                     setSuccessResult(data, filePath)
                 }
             } else {
-                Timber.tag(Const.LogTag.FILE_PICKER_ERROR).e(getString(R.string.err_media_pick_error))
+                Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
+                    .v(getString(R.string.err_media_pick_error))
                 setCanceledResult(getString(R.string.err_media_pick_error))
             }
         })
@@ -109,7 +110,12 @@ internal class MediaFilePickerActivity : AppCompatActivity() {
         if (mPickMediaConfig != null) {
             selectFile.launch(getMediaIntent(mPickMediaConfig!!))
         } else {
-            setCanceledResult(getString(R.string.err_config_null, this::mPickMediaConfig::class.java.name))
+            setCanceledResult(
+                getString(
+                    R.string.err_config_null,
+                    this::mPickMediaConfig::class.java.name,
+                ),
+            )
         }
     }
 
@@ -143,7 +149,8 @@ internal class MediaFilePickerActivity : AppCompatActivity() {
     private fun showGotoSettingDialog() {
         if (mPickMediaConfig != null) {
             showMyDialog(
-                mPickMediaConfig?.settingPermissionTitle ?: getString(R.string.err_permission_denied),
+                mPickMediaConfig?.settingPermissionTitle
+                    ?: getString(R.string.err_permission_denied),
                 mPickMediaConfig?.settingPermissionMessage ?: getString(
                     R.string.err_write_storage_setting,
                     getPermission(mPickMediaConfig!!).split(".").lastOrNull() ?: "",
@@ -157,7 +164,12 @@ internal class MediaFilePickerActivity : AppCompatActivity() {
                 },
             )
         } else {
-            setCanceledResult(getString(R.string.err_config_null, this::mPickMediaConfig::class.java.name))
+            setCanceledResult(
+                getString(
+                    R.string.err_config_null,
+                    this::mPickMediaConfig::class.java.name,
+                ),
+            )
         }
     }
 
@@ -174,7 +186,12 @@ internal class MediaFilePickerActivity : AppCompatActivity() {
                     setCanceledResult(getString(R.string.err_permission_result))
                 }
             } else {
-                setCanceledResult(getString(R.string.err_config_null, this::mPickMediaConfig::class.java.name))
+                setCanceledResult(
+                    getString(
+                        R.string.err_config_null,
+                        this::mPickMediaConfig::class.java.name,
+                    ),
+                )
             }
         }
 
@@ -186,7 +203,12 @@ internal class MediaFilePickerActivity : AppCompatActivity() {
                 ),
             )
         } else {
-            setCanceledResult(getString(R.string.err_config_null, this::mPickMediaConfig::class.java.name))
+            setCanceledResult(
+                getString(
+                    R.string.err_config_null,
+                    this::mPickMediaConfig::class.java.name,
+                ),
+            )
         }
     }
 

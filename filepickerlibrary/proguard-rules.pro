@@ -18,4 +18,17 @@
 
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# -renamesourcefileattribute SourceFile
+-keepclasseswithmembernames class com.nareshchocha.filepickerlibrary.models.**{
+    *;
+}
+#-keepclassmembers class * extends com.nareshchocha.filepickerlibrary.models.BaseConfig {
+ #    *;
+ #}
+ #-keepclassmembers class * extends com.nareshchocha.filepickerlibrary.models.PickMediaType {
+ #    *;
+ #}
+
+-keepclassmembers class * extends androidx.appcompat.app.AppCompatActivity {
+    *;
+}

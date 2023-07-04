@@ -18,6 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
+            android:paddingStart="10dp"
             android:paddingEnd="10dp"
             app:layout_constraintBottom_toTopOf="@id/rvItems"
             app:layout_constraintEnd_toEndOf="parent"
@@ -37,12 +38,11 @@
             android:paddingTop="4dp"
             android:paddingEnd="10dp"
             android:scrollbars="none"
-
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintVertical_bias="0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tbToolbar" />
+            app:layout_constraintTop_toBottomOf="@id/tbToolbar"
+            app:layout_constraintVertical_bias="0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

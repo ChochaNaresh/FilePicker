@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.Keep
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -40,6 +41,7 @@ internal class ImageCaptureActivity : AppCompatActivity() {
                 ImageCaptureConfig::class.java,
             )
         } else {
+            @Suppress("DEPRECATION")
             intent.getParcelableExtra(Const.BundleInternalExtras.IMAGE_CAPTURE) as ImageCaptureConfig?
         }
     }
@@ -77,13 +79,13 @@ internal class ImageCaptureActivity : AppCompatActivity() {
         selectFile(ActivityResultContracts.StartActivityForResult(), resultCallBack = { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 Timber.tag(Const.LogTag.FILE_RESULT)
-                    .w("File Uri ::: ${imageFileUri?.toString()}")
-                Timber.tag(Const.LogTag.FILE_RESULT).w("filePath ::: ${imageFile?.absoluteFile}")
-                Timber.tag(Const.LogTag.FILE_RESULT).w("file read:: ${imageFile?.canRead()}")
+                    .v("File Uri ::: ${imageFileUri?.toString()}")
+                Timber.tag(Const.LogTag.FILE_RESULT).v("filePath ::: ${imageFile?.absoluteFile}")
+                Timber.tag(Const.LogTag.FILE_RESULT).v("file read:: ${imageFile?.canRead()}")
                 setSuccessResult(imageFileUri, imageFile?.absolutePath, true)
             } else {
                 Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
-                    .e(getString(R.string.err_capture_error, "imageCapture"))
+                    .v(getString(R.string.err_capture_error, "imageCapture"))
                 setCanceledResult(getString(R.string.err_capture_error, "imageCapture"))
             }
         })
@@ -176,6 +178,7 @@ internal class ImageCaptureActivity : AppCompatActivity() {
         }
 
     companion object {
+        @Keep
         private fun getPermissionsList(context: Context) = ArrayList<String>().also {
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
                 it.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -198,6 +201,7 @@ internal class ImageCaptureActivity : AppCompatActivity() {
             }
         }
 
+        @Keep
         fun getInstance(mContext: Context, mImageCaptureConfig: ImageCaptureConfig?): Intent {
             val filePickerIntent = Intent(mContext, ImageCaptureActivity::class.java)
             mImageCaptureConfig?.let {

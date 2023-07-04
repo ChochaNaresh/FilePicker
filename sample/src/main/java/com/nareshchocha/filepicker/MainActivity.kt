@@ -17,6 +17,7 @@ import com.nareshchocha.filepickerlibrary.models.PopUpConfig
 import com.nareshchocha.filepickerlibrary.models.PopUpType
 import com.nareshchocha.filepickerlibrary.models.VideoOnly
 import com.nareshchocha.filepickerlibrary.ui.FilePicker
+import org.jetbrains.annotations.VisibleForTesting
 import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
@@ -109,8 +110,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val uriList: MutableList<Uri> = mutableListOf()
-    private val mMediaAdapter: MediaAdapter by lazy {
+    @VisibleForTesting
+    val uriList: MutableList<Uri> = mutableListOf()
+
+    val mMediaAdapter: MediaAdapter by lazy {
         MediaAdapter(
             this,
             items = uriList,
@@ -141,11 +144,11 @@ class MainActivity : AppCompatActivity() {
                     // val listData = result.data?.getStringArrayListExtra(Const.BundleExtras.FILE_PATH_LIST)
                     listData?.let { uriList.addAll(it) }
                 }
-                mMediaAdapter.notifyDataSetChanged()
-                Timber.tag("FILE_RESULT").w(result.toString())
-                Timber.tag("FILE_RESULT").w(result.data?.extras?.toString())
+                mMediaAdapter.notifyItemRangeChanged(0, uriList.size)
+                Timber.tag("FILE_RESULT").v(result.toString())
+                Timber.tag("FILE_RESULT").v(result.data?.extras?.toString())
             } else {
-                Timber.tag("FILE_PICKER_ERROR").e("capture Error")
+                Timber.tag("FILE_PICKER_ERROR").v("capture Error")
             }
         }
 

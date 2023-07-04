@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">FilePicker</string>
+    <string name="capture_image">Capture Image</string>
+    <string name="capture_video">Capture Video</string>
+    <string name="pick_images">Pick Images</string>
+    <string name="pick_video">Pick Video</string>
+    <string name="pick_image_or_video">Pick Image Or Video</string>
+    <string name="pick_pdf">Pick PDF</string>
+    <string name="all_option">All Option</string>
+</resources>

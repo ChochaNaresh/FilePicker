@@ -1,21 +1,32 @@
-import com.android.build.api.dsl.ManagedVirtualDevice
-
 plugins {
-    id("com.android.library")
+    id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-parcelize")
-    id("io.gitlab.arturbosch.detekt")
-    id("maven-publish")
 }
 
 android {
-    namespace = "com.nareshchocha.filepickerlibrary"
+    namespace = "com.nareshchocha.filepicker"
     compileSdk = 33
 
     defaultConfig {
+        applicationId = "com.nareshchocha.filepicker"
         minSdk = 21
+        targetSdk = 33
+        versionCode = 1
+        versionName = "1.0"
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments.putAll(
+            mapOf(
+                "clearPackageData" to "true",
+                /*"coverage" to "true",
+                "disableAnalytics" to "true",
+                "useTestStorageService" to "false",
+                "numShards" to numShards,
+                "shardIndex" to shardIndex*/
+            )
+        )
     }
+
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
@@ -25,19 +36,6 @@ android {
             )
         }
     }
-
-    buildFeatures {
-        buildConfig = true
-        viewBinding = true
-        dataBinding = true
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
-    }
     @Suppress("UnstableApiUsage")
     testOptions {
         unitTests.isIncludeAndroidResources = true
@@ -45,16 +43,17 @@ android {
         managedDevices {
             devices {
 
-                maybeCreate<ManagedVirtualDevice>("pixel4api27").apply {
+                maybeCreate<com.android.build.api.dsl.ManagedVirtualDevice>("pixel4api27").apply {
                     // Use device profiles you typically see in Android Studio.
                     device = "Pixel 4"
                     // Use only API levels 27 and higher.
                     apiLevel = 27
+
                     // To include Google services, use "google".
                     systemImageSource = "google"
                 } // ./gradlew pixel4api27debugAndroidTest
 
-                maybeCreate<ManagedVirtualDevice>("pixel4api28").apply {
+                maybeCreate<com.android.build.api.dsl.ManagedVirtualDevice>("pixel4api28").apply {
                     // Use device profiles you typically see in Android Studio.
                     device = "Pixel 4"
                     // Use only API levels 27 and higher.
@@ -72,22 +71,35 @@ android {
         }
     }
 
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-            withJavadocJar()
-        }
+    buildFeatures {
+        viewBinding = true
+        dataBinding = true
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 }
 
 dependencies {
+    // all libs
+    //  implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
 
     // core
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
-    implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.core:core-ktx:1.10.1")
+
+    // File Picker
+    implementation(project(":filepickerlibrary"))
+    // implementation(files(rootDir.path + "/filepickerlibrary/build/outputs/aar/filepickerlibrary-release.aar"))
+
+    // implementation("com.github.ChochaNaresh:FilePicker:0.1.1")
 
     // timber
     implementation("com.jakewharton.timber:timber:5.0.1")
@@ -108,23 +120,4 @@ dependencies {
     androidTestImplementation("androidx.test:rules:1.5.0")
     androidTestImplementation("androidx.test.uiautomator:uiautomator:2.2.0")
     androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
-}
-publishing {
-    publications {
-        create<MavenPublication>("release") {
-            groupId = "com.github.ChochaNaresh"
-            artifactId = "FilePicker"
-            version = "0.0.1"
-
-            afterEvaluate {
-                from(components["release"])
-            }
-        }
-    }
-}
-
-detekt {
-    toolVersion = "1.22.0"
-    config = files("config/detekt/detekt.yml")
-    buildUponDefaultConfig = true
 }
