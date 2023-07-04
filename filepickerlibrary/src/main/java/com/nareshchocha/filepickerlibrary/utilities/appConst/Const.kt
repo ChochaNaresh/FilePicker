@@ -2,9 +2,11 @@ package com.nareshchocha.filepickerlibrary.utilities.appConst
 
 import android.content.Context
 import android.os.Environment
+import androidx.annotation.Keep
 import com.nareshchocha.filepickerlibrary.R
 import java.io.File
 
+@Keep
 object Const {
     internal const val CARD_RADIUS = 10f
 
@@ -33,6 +35,7 @@ object Const {
         const val PICK_DOCUMENT = "PICK_DOCUMENT"
     }
 
+    @Keep
     object BundleExtras {
         const val FILE_PATH = "FILE_PATH"
         const val FILE_PATH_LIST = "FILE_PATH_LIST"

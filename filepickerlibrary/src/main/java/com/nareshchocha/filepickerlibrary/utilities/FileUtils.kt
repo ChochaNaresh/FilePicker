@@ -7,17 +7,21 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import androidx.annotation.Keep
 import com.nareshchocha.filepickerlibrary.utilities.extentions.isDownloadsDocument
 import com.nareshchocha.filepickerlibrary.utilities.extentions.isExternalStorageDocument
 import com.nareshchocha.filepickerlibrary.utilities.extentions.isGooglePhotosUri
 import com.nareshchocha.filepickerlibrary.utilities.extentions.isMediaDocument
 import java.io.File
 
+@Keep
 internal object FileUtils {
+    @Keep
     fun getRealPath(context: Context, fileUri: Uri): String? {
         return pathFromURI(context, fileUri)
     }
 
+    @Keep
     private fun pathFromURI(context: Context, uri: Uri): String? {
         return when {
             DocumentsContract.isDocumentUri(context, uri) -> {
@@ -65,6 +69,7 @@ internal object FileUtils {
         }
     }
 
+    @Keep
     private fun Context.getMediaDocumentPath(uri: Uri): String? {
         val docId = DocumentsContract.getDocumentId(uri)
         val split =
@@ -91,6 +96,7 @@ internal object FileUtils {
         return getDataColumn(this, contentUri, selection, selectionArgs)
     }
 
+    @Keep
     private fun Context.getDownloadsDocumentPath(uri: Uri): String? {
         val fileName = getFilePath(this, uri)
         if (fileName != null) {
@@ -110,6 +116,7 @@ internal object FileUtils {
         return getDataColumn(this, contentUri, null, null)
     }
 
+    @Keep
     private fun getExternalDocumentPath(uri: Uri): String {
         val docId = DocumentsContract.getDocumentId(uri)
         val split =
@@ -130,6 +137,7 @@ internal object FileUtils {
         }
     }
 
+    @Keep
     private fun getDataColumn(
         context: Context,
         uri: Uri?,
@@ -159,6 +167,7 @@ internal object FileUtils {
         return null
     }
 
+    @Keep
     private fun getFilePath(context: Context, uri: Uri?): String? {
         var cursor: Cursor? = null
         val projection = arrayOf(

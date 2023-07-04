@@ -78,12 +78,12 @@ internal class VideoCaptureActivity : AppCompatActivity() {
         selectFile(ActivityResultContracts.StartActivityForResult(), resultCallBack = { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 Timber.tag(Const.LogTag.FILE_RESULT)
-                    .w("File Uri ::: ${videoFileUri?.toString()}")
-                Timber.tag(Const.LogTag.FILE_RESULT).w("filePath ::: ${videoFile?.absoluteFile}")
+                    .v("File Uri ::: ${videoFileUri?.toString()}")
+                Timber.tag(Const.LogTag.FILE_RESULT).v("filePath ::: ${videoFile?.absoluteFile}")
                 setSuccessResult(videoFileUri, videoFile?.absolutePath, true)
             } else {
                 Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
-                    .e(getString(R.string.err_capture_error, "videoCapture"))
+                    .v(getString(R.string.err_capture_error, "videoCapture"))
                 setCanceledResult(getString(R.string.err_capture_error, "videoCapture"))
             }
         })
