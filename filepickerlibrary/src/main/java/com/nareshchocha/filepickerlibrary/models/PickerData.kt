@@ -1,14 +1,10 @@
 package com.nareshchocha.filepickerlibrary.models
 
-import android.os.Build
 import android.os.Parcelable
-import android.provider.MediaStore
 import androidx.annotation.DrawableRes
 import androidx.annotation.Keep
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
-import com.nareshchocha.filepickerlibrary.R
-import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import kotlinx.parcelize.Parcelize
 import java.io.File
 
@@ -23,17 +19,17 @@ data class PickerData(
 @Parcelize
 data class PopUpConfig(
     val chooserTitle: String? = null,
-    @LayoutRes val layoutId: Int = R.layout.item_pop_up,
-    val mPopUpType: PopUpType = PopUpType.BOTTOM_SHEET,
-    @RecyclerView.Orientation val mOrientation: Int = RecyclerView.VERTICAL,
+    @LayoutRes val layoutId: Int? = null,
+    val mPopUpType: PopUpType? = null,
+    @RecyclerView.Orientation val mOrientation: Int? = null,
 ) : Parcelable
 
 @Parcelize
 data class ImageCaptureConfig(
-    @DrawableRes override val popUpIcon: Int = R.drawable.ic_camera,
-    override val popUpText: String = "Camera",
+    @DrawableRes override val popUpIcon: Int? = null,
+    override val popUpText: String? = null,
     val mFolder: File? = null,
-    val fileName: String = Const.DefaultPaths.defaultImageFile,
+    val fileName: String? = null,
     override val askPermissionTitle: String? = null,
     override val askPermissionMessage: String? = null,
     override val settingPermissionTitle: String? = null,
@@ -49,10 +45,10 @@ data class ImageCaptureConfig(
 
 @Parcelize
 data class VideoCaptureConfig(
-    @DrawableRes override val popUpIcon: Int = R.drawable.ic_video,
-    override val popUpText: String = "Video",
+    @DrawableRes override val popUpIcon: Int? = null,
+    override val popUpText: String? = null,
     val mFolder: File? = null,
-    val fileName: String = Const.DefaultPaths.defaultVideoFile,
+    val fileName: String? = null,
     val maxSeconds: Int? = null,
     val maxSizeLimit: Long? = null,
     val isHighQuality: Boolean? = null,
@@ -71,15 +67,11 @@ data class VideoCaptureConfig(
 
 @Parcelize
 data class PickMediaConfig(
-    @DrawableRes override val popUpIcon: Int = R.drawable.ic_media,
-    override val popUpText: String = "Pick Media",
-    val allowMultiple: Boolean = false,
-    val maxFiles: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        MediaStore.getPickImagesMaxLimit()
-    } else {
-        Int.MAX_VALUE
-    },
-    val mPickMediaType: PickMediaType = ImageAndVideo,
+    @DrawableRes override val popUpIcon: Int? = null,
+    override val popUpText: String? = null,
+    val allowMultiple: Boolean? = null,
+    val maxFiles: Int? = null,
+    val mPickMediaType: PickMediaType? = null,
     override val askPermissionTitle: String? = null,
     override val askPermissionMessage: String? = null,
     override val settingPermissionTitle: String? = null,
@@ -92,26 +84,23 @@ data class PickMediaConfig(
     settingPermissionTitle,
     settingPermissionMessage,
 ) {
-    fun getPickMediaType(input: PickMediaType): String? {
+    fun getPickMediaType(input: PickMediaType?): String? {
         return when (input) {
-            is ImageOnly -> "image/*"
-            is VideoOnly -> "video/*"
-            is ImageAndVideo -> null
+            PickMediaType.ImageOnly -> "image/*"
+            PickMediaType.VideoOnly -> "video/*"
+            PickMediaType.ImageAndVideo -> null
+            else -> null
         }
     }
 }
 
 @Parcelize
 data class DocumentFilePickerConfig(
-    @DrawableRes override val popUpIcon: Int = R.drawable.ic_file,
-    override val popUpText: String = "File Media",
-    val allowMultiple: Boolean = false,
-    val maxFiles: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        MediaStore.getPickImagesMaxLimit()
-    } else {
-        Int.MAX_VALUE
-    },
-    val mMimeTypes: List<String> = listOf("*/*"),
+    @DrawableRes override val popUpIcon: Int? = null,
+    override val popUpText: String? = null,
+    val allowMultiple: Boolean? = null,
+    val maxFiles: Int? = null,
+    val mMimeTypes: List<String>? = null,
     override val askPermissionTitle: String? = null,
     override val askPermissionMessage: String? = null,
     override val settingPermissionTitle: String? = null,
@@ -134,13 +123,6 @@ enum class PopUpType : Parcelable {
 }
 
 @Parcelize
-sealed interface PickMediaType : Parcelable
-
-@Parcelize
-object ImageOnly : PickMediaType
-
-@Parcelize
-object VideoOnly : PickMediaType
-
-@Parcelize
-object ImageAndVideo : PickMediaType
+enum class PickMediaType : Parcelable {
+    ImageOnly, VideoOnly, ImageAndVideo
+}

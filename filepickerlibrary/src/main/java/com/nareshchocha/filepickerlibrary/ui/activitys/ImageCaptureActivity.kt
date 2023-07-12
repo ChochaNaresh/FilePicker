@@ -108,13 +108,13 @@ internal class ImageCaptureActivity : AppCompatActivity() {
         imageFileUri = if (mImageCaptureConfig != null) {
             imageFile = createMediaFileFolder(
                 folderFile = mImageCaptureConfig!!.mFolder ?: defaultFolder(),
-                fileName = mImageCaptureConfig!!.fileName,
+                fileName = mImageCaptureConfig!!.fileName ?: Const.DefaultPaths.defaultImageFile(),
             )
             createFileGetUri(imageFile!!)
         } else {
             imageFile = createMediaFileFolder(
                 folderFile = defaultFolder(),
-                fileName = Const.DefaultPaths.defaultImageFile,
+                fileName = Const.DefaultPaths.defaultImageFile(),
             )
             createFileGetUri(imageFile!!)
         }

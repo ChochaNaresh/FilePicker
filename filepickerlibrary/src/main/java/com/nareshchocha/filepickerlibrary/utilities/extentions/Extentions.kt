@@ -85,17 +85,28 @@ internal fun getDocumentFilePick(mDocumentFilePickerConfig: DocumentFilePickerCo
     return Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
         type = "*/*"
         putExtra(Intent.EXTRA_ALLOW_MULTIPLE, mDocumentFilePickerConfig.allowMultiple)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && mDocumentFilePickerConfig.allowMultiple) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            (mDocumentFilePickerConfig.allowMultiple == true)
+        ) {
             putExtra(MediaStore.EXTRA_PICK_IMAGES_MAX, mDocumentFilePickerConfig.maxFiles)
         }
-        putExtra(Intent.EXTRA_MIME_TYPES, mDocumentFilePickerConfig.mMimeTypes.toTypedArray())
+        if (mDocumentFilePickerConfig.mMimeTypes != null) {
+            putExtra(Intent.EXTRA_MIME_TYPES, mDocumentFilePickerConfig.mMimeTypes.toTypedArray())
+        }
     }
 }
 
 internal fun Context.getMediaIntent(mPickMediaConfig: PickMediaConfig): Intent {
     val mPickMediaType = mPickMediaConfig.getPickMediaType(mPickMediaConfig.mPickMediaType)
-    return if (mPickMediaConfig.allowMultiple) {
-        ActivityResultContracts.PickMultipleVisualMedia(mPickMediaConfig.maxFiles).createIntent(
+    return if (mPickMediaConfig.allowMultiple == true) {
+        ActivityResultContracts.PickMultipleVisualMedia(
+            mPickMediaConfig.maxFiles
+                ?: if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    MediaStore.getPickImagesMaxLimit()
+                } else {
+                    Int.MAX_VALUE
+                },
+        ).createIntent(
             this,
             PickVisualMediaRequest(
                 if (mPickMediaType != null) {

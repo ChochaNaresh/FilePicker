@@ -1,5 +1,4 @@
 import com.android.build.api.dsl.ManagedVirtualDevice
-
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
@@ -124,7 +123,7 @@ publishing {
 }
 
 detekt {
-    toolVersion = "1.22.0"
+    toolVersion = "1.23.0"
     config = files("config/detekt/detekt.yml")
     buildUponDefaultConfig = true
 }
