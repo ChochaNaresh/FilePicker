@@ -63,11 +63,7 @@ internal class PopUpActivity : AppCompatActivity() {
     private fun setAdapter() {
         val linearLayoutManager = LinearLayoutManager(
             this,
-            if (mPickerData?.mPopUpConfig?.mOrientation != null) {
-                mPickerData?.mPopUpConfig?.mOrientation!!
-            } else {
-                RecyclerView.VERTICAL
-            },
+            mPickerData?.mPopUpConfig?.mOrientation ?: RecyclerView.VERTICAL,
             false,
         )
         val popUpAdapter = PopUpAdapter(

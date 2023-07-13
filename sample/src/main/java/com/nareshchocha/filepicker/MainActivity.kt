@@ -10,12 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nareshchocha.filepicker.adapter.MediaAdapter
 import com.nareshchocha.filepicker.databinding.ActivityMainBinding
 import com.nareshchocha.filepickerlibrary.models.DocumentFilePickerConfig
-import com.nareshchocha.filepickerlibrary.models.ImageAndVideo
-import com.nareshchocha.filepickerlibrary.models.ImageOnly
 import com.nareshchocha.filepickerlibrary.models.PickMediaConfig
+import com.nareshchocha.filepickerlibrary.models.PickMediaType
 import com.nareshchocha.filepickerlibrary.models.PopUpConfig
 import com.nareshchocha.filepickerlibrary.models.PopUpType
-import com.nareshchocha.filepickerlibrary.models.VideoOnly
 import com.nareshchocha.filepickerlibrary.ui.FilePicker
 import org.jetbrains.annotations.VisibleForTesting
 import timber.log.Timber
@@ -47,7 +45,7 @@ class MainActivity : AppCompatActivity() {
                 FilePicker.Builder(this)
                     .pickMediaBuild(
                         PickMediaConfig(
-                            mPickMediaType = ImageOnly,
+                            mPickMediaType = PickMediaType.ImageOnly,
                             allowMultiple = true,
                         ),
                     ),
@@ -59,7 +57,7 @@ class MainActivity : AppCompatActivity() {
                 FilePicker.Builder(this)
                     .pickMediaBuild(
                         PickMediaConfig(
-                            mPickMediaType = VideoOnly,
+                            mPickMediaType = PickMediaType.VideoOnly,
                             allowMultiple = true,
                             maxFiles = 3,
                         ),
@@ -72,7 +70,7 @@ class MainActivity : AppCompatActivity() {
                 FilePicker.Builder(this)
                     .pickMediaBuild(
                         PickMediaConfig(
-                            mPickMediaType = ImageAndVideo,
+                            mPickMediaType = PickMediaType.ImageAndVideo,
                             allowMultiple = true,
                         ),
                     ),
@@ -151,23 +149,23 @@ class MainActivity : AppCompatActivity() {
                 Timber.tag("FILE_PICKER_ERROR").v("capture Error")
             }
         }
+}
 
-    private fun Intent.getClipDataUris(): ArrayList<Uri> {
-        val resultSet = LinkedHashSet<Uri>()
-        data?.let { data ->
-            resultSet.add(data)
-        }
-        val clipData = clipData
-        if (clipData == null && resultSet.isEmpty()) {
-            return ArrayList()
-        } else if (clipData != null) {
-            for (i in 0 until clipData.itemCount) {
-                val uri = clipData.getItemAt(i).uri
-                if (uri != null) {
-                    resultSet.add(uri)
-                }
+fun Intent.getClipDataUris(): ArrayList<Uri> {
+    val resultSet = LinkedHashSet<Uri>()
+    data?.let { data ->
+        resultSet.add(data)
+    }
+    val clipData = clipData
+    if (clipData == null && resultSet.isEmpty()) {
+        return ArrayList()
+    } else if (clipData != null) {
+        for (i in 0 until clipData.itemCount) {
+            val uri = clipData.getItemAt(i).uri
+            if (uri != null) {
+                resultSet.add(uri)
             }
         }
-        return ArrayList(resultSet)
     }
+    return ArrayList(resultSet)
 }

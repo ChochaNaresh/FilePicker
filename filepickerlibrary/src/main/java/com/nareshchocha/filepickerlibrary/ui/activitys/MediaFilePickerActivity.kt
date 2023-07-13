@@ -12,8 +12,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.nareshchocha.filepickerlibrary.R
-import com.nareshchocha.filepickerlibrary.models.ImageOnly
 import com.nareshchocha.filepickerlibrary.models.PickMediaConfig
+import com.nareshchocha.filepickerlibrary.models.PickMediaType
 import com.nareshchocha.filepickerlibrary.permission.PermissionUtils.checkPermission
 import com.nareshchocha.filepickerlibrary.picker.PickerUtils.selectFile
 import com.nareshchocha.filepickerlibrary.utilities.FileUtils
@@ -216,7 +216,7 @@ internal class MediaFilePickerActivity : AppCompatActivity() {
 
         private fun getPermission(mPickMediaConfig: PickMediaConfig): String {
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                if (mPickMediaConfig.mPickMediaType == ImageOnly) {
+                if (mPickMediaConfig.mPickMediaType == PickMediaType.ImageOnly) {
                     Manifest.permission.READ_MEDIA_IMAGES
                 } else {
                     Manifest.permission.READ_MEDIA_VIDEO

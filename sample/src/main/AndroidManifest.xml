@@ -5,6 +5,7 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
+
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
@@ -17,8 +18,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FilePicker"
         tools:targetApi="31">
+      <!--  <activity
+            android:name=".JavaExampleActivity"
+            android:exported="false" />-->
         <activity
-            android:name=".MainActivity"
+            android:name=".JavaExampleActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,7 +40,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_library_provider" />
         </provider>
-
     </application>
 
 </manifest>

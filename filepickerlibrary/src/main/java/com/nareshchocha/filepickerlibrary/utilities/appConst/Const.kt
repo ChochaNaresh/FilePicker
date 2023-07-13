@@ -19,8 +19,8 @@ object Const {
     }
 
     internal object DefaultPaths {
-        val defaultImageFile = "tempImage_${System.currentTimeMillis()}.jpg"
-        val defaultVideoFile = "tempVideo_${System.currentTimeMillis()}.mp4"
+        fun defaultImageFile() = "tempImage_${System.currentTimeMillis()}.jpg"
+        fun defaultVideoFile() = "tempVideo_${System.currentTimeMillis()}.mp4"
         fun Context.defaultFolder() = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
             getString(R.string.app_name),

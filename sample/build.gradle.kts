@@ -23,7 +23,7 @@ android {
                 "useTestStorageService" to "false",
                 "numShards" to numShards,
                 "shardIndex" to shardIndex*/
-            )
+            ),
         )
     }
 

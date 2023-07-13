@@ -109,13 +109,13 @@ internal class VideoCaptureActivity : AppCompatActivity() {
         videoFileUri = if (mVideoCaptureConfig != null) {
             videoFile = createMediaFileFolder(
                 folderFile = mVideoCaptureConfig!!.mFolder ?: this.defaultFolder(),
-                fileName = mVideoCaptureConfig!!.fileName,
+                fileName = mVideoCaptureConfig!!.fileName ?: Const.DefaultPaths.defaultVideoFile(),
             )
             createFileGetUri(videoFile!!)
         } else {
             videoFile = createMediaFileFolder(
                 folderFile = this.defaultFolder(),
-                fileName = Const.DefaultPaths.defaultVideoFile,
+                fileName = Const.DefaultPaths.defaultVideoFile(),
             )
             createFileGetUri(videoFile!!)
         }
