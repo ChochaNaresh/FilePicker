@@ -100,7 +100,7 @@ internal object FileUtils {
     private fun Context.getDownloadsDocumentPath(uri: Uri): String? {
         val fileName = getFilePath(this, uri)
         if (fileName != null) {
-            Environment.getExternalStorageDirectory()
+            return Environment.getExternalStorageDirectory()
                 .toString() + "/Download/" + fileName
         }
         var id = DocumentsContract.getDocumentId(uri)

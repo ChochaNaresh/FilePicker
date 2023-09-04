@@ -3,13 +3,14 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("kotlin-parcelize")
+    id("kotlin-kapt")
     id("io.gitlab.arturbosch.detekt")
     id("maven-publish")
 }
 
 android {
     namespace = "com.nareshchocha.filepickerlibrary"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 21
@@ -123,7 +124,7 @@ publishing {
 }
 
 detekt {
-    toolVersion = "1.23.0"
-    config = files("config/detekt/detekt.yml")
+    toolVersion = "1.23.1"
+    config.setFrom("$projectDir/config/detekt/detekt.yml")
     buildUponDefaultConfig = true
 }
