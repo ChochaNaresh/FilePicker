@@ -83,8 +83,7 @@ class MainActivity : AppCompatActivity() {
                     .pickDocumentFileBuild(
                         DocumentFilePickerConfig(
                             allowMultiple = true,
-
-                            mMimeTypes = listOf("application/pdf", "image/*"),
+                            mMimeTypes = listOf("application/pdf"),
                         ),
                     ),
             )

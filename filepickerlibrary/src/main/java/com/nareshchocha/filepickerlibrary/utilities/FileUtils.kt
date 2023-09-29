@@ -7,12 +7,18 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import android.provider.OpenableColumns
 import androidx.annotation.Keep
+import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.extentions.isDownloadsDocument
 import com.nareshchocha.filepickerlibrary.utilities.extentions.isExternalStorageDocument
+import com.nareshchocha.filepickerlibrary.utilities.extentions.isGoogleDriveUri
 import com.nareshchocha.filepickerlibrary.utilities.extentions.isGooglePhotosUri
 import com.nareshchocha.filepickerlibrary.utilities.extentions.isMediaDocument
+import timber.log.Timber
 import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 
 @Keep
 internal object FileUtils {
@@ -32,30 +38,38 @@ internal object FileUtils {
                     }
 
                     uri.isDownloadsDocument() -> {
-                        context.getDownloadsDocumentPath(uri)
+                        context.getDownloadsDocumentPath(uri) ?: context.copyFileToInternalStorage(
+                            uri
+                        )
                     }
 
                     uri.isMediaDocument() -> {
-                        context.getMediaDocumentPath(uri)
+                        context.getMediaDocumentPath(uri) ?: context.copyFileToInternalStorage(uri)
                     }
 
                     else -> {
-                        null
+                        context.copyFileToInternalStorage(uri)
                     }
                 }
+            }
+
+            uri.isGoogleDriveUri() -> {
+                context.getDriveFilePath(uri);
             }
 
             "content".equals(uri.scheme, ignoreCase = true) -> {
                 // Return the remote address
                 if (uri.isGooglePhotosUri()) {
                     uri.lastPathSegment
+                } else if (uri.isGoogleDriveUri()) {
+                    return context.getDriveFilePath(uri);
                 } else {
                     getDataColumn(
                         context,
                         uri,
                         null,
                         null,
-                    )
+                    ) ?: context.copyFileToInternalStorage(uri)
                 }
             }
 
@@ -64,9 +78,99 @@ internal object FileUtils {
             }
 
             else -> {
-                null
+                context.copyFileToInternalStorage(uri)
             }
         }
+    }
+
+
+    /***
+     * Used for Android Q+
+     * @param uri
+     * @param newDirName if you want to create a directory, you can set this variable
+     * @return
+     */
+    private fun Context.copyFileToInternalStorage(
+        uri: Uri?,
+        newDirName: String = Const.copyFileFolder
+    ): String? {
+        if (uri == null) {
+            return null
+        }
+        val returnCursor: Cursor? = this.contentResolver.query(
+            uri, arrayOf(
+                OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE
+            ), null, null, null
+        )
+        val nameIndex = returnCursor?.getColumnIndex(OpenableColumns.DISPLAY_NAME) ?: return null
+        returnCursor.moveToFirst()
+        val name = returnCursor.getString(nameIndex)
+        val output: File = if (newDirName != "") {
+            val dir = File(cacheDir, newDirName)
+            if (!dir.exists()) {
+                dir.mkdir()
+            }
+            File(cacheDir, "$newDirName/$name")
+        } else {
+            File(cacheDir, "/$name")
+        }
+        try {
+            val inputStream: InputStream? = contentResolver.openInputStream(uri)
+            val outputStream = FileOutputStream(output)
+            var read: Int? = 0
+            val bufferSize = 1024
+            val buffers = ByteArray(bufferSize)
+            while (inputStream?.read(buffers).also { read = it } != -1) {
+                read?.let { outputStream.write(buffers, 0, it) }
+            }
+            inputStream?.close()
+            outputStream.close()
+        } catch (e: Exception) {
+            output.delete()
+            Timber.tag("Exception").e(e.message!!)
+            return null
+        }
+        return output.path
+    }
+
+
+    private fun Context.getDriveFilePath(uri: Uri): String? {
+        val returnCursor: Cursor? = contentResolver.query(
+            uri,
+            null,
+            null,
+            null,
+            null
+        )
+        /*
+         * Get the column indexes of the data in the Cursor,
+         *     * move to the first row in the Cursor, get the data,
+         *     * and display it.
+         * */
+        val nameIndex = returnCursor?.getColumnIndex(OpenableColumns.DISPLAY_NAME) ?: return null
+        returnCursor.moveToFirst()
+        val name = returnCursor.getString(nameIndex)
+        val file = File(cacheDir, name)
+        try {
+            val inputStream: InputStream? = contentResolver.openInputStream(uri)
+            val outputStream = FileOutputStream(file)
+            var read: Int? = 0
+            val maxBufferSize = 1 * 1024 * 1024
+            val bytesAvailable = inputStream?.available() ?: 0
+
+            //int bufferSize = 1024;
+            val bufferSize = bytesAvailable.coerceAtMost(maxBufferSize)
+            val buffers = ByteArray(bufferSize)
+            while (inputStream?.read(buffers).also { read = it } != -1) {
+                read?.let { outputStream.write(buffers, 0, it) }
+            }
+            inputStream?.close()
+            outputStream.close()
+        } catch (e: Exception) {
+            Timber.tag("Exception").e(e.message)
+            return null
+        }
+        return file.path
     }
 
     @Keep
@@ -86,6 +190,10 @@ internal object FileUtils {
             }
 
             "audio" -> {
+                contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+            }
+
+            else -> {
                 contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
             }
         }
@@ -109,11 +217,23 @@ internal object FileUtils {
             val file = File(id)
             if (file.exists()) return id
         }
-        val contentUri = ContentUris.withAppendedId(
-            Uri.parse("content://downloads/public_downloads"),
-            java.lang.Long.valueOf(id),
+        val contentUriPrefixesToTry = arrayOf(
+            "content://downloads/public_downloads",
+            "content://downloads/my_downloads"
         )
-        return getDataColumn(this, contentUri, null, null)
+        for (contentUriPrefix in contentUriPrefixesToTry) {
+            return try {
+                val contentUri = ContentUris.withAppendedId(
+                    Uri.parse(contentUriPrefix),
+                    java.lang.Long.valueOf(id)
+                )
+                getDataColumn(this, contentUri, null, null)
+            } catch (e: NumberFormatException) {
+                //In Android 8 and Android P the id is not a number
+                uri.path!!.replaceFirst("^/document/raw:", "").replaceFirst("^raw:", "")
+            }
+        }
+        return null
     }
 
     @Keep
@@ -157,6 +277,8 @@ internal object FileUtils {
                 selectionArgs,
                 null,
             )
+            Timber.tag("Checked:").d("cursor:: %s", cursor)
+
             if (cursor != null && cursor.moveToFirst()) {
                 val index = cursor.getColumnIndexOrThrow(column)
                 return cursor.getString(index)
