@@ -12,6 +12,8 @@ object Const {
 
     // internal const val AUTHORITY = "com.nareshchocha.filepickerlibrary.fileprovider"
     internal const val AUTHORITY = ".library.fileprovider"
+    internal const val copyFileFolder = "copyFileToInternalStorage"
+
 
     internal object LogTag {
         const val FILE_RESULT = "FILE_RESULT ::"

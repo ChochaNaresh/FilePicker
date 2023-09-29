@@ -33,3 +33,7 @@ internal fun Uri.isMediaDocument(): Boolean {
 internal fun Uri.isGooglePhotosUri(): Boolean {
     return "com.google.android.apps.photos.content" == authority
 }
+
+internal fun Uri.isGoogleDriveUri(): Boolean {
+    return "com.google.android.apps.docs.storage" == authority || "com.google.android.apps.docs.storage.legacy" == authority
+}

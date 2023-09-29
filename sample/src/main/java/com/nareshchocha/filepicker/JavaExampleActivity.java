@@ -24,7 +24,9 @@ import com.nareshchocha.filepickerlibrary.models.PopUpConfig;
 import com.nareshchocha.filepickerlibrary.models.PopUpType;
 import com.nareshchocha.filepickerlibrary.models.VideoCaptureConfig;
 import com.nareshchocha.filepickerlibrary.ui.FilePicker;
+import com.nareshchocha.filepickerlibrary.utilities.appConst.Const;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import timber.log.Timber;
@@ -192,18 +194,23 @@ public class JavaExampleActivity extends AppCompatActivity {
                         @Override
                         public void onActivityResult(ActivityResult result) {
                             uriList.clear();
-                            if (result != null && result.getResultCode() == Activity.RESULT_OK) {
-                                if (result.getData().getData() != null) {
-                                    uriList.add(result.getData().getData());
-                                    // content://com.nareshchocha.filepicker.library.fileprovider/secure_name/FilePicker/tempImage_1689140682218.jpg
-                                    // content://com.nareshchocha.filepicker.library.fileprovider/secure_name/FilePicker/tempImage_1689140682218.jpg
-                                } else {
-                                    ArrayList<Uri> listData = getClipDataUris(result.getData());
-                                    // ArrayList<String> listData = result.getData().getStringArrayListExtra(Const.BundleExtras.FILE_PATH_LIST);
-                                    uriList.addAll(listData);
+                            try {
+                                if (result != null && result.getResultCode() == Activity.RESULT_OK) {
+                                    if (result.getData().getData() != null) {
+                                        uriList.add(result.getData().getData());
+                                        String listData = result.getData().getStringExtra(Const.BundleExtras.FILE_PATH);
+                                        File testFile = new File(listData);
+                                        Timber.tag("FILE_RESULT").v("Can Read::" + testFile.canRead() + " can Write::" + testFile.canWrite());
+                                    } else {
+                                        ArrayList<Uri> listData = getClipDataUris(result.getData());
+                                        // ArrayList<String> listData = result.getData().getStringArrayListExtra(Const.BundleExtras.FILE_PATH_LIST);
+                                        uriList.addAll(listData);
+                                    }
+                                    Timber.tag("FILE_RESULT").v(result.toString());
+                                    Timber.tag("FILE_RESULT").v(result.getData().getExtras().toString());
                                 }
-                                Timber.tag("FILE_RESULT").v(result.toString());
-                                Timber.tag("FILE_RESULT").v(result.getData().getExtras().toString());
+                            } catch (Exception e) {
+                                Timber.tag("FILE_RESULT").e(e.toString());
                             }
                             mMediaAdapter.notifyItemRangeChanged(0, uriList.size());
                         }
