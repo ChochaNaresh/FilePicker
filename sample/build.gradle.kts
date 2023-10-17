@@ -75,11 +75,11 @@ android {
         viewBinding = true
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 }
 
@@ -92,7 +92,8 @@ dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
 
     // File Picker
-    implementation(project(":filepickerlibrary"))
+    // implementation(project(":filepickerlibrary"))
+    implementation("io.github.chochanaresh:filepicker:0.2.0")
 
     // timber
     implementation("com.jakewharton.timber:timber:5.0.1")

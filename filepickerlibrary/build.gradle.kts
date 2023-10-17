@@ -1,10 +1,14 @@
 import com.android.build.api.dsl.ManagedVirtualDevice
+import com.vanniktech.maven.publish.SonatypeHost
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("kotlin-parcelize")
     id("io.gitlab.arturbosch.detekt")
-    // id("maven-publish")
+    id("com.vanniktech.maven.publish") // NEW
+    id("maven-publish")
+    id("signing")
 }
 
 android {
@@ -30,11 +34,11 @@ android {
         viewBinding = true
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
     @Suppress("UnstableApiUsage")
     testOptions {
@@ -103,8 +107,43 @@ dependencies {
     androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
 }
 
+mavenPublishing {
+    publishToMavenCentral(SonatypeHost.S01, true)
+    signAllPublications()
+}
+
 detekt {
     toolVersion = "1.23.1"
     config.setFrom("$projectDir/config/detekt/detekt.yml")
     buildUponDefaultConfig = true
+}
+
+mavenPublishing {
+    coordinates("io.github.chochanaresh", "filepicker", "0.2.0")
+
+    pom {
+        name.set("filepicker")
+        description.set("All file and media picker library for android. This library is designed to simplify the process of selecting and retrieving media files from an Android device, and supports media capture for images and videos.")
+        inceptionYear.set("2023")
+        url.set("https://github.com/ChochaNaresh/FilePicker")
+        licenses {
+            license {
+                name.set("The Apache License, Version 2.0")
+                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                distribution.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+            }
+        }
+        developers {
+            developer {
+                id.set("ChochaNaresh")
+                name.set("Naresh Chocha")
+                url.set("https://github.com/ChochaNaresh")
+            }
+        }
+        scm {
+            url.set("https://github.com/ChochaNaresh/FilePicker")
+            connection.set("scm:git:git://github.com/ChochaNaresh/FilePicker.git")
+            developerConnection.set("scm:git:ssh://git@github.com/ChochaNaresh/FilePicker.git")
+        }
+    }
 }
