@@ -5,7 +5,7 @@ This library is designed to simplify the process of selecting and retrieving med
 [![](https://jitpack.io/v/ChochaNaresh/FilePicker.svg)](https://jitpack.io/#ChochaNaresh/FilePicker)
 [![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
 ![Language](https://img.shields.io/badge/language-Kotlin-orange.svg)
-![Language](https://img.shields.io/badge/Kotlin-1.8.22-blue)
+![Language](https://img.shields.io/badge/Kotlin-1.9.10-blue)
 
 ### How to use
 **How to add dependencies**

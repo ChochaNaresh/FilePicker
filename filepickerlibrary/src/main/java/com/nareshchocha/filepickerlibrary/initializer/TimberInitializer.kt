@@ -2,14 +2,7 @@ package com.nareshchocha.filepickerlibrary.initializer
 
 import android.content.Context
 import androidx.startup.Initializer
-import com.nareshchocha.filepickerlibrary.utilities.appConst.Const.copyFileFolder
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.File
-import java.io.IOException
 
 class TimberInitializer : Initializer<Unit> {
     companion object {

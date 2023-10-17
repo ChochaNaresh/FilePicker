@@ -3,9 +3,8 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("kotlin-parcelize")
-    id("kotlin-kapt")
     id("io.gitlab.arturbosch.detekt")
-    id("maven-publish")
+    // id("maven-publish")
 }
 
 android {
@@ -29,7 +28,6 @@ android {
     buildFeatures {
         buildConfig = true
         viewBinding = true
-        dataBinding = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -72,21 +70,15 @@ android {
         }
     }
 
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-            withJavadocJar()
-        }
-    }
 }
 
 dependencies {
 
     // core
-    implementation("androidx.core:core-ktx:1.10.1")
+    implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.9.0")
-    implementation("androidx.core:core-ktx:1.10.1")
+    implementation("com.google.android.material:material:1.10.0")
+    implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     // timber
@@ -94,6 +86,7 @@ dependencies {
 
     // Coil
     implementation("io.coil-kt:coil:2.4.0")
+    implementation("androidx.startup:startup-runtime:1.1.1")
 
     // testing
     testImplementation("junit:junit:4.13.2")
@@ -108,19 +101,6 @@ dependencies {
     androidTestImplementation("androidx.test:rules:1.5.0")
     androidTestImplementation("androidx.test.uiautomator:uiautomator:2.2.0")
     androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
-}
-publishing {
-    publications {
-        create<MavenPublication>("release") {
-            groupId = "com.github.ChochaNaresh"
-            artifactId = "FilePicker"
-            version = "0.0.1"
-
-            afterEvaluate {
-                from(components["release"])
-            }
-        }
-    }
 }
 
 detekt {

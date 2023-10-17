@@ -3,6 +3,7 @@ package com.nareshchocha.filepicker;
 import static com.nareshchocha.filepicker.MainActivityKt.getClipDataUris;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -28,12 +29,13 @@ import com.nareshchocha.filepickerlibrary.utilities.appConst.Const;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import timber.log.Timber;
 
 public class JavaExampleActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
-    ArrayList<Uri> uriList = new ArrayList<Uri>();
+    ArrayList<Uri> uriList = new ArrayList<>();
     private MediaAdapter mMediaAdapter;
 
     @Override
@@ -43,96 +45,86 @@ public class JavaExampleActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         setAdapter();
 
-        binding.mbtCaptureImage.setOnClickListener(v -> {
-            captureImageResultLauncher.launch(
-                    new FilePicker.Builder(this)
-                            .imageCaptureBuild(
-                                    new ImageCaptureConfig(
-                                            null,
-                                            null,
-                                            null,
-                                            null,
-                                            null,
-                                            null,
-                                            null,
-                                            null
-                                    )
-                            )
-            );
-        });
+        binding.mbtCaptureImage.setOnClickListener(v -> captureImageResultLauncher.launch(
+                new FilePicker.Builder(this)
+                        .imageCaptureBuild(
+                                new ImageCaptureConfig(
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null
+                                )
+                        )
+        ));
 
-        binding.mbtCaptureVideo.setOnClickListener(v -> {
-            captureImageResultLauncher.launch(
-                    new FilePicker.Builder(this)
-                            .videoCaptureBuild(
-                                    new VideoCaptureConfig(
-                                            null,
-                                            null,
-                                            null,
-                                            null,
-                                            null,
-                                            null,
-                                            null,
-                                            null,
-                                            null,
-                                            null,
-                                            null
-                                    )
-                            )
-            );
-        });
+        binding.mbtCaptureVideo.setOnClickListener(v -> captureImageResultLauncher.launch(
+                new FilePicker.Builder(this)
+                        .videoCaptureBuild(
+                                new VideoCaptureConfig(
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null
+                                )
+                        )
+        ));
 
-        binding.mbtPickImages.setOnClickListener(v -> {
-            captureImageResultLauncher.launch(
-                    new FilePicker.Builder(this)
-                            .pickMediaBuild(
-                                    new PickMediaConfig(
-                                            null,
-                                            null,
-                                            true,
-                                            null,
-                                            PickMediaType.ImageOnly,
-                                            null,
-                                            null,
-                                            null,
-                                            null)
-                            )
-            );
-        });
+        binding.mbtPickImages.setOnClickListener(v -> captureImageResultLauncher.launch(
+                new FilePicker.Builder(this)
+                        .pickMediaBuild(
+                                new PickMediaConfig(
+                                        null,
+                                        null,
+                                        true,
+                                        null,
+                                        PickMediaType.ImageOnly,
+                                        null,
+                                        null,
+                                        null,
+                                        null)
+                        )
+        ));
 
-        binding.mbtPickVideo.setOnClickListener(v -> {
-            captureImageResultLauncher.launch(
-                    new FilePicker.Builder(this)
-                            .pickMediaBuild(
-                                    new PickMediaConfig(
-                                            null,
-                                            null,
-                                            true,
-                                            3,
-                                            PickMediaType.VideoOnly,
-                                            null,
-                                            null,
-                                            null,
-                                            null)
-                            )
-            );
-        });
-        binding.mbtPickImageVideo.setOnClickListener(v -> {
-            captureImageResultLauncher.launch(
-                    new FilePicker.Builder(this)
-                            .pickMediaBuild(
-                                    new PickMediaConfig(
-                                            null,
-                                            null,
-                                            true,
-                                            null,
-                                            PickMediaType.ImageAndVideo,
-                                            null,
-                                            null,
-                                            null,
-                                            null)
-                            ));
-        });
+        binding.mbtPickVideo.setOnClickListener(v -> captureImageResultLauncher.launch(
+                new FilePicker.Builder(this)
+                        .pickMediaBuild(
+                                new PickMediaConfig(
+                                        null,
+                                        null,
+                                        true,
+                                        3,
+                                        PickMediaType.VideoOnly,
+                                        null,
+                                        null,
+                                        null,
+                                        null)
+                        )
+        ));
+        binding.mbtPickImageVideo.setOnClickListener(v -> captureImageResultLauncher.launch(
+                new FilePicker.Builder(this)
+                        .pickMediaBuild(
+                                new PickMediaConfig(
+                                        null,
+                                        null,
+                                        true,
+                                        null,
+                                        PickMediaType.ImageAndVideo,
+                                        null,
+                                        null,
+                                        null,
+                                        null)
+                        )));
 
         binding.mbtPDF.setOnClickListener(v -> {
             ArrayList<String> mMimeTypesList = new ArrayList<>();
@@ -156,24 +148,22 @@ public class JavaExampleActivity extends AppCompatActivity {
             );
         });
 
-        binding.mbtAllOption.setOnClickListener(v -> {
-            captureImageResultLauncher.launch(
-                    new FilePicker.Builder(this)
-                            .setPopUpConfig(
-                                    new PopUpConfig(
-                                            "Choose Profile",
-                                            null,
-                                            PopUpType.BOTTOM_SHEET,
-                                            RecyclerView.VERTICAL
-                                    )
-                            )
-                            .addPickDocumentFile(null)
-                            .addImageCapture(null)
-                            .addVideoCapture(null)
-                            .addPickMedia(null)
-                            .build()
-            );
-        });
+        binding.mbtAllOption.setOnClickListener(v -> captureImageResultLauncher.launch(
+                new FilePicker.Builder(this)
+                        .setPopUpConfig(
+                                new PopUpConfig(
+                                        "Choose Profile",
+                                        null,
+                                        PopUpType.BOTTOM_SHEET,
+                                        RecyclerView.VERTICAL
+                                )
+                        )
+                        .addPickDocumentFile(null)
+                        .addImageCapture(null)
+                        .addVideoCapture(null)
+                        .addPickMedia(null)
+                        .build()
+        ));
 
     }
 
@@ -188,7 +178,7 @@ public class JavaExampleActivity extends AppCompatActivity {
         binding.rvMedia.setAdapter(mMediaAdapter);
     }
 
-    private final ActivityResultLauncher captureImageResultLauncher =
+    private final ActivityResultLauncher<Intent> captureImageResultLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                     new ActivityResultCallback<ActivityResult>() {
                         @Override
@@ -196,9 +186,11 @@ public class JavaExampleActivity extends AppCompatActivity {
                             uriList.clear();
                             try {
                                 if (result != null && result.getResultCode() == Activity.RESULT_OK) {
+                                    assert result.getData() != null;
                                     if (result.getData().getData() != null) {
                                         uriList.add(result.getData().getData());
                                         String listData = result.getData().getStringExtra(Const.BundleExtras.FILE_PATH);
+                                        assert listData != null;
                                         File testFile = new File(listData);
                                         Timber.tag("FILE_RESULT").v("Can Read::" + testFile.canRead() + " can Write::" + testFile.canWrite());
                                     } else {
@@ -207,7 +199,7 @@ public class JavaExampleActivity extends AppCompatActivity {
                                         uriList.addAll(listData);
                                     }
                                     Timber.tag("FILE_RESULT").v(result.toString());
-                                    Timber.tag("FILE_RESULT").v(result.getData().getExtras().toString());
+                                    Timber.tag("FILE_RESULT").v(Objects.requireNonNull(result.getData().getExtras()).toString());
                                 }
                             } catch (Exception e) {
                                 Timber.tag("FILE_RESULT").e(e.toString());

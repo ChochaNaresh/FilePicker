@@ -73,7 +73,6 @@ android {
 
     buildFeatures {
         viewBinding = true
-        dataBinding = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -85,21 +84,15 @@ android {
 }
 
 dependencies {
-    // all libs
-    //  implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
-
     // core
-    implementation("androidx.core:core-ktx:1.10.1")
+    implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.9.0")
+    implementation("com.google.android.material:material:1.10.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.core:core-ktx:1.10.1")
+    implementation("androidx.core:core-ktx:1.12.0")
 
     // File Picker
     implementation(project(":filepickerlibrary"))
-    // implementation(files(rootDir.path + "/filepickerlibrary/build/outputs/aar/filepickerlibrary-release.aar"))
-
-    // implementation("com.github.ChochaNaresh:FilePicker:0.1.1")
 
     // timber
     implementation("com.jakewharton.timber:timber:5.0.1")

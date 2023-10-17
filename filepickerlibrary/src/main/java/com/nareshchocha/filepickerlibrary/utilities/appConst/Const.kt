@@ -13,11 +13,14 @@ object Const {
     // internal const val AUTHORITY = "com.nareshchocha.filepickerlibrary.fileprovider"
     internal const val AUTHORITY = ".library.fileprovider"
     internal const val copyFileFolder = "copyFileToInternalStorage"
+    internal const val MAX_BUFFER_SIZE = 1 * 1024 * 1024
+    internal const val BUFFER_SIZE = 1024
 
 
     internal object LogTag {
         const val FILE_RESULT = "FILE_RESULT ::"
         const val FILE_PICKER_ERROR = "FILE_PICKER_ERROR ::"
+        const val FILE_PICKER_EXCEPTION = "FILE_PICKER_EXCEPTION ::"
     }
 
     internal object DefaultPaths {
