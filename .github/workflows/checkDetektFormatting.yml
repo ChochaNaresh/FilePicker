@@ -4,9 +4,9 @@ on:
   label:
     types: [ created ]
   push:
-    branches: [ "main" ]
+    branches: [ "Dev","main" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "Dev","main" ]
 
 jobs:
   build:
