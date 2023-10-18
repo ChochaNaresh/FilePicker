@@ -189,7 +189,6 @@ internal class ImageCaptureActivity : AppCompatActivity() {
                     PackageManager.PackageInfoFlags.of(PackageManager.GET_PERMISSIONS.toLong()),
                 )
             } else {
-                @Suppress("DEPRECATION")
                 context.packageManager.getPackageInfo(
                     context.packageName,
                     PackageManager.GET_PERMISSIONS,

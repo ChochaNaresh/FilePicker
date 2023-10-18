@@ -44,7 +44,6 @@
             android:forceUriPermissions="true"
             android:grantUriPermissions="true"
             tools:targetApi="q">
-            <!--android:authorities="${applicationId}.filepicker.fileprovider"-->
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_picker_library_provider" />

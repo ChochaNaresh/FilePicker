@@ -2,10 +2,11 @@
 ## File Picker Library for Android
 This library is designed to simplify the process of selecting and retrieving media files from an Android device, and supports media capture for images and videos.
 
-[![](https://jitpack.io/v/ChochaNaresh/FilePicker.svg)](https://jitpack.io/#ChochaNaresh/FilePicker)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.chochanaresh/filepicker.svg)](https://search.maven.org/artifact/io.github.chochanaresh/filepicker)
+[![Build Workflow](https://github.com/ChochaNaresh/FilePicker/workflows/Build/badge.svg)](https://github.com/ChochaNaresh/FilePicker/actions?query=workflow%3ABuild)
 [![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
 ![Language](https://img.shields.io/badge/language-Kotlin-orange.svg)
-![Language](https://img.shields.io/badge/Kotlin-1.8.22-blue)
+![Language](https://img.shields.io/badge/Kotlin-1.9.10-blue)
 
 ### How to use
 **How to add dependencies**
@@ -14,8 +15,7 @@ This library is designed to simplify the process of selecting and retrieving med
 ```groovy
 allprojects {
     repositories {
-        mavenCentral() // For FilePicker library, this line is enough. Although, it has been published on jitpack as well
-        maven { url "https://jitpack.io" }  //Make sure to add this in your project
+        mavenCentral() // For FilePicker library, this line is enough.
     }
 }
 ```
@@ -23,7 +23,8 @@ allprojects {
 ```groovy
 dependencies {
     // ...
-    implementation 'com.github.ChochaNaresh:FilePicker:$libVersion'
+    implementation 'com.github.ChochaNaresh:FilePicker:$libVersion' // deprecated
+    implementation 'io.github.chochanaresh:filepicker:$libVersion' // update 
     // ...
 }
 ```
@@ -32,8 +33,7 @@ dependencies {
 ```kotlin
 allprojects {
     repositories {
-        mavenCentral() // For FilePicker library, this line is enough. Although, it has been published on jitpack as well
-        maven { setUrl("https://jitpack.io") }  //Make sure to add this in your project
+        mavenCentral() // For FilePicker library, this line is enough.
     }
 }
 ```
@@ -41,12 +41,13 @@ allprojects {
 ```kotlin
 dependencies {
     // ...
-    implementation("com.github.ChochaNaresh:FilePicker:$libVersion")
+    implementation("com.github.ChochaNaresh:FilePicker:$libVersion") // deprecated
+    implementation ("io.github.chochanaresh:filepicker:$libVersion") // update 
     // ...
 }
 ```
 ## Version
-Where `$libVersion` = [![libVersion](https://img.shields.io/github/release/ChochaNaresh/FilePicker/all.svg?style=flat-square)](https://github.com/ChochaNaresh/FilePicker/releases)
+Where `$libVersion` = [![libVersion](https://img.shields.io/maven-central/v/io.github.chochanaresh/filepicker.svg)](https://central.sonatype.com/artifact/io.github.chochanaresh/filepicker/versions)
 
 ## How to get result
 
