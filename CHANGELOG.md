@@ -5,6 +5,5 @@
 # Changelog
 
 ## 0.2.1
-
 ##### Initial
 - initial release in Maven Central
