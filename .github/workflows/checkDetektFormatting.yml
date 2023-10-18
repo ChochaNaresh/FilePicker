@@ -2,10 +2,9 @@ name: check Detekt Formatting CI
 
 on:
   push:
-    branches: [ "Dev","main" ]
+    branches: [ "Dev" ]
   pull_request:
-    branches: [ "Dev","main" ]
-
+    branches: [ "Dev" ]
 jobs:
   build:
 
