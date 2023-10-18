@@ -1,8 +1,6 @@
 name: check Detekt Formatting CI
 
 on:
-  label:
-    types: [ created ]
   push:
     branches: [ "Dev","main" ]
   pull_request:
