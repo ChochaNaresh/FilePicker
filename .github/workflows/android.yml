@@ -1,13 +1,10 @@
 name: Android CI
 
 on:
-  pull_request:
-    types: closed
-    branches:
-      - master
+  push:
+    branches: [ "master" ]
 jobs:
   build:
-
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
