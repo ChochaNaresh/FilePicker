@@ -6,10 +6,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.LayoutRes
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.models.BaseConfig
+import com.nareshchocha.filepickerlibrary.utilities.extentions.isDarkMode
 
 internal class PopUpAdapter(
     @LayoutRes private val layoutID: Int,
@@ -36,7 +38,16 @@ internal class PopUpAdapter(
 
     private fun bind(holder: ItemViewHolder, position: Int) {
         val item = items[position]
+        val isDarkMode = holder.binding.context.isDarkMode()
         holder.mImageView?.load(item.popUpIcon)
+        if (isDarkMode) {
+            holder.mImageView?.setColorFilter(
+                ContextCompat.getColor(holder.binding.context, R.color.white),
+                android.graphics.PorterDuff.Mode.SRC_IN
+            )
+            holder.mTextView?.setTextColor(ContextCompat.getColor(holder.binding.context, R.color.white))
+        }
+
         holder.mTextView?.text = item.popUpText
     }
 

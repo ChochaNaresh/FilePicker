@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.ClipData
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
@@ -15,6 +16,8 @@ import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.models.DocumentFilePickerConfig
 import com.nareshchocha.filepickerlibrary.models.PickMediaConfig
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
+import java.security.AccessController.getContext
+
 
 internal fun Context.showMyDialog(
     title: String,
@@ -203,4 +206,15 @@ internal fun Activity.setCanceledResult(error: String? = null) {
         },
     )
     finish()
+}
+
+
+fun Context.isDarkMode(): Boolean {
+    return when (resources.configuration.uiMode and
+            Configuration.UI_MODE_NIGHT_MASK) {
+        Configuration.UI_MODE_NIGHT_YES -> true
+        Configuration.UI_MODE_NIGHT_NO -> false
+        Configuration.UI_MODE_NIGHT_UNDEFINED -> false
+        else -> false
+    }
 }
