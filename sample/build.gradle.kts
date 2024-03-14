@@ -92,8 +92,8 @@ dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
 
     // File Picker
-    // implementation(project(":filepickerlibrary"))
-    implementation("io.github.chochanaresh:filepicker:0.2.0")
+     implementation(project(":filepickerlibrary"))
+    //implementation("io.github.chochanaresh:filepicker:0.2.0")
 
     // timber
     implementation("com.jakewharton.timber:timber:5.0.1")

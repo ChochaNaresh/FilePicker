@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:cardBackgroundColor="@color/white"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
     app:shapeAppearanceOverlay="@style/Theme.FilePicker.MediumComponent"
     tools:context=".ui.activitys.PopUpActivity">
@@ -27,7 +26,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0"
             app:title="@string/app_name"
-            app:titleTextColor="?colorPrimary" />
+             />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvItems"
