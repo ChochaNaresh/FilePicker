@@ -23,7 +23,7 @@ allprojects {
 ```groovy
 dependencies {
     // ...
-    implementation 'io.github.chochanaresh:filepicker:$libVersion' // update 
+    implementation 'io.github.chochanaresh:filepicker:$libVersion'
     // ...
 }
 ```
@@ -40,7 +40,7 @@ allprojects {
 ```kotlin
 dependencies {
     // ...
-    implementation ("io.github.chochanaresh:filepicker:$libVersion") // update 
+    implementation ("io.github.chochanaresh:filepicker:$libVersion") 
     // ...
 }
 ```
@@ -56,7 +56,7 @@ filepicker = { group = "io.github.chochanaresh", name = "filepicker", version.re
 ```kotlin 
 dependencies {
     // ...
-    implementation(libs.filepicker)// update 
+    implementation(libs.filepicker)
     // ...
 }
 ```
