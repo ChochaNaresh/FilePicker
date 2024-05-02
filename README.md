@@ -6,7 +6,7 @@ This library is designed to simplify the process of selecting and retrieving med
 [![Build Workflow](https://github.com/ChochaNaresh/FilePicker/actions/workflows/android.yml/badge.svg)](https://github.com/ChochaNaresh/FilePicker/actions?query=workflow%3AAndroid)
 [![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
 ![Language](https://img.shields.io/badge/language-Kotlin-orange.svg)
-![Language](https://img.shields.io/badge/Kotlin-1.9.10-blue)
+![Language](https://img.shields.io/badge/Kotlin-1.9.23-blue)
 
 ### How to use
 **How to add dependencies**
