@@ -119,7 +119,7 @@ detekt {
 }
 
 mavenPublishing {
-    coordinates("io.github.chochanaresh", "filepicker", "0.2.4")
+    coordinates("io.github.chochanaresh", "filepicker", "0.2.5")
 
     pom {
         name.set("filepicker")

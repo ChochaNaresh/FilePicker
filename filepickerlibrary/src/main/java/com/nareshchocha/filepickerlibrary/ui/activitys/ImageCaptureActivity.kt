@@ -118,7 +118,14 @@ internal class ImageCaptureActivity : AppCompatActivity() {
             )
             createFileGetUri(imageFile!!)
         }
-        imageFileUri?.let { imageCapture.launch(getImageCaptureIntent(it)) }
+        imageFileUri?.let {
+            imageCapture.launch(
+                getImageCaptureIntent(
+                    it,
+                    mImageCaptureConfig?.isUseRearCamera ?: true
+                )
+            )
+        }
     }
 
     private fun showAskDialog() {

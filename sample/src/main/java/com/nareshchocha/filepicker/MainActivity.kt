@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nareshchocha.filepicker.adapter.MediaAdapter
 import com.nareshchocha.filepicker.databinding.ActivityMainBinding
 import com.nareshchocha.filepickerlibrary.models.DocumentFilePickerConfig
+import com.nareshchocha.filepickerlibrary.models.ImageCaptureConfig
 import com.nareshchocha.filepickerlibrary.models.PickMediaConfig
 import com.nareshchocha.filepickerlibrary.models.PickMediaType
 import com.nareshchocha.filepickerlibrary.models.PopUpConfig
@@ -30,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         binding.mbtCaptureImage.setOnClickListener {
             captureImageResultLauncher.launch(
                 FilePicker.Builder(this)
-                    .imageCaptureBuild(),
+                    .imageCaptureBuild(ImageCaptureConfig(isUseRearCamera = false)),
             )
         }
         binding.mbtCaptureVideo.setOnClickListener {

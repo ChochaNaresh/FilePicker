@@ -23,7 +23,6 @@ allprojects {
 ```groovy
 dependencies {
     // ...
-    implementation 'com.github.ChochaNaresh:FilePicker:$libVersion' // deprecated
     implementation 'io.github.chochanaresh:filepicker:$libVersion' // update 
     // ...
 }
@@ -41,8 +40,23 @@ allprojects {
 ```kotlin
 dependencies {
     // ...
-    implementation("com.github.ChochaNaresh:FilePicker:$libVersion") // deprecated
     implementation ("io.github.chochanaresh:filepicker:$libVersion") // update 
+    // ...
+}
+```
+**libs.versions.toml** 
+```toml
+[versions]
+filepicker = "$libVersion"
+
+[libraries]
+filepicker = { group = "io.github.chochanaresh", name = "filepicker", version.ref = "filepicker" }
+````
+
+```kotlin 
+dependencies {
+    // ...
+    implementation(libs.filepicker)// update 
     // ...
 }
 ```
@@ -208,6 +222,8 @@ addImageCapture(
         popUpText = "Camera",
         mFolder = File(),// set custom folder with write file permission
         fileName = "image.jpg",
+        // It is not working correctly. However, it will Work on the same devices.
+        isUseRearCamera = true, // setting camera facing
         askPermissionTitle = null, // set Permission ask Title
         askPermissionMessage = null,// set Permission ask Message
         settingPermissionTitle = null,// set Permission setting Title
@@ -227,6 +243,8 @@ addImageCapture(
             null, // Title for pop item 
             null, // set custom folder with write file permission
             null,  // set custom File name
+            // It is not working correctly. However, it will Work on the same devices.
+            isUseRearCamera = true, // setting camera facing
             askPermissionTitle = null, // set Permission ask Title
             askPermissionMessage = null,// set Permission ask Message
             settingPermissionTitle = null,// set Permission setting Title

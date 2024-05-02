@@ -30,6 +30,10 @@ data class ImageCaptureConfig(
     override val popUpText: String? = null,
     val mFolder: File? = null,
     val fileName: String? = null,
+    /**
+     * It is not working correctly. However, it will Work on the same devices.
+     */
+    val isUseRearCamera: Boolean? = null,
     override val askPermissionTitle: String? = null,
     override val askPermissionMessage: String? = null,
     override val settingPermissionTitle: String? = null,
@@ -70,6 +74,9 @@ data class PickMediaConfig(
     @DrawableRes override val popUpIcon: Int? = null,
     override val popUpText: String? = null,
     val allowMultiple: Boolean? = null,
+    /**
+     *  MaxFiles work after SDK 33 or above versions
+     */
     val maxFiles: Int? = null,
     val mPickMediaType: PickMediaType? = null,
     override val askPermissionTitle: String? = null,
@@ -99,6 +106,9 @@ data class DocumentFilePickerConfig(
     @DrawableRes override val popUpIcon: Int? = null,
     override val popUpText: String? = null,
     val allowMultiple: Boolean? = null,
+    /**
+     *  MaxFiles work after SDK 33 or above versions
+     */
     val maxFiles: Int? = null,
     val mMimeTypes: List<String>? = null,
     override val askPermissionTitle: String? = null,

@@ -49,7 +49,8 @@ class FilePicker private constructor() {
                     popUpIcon = mImageCaptureConfig?.popUpIcon ?: R.drawable.ic_camera,
                     popUpText = mImageCaptureConfig?.popUpText ?: "Camera",
                     mFolder = mImageCaptureConfig?.mFolder,
-                    fileName = mImageCaptureConfig?.fileName ?: Const.DefaultPaths.defaultImageFile(),
+                    fileName = mImageCaptureConfig?.fileName
+                        ?: Const.DefaultPaths.defaultImageFile(),
                     askPermissionTitle = mImageCaptureConfig?.askPermissionTitle,
                     askPermissionMessage = mImageCaptureConfig?.askPermissionMessage,
                     settingPermissionTitle = mImageCaptureConfig?.settingPermissionTitle,
@@ -66,7 +67,8 @@ class FilePicker private constructor() {
                     popUpIcon = mVideoCaptureConfig?.popUpIcon ?: R.drawable.ic_video,
                     popUpText = mVideoCaptureConfig?.popUpText ?: "Video",
                     mFolder = mVideoCaptureConfig?.mFolder,
-                    fileName = mVideoCaptureConfig?.fileName ?: Const.DefaultPaths.defaultVideoFile(),
+                    fileName = mVideoCaptureConfig?.fileName
+                        ?: Const.DefaultPaths.defaultVideoFile(),
                     maxSeconds = mVideoCaptureConfig?.maxSeconds,
                     maxSizeLimit = mVideoCaptureConfig?.maxSizeLimit,
                     isHighQuality = mVideoCaptureConfig?.isHighQuality,
@@ -92,7 +94,8 @@ class FilePicker private constructor() {
                         } else {
                             Int.MAX_VALUE
                         },
-                    mPickMediaType = mPickMediaConfig?.mPickMediaType ?: PickMediaType.ImageAndVideo,
+                    mPickMediaType = mPickMediaConfig?.mPickMediaType
+                        ?: PickMediaType.ImageAndVideo,
                     askPermissionTitle = mPickMediaConfig?.askPermissionTitle,
                     askPermissionMessage = mPickMediaConfig?.askPermissionMessage,
                     settingPermissionTitle = mPickMediaConfig?.settingPermissionTitle,
@@ -121,7 +124,7 @@ class FilePicker private constructor() {
                     settingPermissionTitle = mDocumentFilePickerConfig?.settingPermissionTitle,
                     settingPermissionMessage = mDocumentFilePickerConfig?.settingPermissionMessage,
 
-                ),
+                    ),
             )
             return this
         }
@@ -134,7 +137,9 @@ class FilePicker private constructor() {
                     popUpIcon = mImageCaptureConfig?.popUpIcon ?: R.drawable.ic_camera,
                     popUpText = mImageCaptureConfig?.popUpText ?: "Camera",
                     mFolder = mImageCaptureConfig?.mFolder,
-                    fileName = mImageCaptureConfig?.fileName ?: Const.DefaultPaths.defaultImageFile(),
+                    fileName = mImageCaptureConfig?.fileName
+                        ?: Const.DefaultPaths.defaultImageFile(),
+                    isUseRearCamera = mImageCaptureConfig?.isUseRearCamera ?: true,
                     askPermissionTitle = mImageCaptureConfig?.askPermissionTitle,
                     askPermissionMessage = mImageCaptureConfig?.askPermissionMessage,
                     settingPermissionTitle = mImageCaptureConfig?.settingPermissionTitle,
@@ -150,7 +155,8 @@ class FilePicker private constructor() {
                     popUpIcon = mVideoCaptureConfig?.popUpIcon ?: R.drawable.ic_video,
                     popUpText = mVideoCaptureConfig?.popUpText ?: "Video",
                     mFolder = mVideoCaptureConfig?.mFolder,
-                    fileName = mVideoCaptureConfig?.fileName ?: Const.DefaultPaths.defaultVideoFile(),
+                    fileName = mVideoCaptureConfig?.fileName
+                        ?: Const.DefaultPaths.defaultVideoFile(),
                     maxSeconds = mVideoCaptureConfig?.maxSeconds,
                     maxSizeLimit = mVideoCaptureConfig?.maxSizeLimit,
                     isHighQuality = mVideoCaptureConfig?.isHighQuality,
@@ -175,7 +181,8 @@ class FilePicker private constructor() {
                         } else {
                             Int.MAX_VALUE
                         },
-                    mPickMediaType = mPickMediaConfig?.mPickMediaType ?: PickMediaType.ImageAndVideo,
+                    mPickMediaType = mPickMediaConfig?.mPickMediaType
+                        ?: PickMediaType.ImageAndVideo,
                     askPermissionTitle = mPickMediaConfig?.askPermissionTitle,
                     askPermissionMessage = mPickMediaConfig?.askPermissionMessage,
                     settingPermissionTitle = mPickMediaConfig?.settingPermissionTitle,
