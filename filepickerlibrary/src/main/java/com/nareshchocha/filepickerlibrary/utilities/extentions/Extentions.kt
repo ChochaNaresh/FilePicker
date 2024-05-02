@@ -16,7 +16,6 @@ import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.models.DocumentFilePickerConfig
 import com.nareshchocha.filepickerlibrary.models.PickMediaConfig
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
-import java.security.AccessController.getContext
 
 
 internal fun Context.showMyDialog(
@@ -49,10 +48,24 @@ internal fun Context.showMyDialog(
     alertDialog.show()
 }
 
-internal fun Context.getImageCaptureIntent(outputFileUri: Uri): Intent {
+internal fun Context.getImageCaptureIntent(
+    outputFileUri: Uri,
+    useRearCamera: Boolean
+): Intent {
     return Intent(MediaStore.ACTION_IMAGE_CAPTURE).also {
         it.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
         it.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri)
+        if (useRearCamera) {
+            it.putExtra("android.intent.extras.LENS_FACING_BACK", 1)
+            it.putExtra("android.intent.extras.LENS_FACING_FRONT", 0)
+            it.putExtra("android.intent.extras.CAMERA_FACING", 0)
+            it.putExtra("android.intent.extra.USE_FRONT_CAMERA", false)
+        } else {
+            it.putExtra("android.intent.extras.LENS_FACING_FRONT", 1)
+            it.putExtra("android.intent.extras.LENS_FACING_BACK", 0)
+            it.putExtra("android.intent.extras.CAMERA_FACING", 1)
+            it.putExtra("android.intent.extra.USE_FRONT_CAMERA", true)
+        }
     }
 }
 

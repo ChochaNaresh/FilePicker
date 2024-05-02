@@ -6,7 +6,7 @@ This library is designed to simplify the process of selecting and retrieving med
 [![Build Workflow](https://github.com/ChochaNaresh/FilePicker/actions/workflows/android.yml/badge.svg)](https://github.com/ChochaNaresh/FilePicker/actions?query=workflow%3AAndroid)
 [![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
 ![Language](https://img.shields.io/badge/language-Kotlin-orange.svg)
-![Language](https://img.shields.io/badge/Kotlin-1.9.10-blue)
+![Language](https://img.shields.io/badge/Kotlin-1.9.23-blue)
 
 ### How to use
 **How to add dependencies**
@@ -23,8 +23,7 @@ allprojects {
 ```groovy
 dependencies {
     // ...
-    implementation 'com.github.ChochaNaresh:FilePicker:$libVersion' // deprecated
-    implementation 'io.github.chochanaresh:filepicker:$libVersion' // update 
+    implementation 'io.github.chochanaresh:filepicker:$libVersion'
     // ...
 }
 ```
@@ -41,8 +40,23 @@ allprojects {
 ```kotlin
 dependencies {
     // ...
-    implementation("com.github.ChochaNaresh:FilePicker:$libVersion") // deprecated
-    implementation ("io.github.chochanaresh:filepicker:$libVersion") // update 
+    implementation ("io.github.chochanaresh:filepicker:$libVersion") 
+    // ...
+}
+```
+**libs.versions.toml** 
+```toml
+[versions]
+filepicker = "$libVersion"
+
+[libraries]
+filepicker = { group = "io.github.chochanaresh", name = "filepicker", version.ref = "filepicker" }
+````
+
+```kotlin 
+dependencies {
+    // ...
+    implementation(libs.filepicker)
     // ...
 }
 ```
@@ -208,6 +222,8 @@ addImageCapture(
         popUpText = "Camera",
         mFolder = File(),// set custom folder with write file permission
         fileName = "image.jpg",
+        // It is not working correctly. However, it will Work on the same devices.
+        isUseRearCamera = true, // setting camera facing
         askPermissionTitle = null, // set Permission ask Title
         askPermissionMessage = null,// set Permission ask Message
         settingPermissionTitle = null,// set Permission setting Title
@@ -227,6 +243,8 @@ addImageCapture(
             null, // Title for pop item 
             null, // set custom folder with write file permission
             null,  // set custom File name
+            // It is not working correctly. However, it will Work on the same devices.
+            isUseRearCamera = true, // setting camera facing
             askPermissionTitle = null, // set Permission ask Title
             askPermissionMessage = null,// set Permission ask Message
             settingPermissionTitle = null,// set Permission setting Title

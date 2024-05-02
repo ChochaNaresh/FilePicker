@@ -53,6 +53,7 @@ public class JavaExampleActivity extends AppCompatActivity {
                                         null,
                                         null,
                                         null,
+                                        true,
                                         null,
                                         null,
                                         null,
