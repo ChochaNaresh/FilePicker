@@ -205,7 +205,7 @@ internal class VideoCaptureActivity : AppCompatActivity() {
                 )
             }
             val permissions = info.requestedPermissions
-            if (permissions.contains(Manifest.permission.CAMERA)) {
+            if (permissions?.contains(Manifest.permission.CAMERA)==true) {
                 it.add(Manifest.permission.CAMERA)
             }
         }
