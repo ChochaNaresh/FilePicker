@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.ClipData
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
@@ -16,6 +18,7 @@ import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.models.DocumentFilePickerConfig
 import com.nareshchocha.filepickerlibrary.models.PickMediaConfig
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
+import timber.log.Timber
 
 
 internal fun Context.showMyDialog(
@@ -46,6 +49,22 @@ internal fun Context.showMyDialog(
     val alertDialog = builder.create()
 
     alertDialog.show()
+}
+
+
+fun Context.getRequestedPermissions(): Array<String>? {
+    val info: PackageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        packageManager.getPackageInfo(
+            packageName,
+            PackageManager.PackageInfoFlags.of(PackageManager.GET_PERMISSIONS.toLong()),
+        )
+    } else {
+        packageManager.getPackageInfo(
+            packageName,
+            PackageManager.GET_PERMISSIONS,
+        )
+    }
+    return info.requestedPermissions
 }
 
 internal fun Context.getImageCaptureIntent(
@@ -173,6 +192,9 @@ internal fun Activity.setSuccessResult(
                 }
 
             fileUri?.let { mIntent.data = fileUri }
+            if (isFromCapture) {
+                 mIntent.putExtra(Const.BundleExtras.FROM_CAPTURE, true)
+            }
             filePath?.let { mIntent.putExtra(Const.BundleExtras.FILE_PATH, it) }
         },
     )
@@ -193,6 +215,9 @@ internal fun Activity.setSuccessResult(
                 } else {
                     Intent.FLAG_GRANT_READ_URI_PERMISSION
                 }
+            if (isFromCapture) {
+                mIntent.putExtra(Const.BundleExtras.FROM_CAPTURE, true)
+            }
             if (!fileUri.isNullOrEmpty()) {
                 val mClipData = ClipData.newUri(contentResolver, "uris", fileUri.first())
                 fileUri.subList(1, fileUri.size).forEach {
@@ -212,6 +237,7 @@ internal fun Activity.setSuccessResult(
 }
 
 internal fun Activity.setCanceledResult(error: String? = null) {
+    Timber.tag("FILE_RESULT").e("ERROR: $error")
     setResult(
         Activity.RESULT_CANCELED,
         Intent().also { mIntent ->

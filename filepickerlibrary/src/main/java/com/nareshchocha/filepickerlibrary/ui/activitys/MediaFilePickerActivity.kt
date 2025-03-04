@@ -19,6 +19,7 @@ import com.nareshchocha.filepickerlibrary.picker.PickerUtils.selectFile
 import com.nareshchocha.filepickerlibrary.utilities.FileUtils
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.extentions.getMediaIntent
+import com.nareshchocha.filepickerlibrary.utilities.extentions.getRequestedPermissions
 import com.nareshchocha.filepickerlibrary.utilities.extentions.getSettingIntent
 import com.nareshchocha.filepickerlibrary.utilities.extentions.setCanceledResult
 import com.nareshchocha.filepickerlibrary.utilities.extentions.setSuccessResult
@@ -197,11 +198,17 @@ internal class MediaFilePickerActivity : AppCompatActivity() {
 
     private fun checkPermission() {
         if (mPickMediaConfig != null) {
-            checkPermission.launch(
-                getPermission(
-                    mPickMediaConfig = mPickMediaConfig!!,
-                ),
-            )
+            val list = getPermissionManifestCheck(mPickMediaConfig!!, this)
+            if (list.isEmpty()) {
+                setCanceledResult(getString(R.string.permission_not_found))
+                return
+            } else {
+                checkPermission.launch(
+                    getPermission(
+                        mPickMediaConfig = mPickMediaConfig!!,
+                    ),
+                )
+            }
         } else {
             setCanceledResult(
                 getString(
@@ -213,6 +220,38 @@ internal class MediaFilePickerActivity : AppCompatActivity() {
     }
 
     companion object {
+
+        private fun getPermissionManifestCheck(
+            mPickMediaConfig: PickMediaConfig,
+            context: Context
+        ) = ArrayList<String>().also {
+            val permissions = context.getRequestedPermissions()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (mPickMediaConfig.mPickMediaType == PickMediaType.ImageOnly) {
+                    if (permissions?.contains(Manifest.permission.READ_MEDIA_IMAGES) == true) {
+                        it.add(Manifest.permission.READ_MEDIA_IMAGES)
+                    }
+                    /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                        if (permissions?.contains(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED) == true) {
+                            it.add(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
+                        }
+                    }*/
+                } else {
+                    if (permissions?.contains(Manifest.permission.READ_MEDIA_VIDEO) == true) {
+                        it.add(Manifest.permission.READ_MEDIA_VIDEO)
+                    }
+                    /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                        if (permissions?.contains(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED) == true) {
+                            it.add(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
+                        }
+                    }*/
+                }
+            } else {
+                if (permissions?.contains(Manifest.permission.READ_EXTERNAL_STORAGE) == true) {
+                    it.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+                }
+            }
+        }
 
         private fun getPermission(mPickMediaConfig: PickMediaConfig): String {
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

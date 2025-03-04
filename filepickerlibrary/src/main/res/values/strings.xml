@@ -8,6 +8,8 @@
     <string name="file_permission">Please allow Read media permission for selecting image/video.</string>
     <string name="err_write_storage_permission">Please allow <b>%1$s</b> permission for capture image/video.</string>
     <string name="err_write_storage_setting"><b>%1$s</b> permission is not granted. Please allow it from setting.</string>
+    <string name="permission_not_found">Permissions is not found in the manifest.</string>
+
 
     <!-- Permission result error  -->
     <string name="err_permission_result">Permission not allowed</string>

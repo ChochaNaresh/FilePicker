@@ -139,7 +139,7 @@ public class JavaExampleActivity extends AppCompatActivity {
                                             null,
                                             true,
                                             null,
-                                            mMimeTypesList,
+                                            null,
                                             null,
                                             null,
                                             null,
@@ -201,6 +201,9 @@ public class JavaExampleActivity extends AppCompatActivity {
                                     }
                                     Timber.tag("FILE_RESULT").v(result.toString());
                                     Timber.tag("FILE_RESULT").v(Objects.requireNonNull(result.getData().getExtras()).toString());
+                                }else {
+                                    assert Objects.requireNonNull(result).getData() != null;
+                                    Timber.tag("FILE_RESULT").e(result.getData().getStringExtra("ERROR"));
                                 }
                             } catch (Exception e) {
                                 Timber.tag("FILE_RESULT").e(e.toString());

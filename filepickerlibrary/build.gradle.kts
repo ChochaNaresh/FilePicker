@@ -2,18 +2,18 @@ import com.android.build.api.dsl.ManagedVirtualDevice
 import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.arturbosch.detekt)
+    alias(libs.plugins.maven.publish)
     id("kotlin-parcelize")
-    id("io.gitlab.arturbosch.detekt")
-    id("com.vanniktech.maven.publish") // NEW
     id("maven-publish")
     id("signing")
 }
 
 android {
     namespace = "com.nareshchocha.filepickerlibrary"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 21
@@ -79,32 +79,31 @@ android {
 dependencies {
 
     // core
-    implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.11.0")
-    implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.constraintlayout)
 
     // timber
-    implementation("com.jakewharton.timber:timber:5.0.1")
+    implementation(libs.timber)
 
     // Coil
-    implementation("io.coil-kt:coil:2.4.0")
-    implementation("androidx.startup:startup-runtime:1.1.1")
+    implementation(libs.coil)
+    implementation(libs.androidx.startup.runtime)
 
     // testing
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("com.google.truth:truth:1.1.5")
-
-    androidTestImplementation("androidx.test.ext:junit-ktx:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
-    androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
-
-    androidTestImplementation("com.google.truth:truth:1.1.5")
-    androidTestImplementation("androidx.test:rules:1.5.0")
-    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0")
-    androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation(libs.junit)
+    testImplementation(libs.truth)
+    androidTestImplementation(libs.truth)
+    androidTestImplementation(libs.androidx.espresso.contrib)
+    androidTestImplementation(libs.androidx.espresso.intents)
+    androidTestImplementation(libs.androidx.rules)
+    androidTestImplementation(libs.androidx.uiautomator)
+    androidTestImplementation(libs.androidx.core.testing)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 }
 
 mavenPublishing {
@@ -119,7 +118,7 @@ detekt {
 }
 
 mavenPublishing {
-    coordinates("io.github.chochanaresh", "filepicker", "0.2.5")
+    coordinates("io.github.chochanaresh", "filepicker", "0.2.6")
 
     pom {
         name.set("filepicker")

@@ -23,6 +23,7 @@ import com.nareshchocha.filepickerlibrary.picker.PickerUtils.selectFile
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const.DefaultPaths.defaultFolder
 import com.nareshchocha.filepickerlibrary.utilities.extentions.getImageCaptureIntent
+import com.nareshchocha.filepickerlibrary.utilities.extentions.getRequestedPermissions
 import com.nareshchocha.filepickerlibrary.utilities.extentions.getSettingIntent
 import com.nareshchocha.filepickerlibrary.utilities.extentions.setCanceledResult
 import com.nareshchocha.filepickerlibrary.utilities.extentions.setSuccessResult
@@ -190,19 +191,8 @@ internal class ImageCaptureActivity : AppCompatActivity() {
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
                 it.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             }
-            val info: PackageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                context.packageManager.getPackageInfo(
-                    context.packageName,
-                    PackageManager.PackageInfoFlags.of(PackageManager.GET_PERMISSIONS.toLong()),
-                )
-            } else {
-                context.packageManager.getPackageInfo(
-                    context.packageName,
-                    PackageManager.GET_PERMISSIONS,
-                )
-            }
-            val permissions = info.requestedPermissions
-            if (permissions.contains(Manifest.permission.CAMERA)) {
+            val permissions = context.getRequestedPermissions()
+            if (permissions?.contains(Manifest.permission.CAMERA)==true) {
                 it.add(Manifest.permission.CAMERA)
             }
         }
