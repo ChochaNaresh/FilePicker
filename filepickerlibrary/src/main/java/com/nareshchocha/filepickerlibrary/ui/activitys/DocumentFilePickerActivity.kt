@@ -19,6 +19,7 @@ import com.nareshchocha.filepickerlibrary.picker.PickerUtils.selectFile
 import com.nareshchocha.filepickerlibrary.utilities.FileUtils
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.extentions.getDocumentFilePick
+import com.nareshchocha.filepickerlibrary.utilities.extentions.getRequestedPermissions
 import com.nareshchocha.filepickerlibrary.utilities.extentions.getSettingIntent
 import com.nareshchocha.filepickerlibrary.utilities.extentions.setCanceledResult
 import com.nareshchocha.filepickerlibrary.utilities.extentions.setSuccessResult
@@ -196,9 +197,15 @@ internal class DocumentFilePickerActivity : AppCompatActivity() {
 
     private fun checkPermission() {
         if (mDocumentFilePickerConfig != null) {
-            checkPermission.launch(
-                getPermission(),
-            )
+            val list = getPermissionManifestCheck(this)
+            if (list.isEmpty()) {
+                setCanceledResult(getString(R.string.permission_not_found))
+                return
+            } else {
+                checkPermission.launch(
+                    getPermission(),
+                )
+            }
         } else {
             setCanceledResult(
                 getString(
@@ -210,6 +217,21 @@ internal class DocumentFilePickerActivity : AppCompatActivity() {
     }
 
     companion object {
+
+        private fun getPermissionManifestCheck(
+            context: Context
+        ) = ArrayList<String>().also {
+            val permissions = context.getRequestedPermissions()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (permissions?.contains(Manifest.permission.READ_MEDIA_VIDEO) == true) {
+                    it.add(Manifest.permission.READ_MEDIA_VIDEO)
+                }
+            } else {
+                if (permissions?.contains(Manifest.permission.READ_EXTERNAL_STORAGE) == true) {
+                    it.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+                }
+            }
+        }
 
         private fun getPermission(): String {
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

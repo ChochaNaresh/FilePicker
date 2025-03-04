@@ -42,6 +42,7 @@ object Const {
 
     @Keep
     object BundleExtras {
+        const val FROM_CAPTURE = "isFromCapture"
         const val FILE_PATH = "FILE_PATH"
         const val FILE_PATH_LIST = "FILE_PATH_LIST"
         const val ERROR = "ERROR"
