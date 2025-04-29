@@ -28,7 +28,7 @@ internal object FileUtils {
 
     @Keep
     private fun pathFromURI(context: Context, uri: Uri): String? {
-        return when {
+        val filePath = when {
             DocumentsContract.isDocumentUri(context, uri) -> {
                 getDocumentUri(context, uri)
             }
@@ -61,6 +61,14 @@ internal object FileUtils {
                 context.copyFileToInternalStorage(uri)
             }
         }
+        filePath?.let {
+            val file = File(filePath)
+            return if (file.canRead()) {
+                file.absolutePath
+            } else {
+                context.copyFileToInternalStorage(uri)
+            }
+        } ?: return null
     }
 
     private fun getDocumentUri(context: Context, uri: Uri) = when {
