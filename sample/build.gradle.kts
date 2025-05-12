@@ -36,40 +36,6 @@ android {
             )
         }
     }
-    @Suppress("UnstableApiUsage")
-    testOptions {
-        unitTests.isIncludeAndroidResources = true
-        animationsDisabled = false
-        managedDevices {
-            devices {
-
-                maybeCreate<com.android.build.api.dsl.ManagedVirtualDevice>("pixel4api27").apply {
-                    // Use device profiles you typically see in Android Studio.
-                    device = "Pixel 4"
-                    // Use only API levels 27 and higher.
-                    apiLevel = 27
-
-                    // To include Google services, use "google".
-                    systemImageSource = "google"
-                } // ./gradlew pixel4api27debugAndroidTest
-
-                maybeCreate<com.android.build.api.dsl.ManagedVirtualDevice>("pixel4api28").apply {
-                    // Use device profiles you typically see in Android Studio.
-                    device = "Pixel 4"
-                    // Use only API levels 27 and higher.
-                    apiLevel = 28
-                    // To include Google services, use "google".
-                    systemImageSource = "google"
-                } // ./gradlew pixel4api28debugAndroidTest
-            }
-            groups {
-                maybeCreate("phoneAndTablet").apply {
-                    targetDevices.add(devices["pixel4api27"])
-                    targetDevices.add(devices["pixel4api28"])
-                } // ./gradlew phoneAndTabletGroupdebugAndroidTest
-            }
-        }
-    }
 
     buildFeatures {
         viewBinding = true
