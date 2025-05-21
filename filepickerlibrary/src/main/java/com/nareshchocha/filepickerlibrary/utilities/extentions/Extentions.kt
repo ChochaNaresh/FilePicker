@@ -13,43 +13,10 @@ import android.provider.MediaStore
 import android.provider.Settings
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.models.DocumentFilePickerConfig
 import com.nareshchocha.filepickerlibrary.models.PickMediaConfig
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import timber.log.Timber
-
-
-internal fun Context.showMyDialog(
-    title: String,
-    message: String,
-    positiveButtonText: String? = null,
-    negativeClick: () -> Unit,
-    positiveClick: () -> Unit,
-) {
-    val builder = MaterialAlertDialogBuilder(this)
-    builder.setTitle(title)
-    builder.setMessage(message)
-    builder.setNegativeButton(
-        getString(R.string.str_cancel),
-    ) { dialog, _ ->
-        negativeClick()
-        dialog.dismiss()
-    }
-    builder.setPositiveButton(
-        positiveButtonText ?: getString(R.string.str_ok),
-    ) { dialog, _ ->
-        positiveClick()
-        dialog.dismiss()
-    }
-    builder.setOnCancelListener {
-        negativeClick()
-    }
-    val alertDialog = builder.create()
-
-    alertDialog.show()
-}
 
 
 fun Context.getRequestedPermissions(): Array<String>? {

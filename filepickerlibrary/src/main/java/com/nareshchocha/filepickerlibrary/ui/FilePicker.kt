@@ -5,11 +5,11 @@ import android.content.Intent
 import android.os.Build
 import android.provider.MediaStore
 import androidx.annotation.Keep
-import androidx.recyclerview.widget.RecyclerView
 import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.models.BaseConfig
 import com.nareshchocha.filepickerlibrary.models.DocumentFilePickerConfig
 import com.nareshchocha.filepickerlibrary.models.ImageCaptureConfig
+import com.nareshchocha.filepickerlibrary.models.Orientation
 import com.nareshchocha.filepickerlibrary.models.PickMediaConfig
 import com.nareshchocha.filepickerlibrary.models.PickMediaType
 import com.nareshchocha.filepickerlibrary.models.PickerData
@@ -35,9 +35,8 @@ class FilePicker private constructor() {
         fun setPopUpConfig(mPopUpConfig: PopUpConfig? = null): Builder {
             this.mPopUpConfig = PopUpConfig(
                 chooserTitle = mPopUpConfig?.chooserTitle ?: "Choose Option",
-                layoutId = mPopUpConfig?.layoutId ?: R.layout.item_pop_up,
                 mPopUpType = mPopUpConfig?.mPopUpType ?: PopUpType.BOTTOM_SHEET,
-                mOrientation = mPopUpConfig?.mOrientation ?: RecyclerView.VERTICAL,
+                mOrientation = mPopUpConfig?.mOrientation ?: Orientation.VERTICAL,
             )
             return this
         }

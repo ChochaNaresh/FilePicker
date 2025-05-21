@@ -3,8 +3,6 @@ package com.nareshchocha.filepickerlibrary.models
 import android.os.Parcelable
 import androidx.annotation.DrawableRes
 import androidx.annotation.Keep
-import androidx.annotation.LayoutRes
-import androidx.recyclerview.widget.RecyclerView
 import kotlinx.parcelize.Parcelize
 import java.io.File
 
@@ -19,10 +17,14 @@ data class PickerData(
 @Parcelize
 data class PopUpConfig(
     val chooserTitle: String? = null,
-    @LayoutRes val layoutId: Int? = null,
     val mPopUpType: PopUpType? = null,
-    @RecyclerView.Orientation val mOrientation: Int? = null,
+    val mOrientation: Orientation? = null,
 ) : Parcelable
+
+enum class Orientation {
+    HORIZONTAL,
+    VERTICAL
+}
 
 @Parcelize
 data class ImageCaptureConfig(

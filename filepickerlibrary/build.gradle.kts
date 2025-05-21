@@ -31,8 +31,6 @@ android {
     }
 
     buildFeatures {
-        buildConfig = true
-        viewBinding = true
         compose = true
         aidl = false
         buildConfig = false
@@ -51,6 +49,7 @@ android {
 
 dependencies {
 
+    implementation(libs.androidx.startup.runtime)
     // compose
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -60,11 +59,16 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended)
 
+    // timber
+    implementation(libs.timber)
+
 
     // testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    testImplementation(libs.truth)
+    androidTestImplementation(libs.truth)
 
 
     // testing compose
@@ -72,37 +76,6 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-
-
-
-    // Old code
-    // core
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.constraintlayout)
-
-    // timber
-    implementation(libs.timber)
-
-    // Coil
-    implementation(libs.coil)
-    implementation(libs.androidx.startup.runtime)
-
-    // testing
-    testImplementation(libs.junit)
-    testImplementation(libs.truth)
-    androidTestImplementation(libs.truth)
-    androidTestImplementation(libs.androidx.espresso.contrib)
-    androidTestImplementation(libs.androidx.espresso.intents)
-    androidTestImplementation(libs.androidx.rules)
-    androidTestImplementation(libs.androidx.uiautomator)
-    androidTestImplementation(libs.androidx.core.testing)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 }
 
 mavenPublishing {

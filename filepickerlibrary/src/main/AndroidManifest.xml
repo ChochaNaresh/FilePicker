@@ -10,24 +10,19 @@
         android:supportsRtl="true">
         <activity
             android:name=".ui.activitys.PopUpActivity"
-            android:exported="false"
-            android:theme="@style/Theme.FilePicker.Dialog" />
+            android:exported="false" />
         <activity
             android:name=".ui.activitys.MediaFilePickerActivity"
-            android:exported="false"
-            android:theme="@style/Theme.FilePicker.Dialog.NoActionBar" />
+            android:exported="false" />
         <activity
             android:name=".ui.activitys.DocumentFilePickerActivity"
-            android:exported="false"
-            android:theme="@style/Theme.FilePicker.Dialog.NoActionBar" />
+            android:exported="false" />
         <activity
             android:name=".ui.activitys.ImageCaptureActivity"
-            android:exported="false"
-            android:theme="@style/Theme.FilePicker.Dialog.NoActionBar" />
+            android:exported="false" />
         <activity
             android:name=".ui.activitys.VideoCaptureActivity"
-            android:exported="false"
-            android:theme="@style/Theme.FilePicker.Dialog.NoActionBar" />
+            android:exported="false" />
 
         <provider
             android:name=".utilities.CustomFileProvider"
