@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.parcelize)
 }
 
@@ -28,7 +29,11 @@ android {
         }
     }
     buildFeatures {
-        viewBinding = true
+        compose = true
+        aidl = false
+        buildConfig = false
+        renderScript = false
+        shaders = false
     }
 
     compileOptions {
@@ -43,34 +48,37 @@ android {
 }
 
 dependencies {
-    // core
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
 
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.startup.runtime)
+    // compose
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.material.icons.extended)
 
+    implementation("io.coil-kt.coil3:coil-compose:3.2.0")
     // File Picker
-     implementation(project(":filepickerlibrary"))
+    implementation(project(":filepickerlibrary"))
 
     // timber
     implementation(libs.timber)
 
-    // Coil
-    implementation(libs.coil)
-    implementation(libs.androidx.startup.runtime)
-
 
     // testing
     testImplementation(libs.junit)
-    testImplementation(libs.truth)
-    androidTestImplementation(libs.truth)
-    androidTestImplementation(libs.androidx.espresso.contrib)
-    androidTestImplementation(libs.androidx.espresso.intents)
-    androidTestImplementation(libs.androidx.rules)
-    androidTestImplementation(libs.androidx.uiautomator)
-    androidTestImplementation(libs.androidx.core.testing)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    testImplementation(libs.truth)
+    androidTestImplementation(libs.truth)
+
+
+    // testing compose
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
+
 }
