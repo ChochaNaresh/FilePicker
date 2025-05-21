@@ -1,30 +1,31 @@
-import com.android.build.api.dsl.ManagedVirtualDevice
 import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.arturbosch.detekt)
     alias(libs.plugins.maven.publish)
-    id("kotlin-parcelize")
-    id("maven-publish")
-    id("signing")
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.signing)
+    // id("maven-publish")
+    // id("signing")
 }
 
 android {
     namespace = "com.nareshchocha.filepickerlibrary"
-    compileSdk = 35
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = 21
+        minSdk = libs.versions.minSdk.get().toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
-        getByName("release") {
+        release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
+                "proguard-rules.pro"
             )
         }
     }
@@ -32,18 +33,50 @@ android {
     buildFeatures {
         buildConfig = true
         viewBinding = true
+        compose = true
+        aidl = false
+        buildConfig = false
+        renderScript = false
+        shaders = false
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
+        targetCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
     }
+
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+        jvmTarget = JavaVersion.valueOf(libs.versions.jdkVersion.get()).toString()
     }
 }
 
 dependencies {
 
+    // compose
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.material.icons.extended)
+
+
+    // testing
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+
+
+    // testing compose
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
+
+
+
+
+    // Old code
     // core
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

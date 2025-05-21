@@ -1,52 +1,45 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 android {
     namespace = "com.nareshchocha.filepicker"
-    compileSdk = 35
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "com.nareshchocha.filepicker"
-        minSdk = 21
-        targetSdk = 35
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 2
         versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        testInstrumentationRunnerArguments.putAll(
-            mapOf(
-                "clearPackageData" to "true",
-                /*"coverage" to "true",
-                "disableAnalytics" to "true",
-                "useTestStorageService" to "false",
-                "numShards" to numShards,
-                "shardIndex" to shardIndex*/
-            ),
-        )
     }
 
     buildTypes {
-        getByName("release") {
+        release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
+                "proguard-rules.pro"
             )
         }
     }
-
     buildFeatures {
         viewBinding = true
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
+        targetCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
     }
+
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+        jvmTarget = JavaVersion.valueOf(libs.versions.jdkVersion.get()).toString()
     }
+
 }
 
 dependencies {
