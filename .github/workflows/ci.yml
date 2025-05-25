@@ -96,8 +96,8 @@ jobs:
       - name: Publish to Maven Central
         run: ./gradlew publishReleasePublicationToMavenRepository -PVERSION_NAME=${{ env.VERSION_NAME }}
         env:
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          mavenCentralUsername: ${{ secrets.OSSRH_USERNAME }}
+          mavenCentralPassword: ${{ secrets.OSSRH_PASSWORD }}
           SIGNING_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
 
