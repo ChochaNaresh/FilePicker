@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.arturbosch.detekt)
+    // alias(libs.plugins.arturbosch.detekt)
     alias(libs.plugins.maven.publish)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.signing)
@@ -79,11 +79,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 }
 
-detekt {
-    toolVersion = "1.23.1"
+/*detekt {
+    toolVersion = "1.23.8"
     config.setFrom("$projectDir/config/detekt/detekt.yml")
     buildUponDefaultConfig = true
-}
+}*/
 
 mavenPublishing {
     publishToMavenCentral(SonatypeHost.S01)

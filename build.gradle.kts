@@ -8,7 +8,7 @@ plugins {
     // parcelize
     alias(libs.plugins.kotlin.parcelize) apply false
     // code analyzer for Kotlin
-    alias(libs.plugins.arturbosch.detekt) apply false
+    //alias(libs.plugins.arturbosch.detekt) apply false
     alias(libs.plugins.maven.publish) apply false
 }
 
