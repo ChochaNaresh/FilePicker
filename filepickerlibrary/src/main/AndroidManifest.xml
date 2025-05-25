@@ -1,34 +1,73 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
+          ~ FilePicker Library AndroidManifest
+          ~
+          ~ This manifest defines the components of the FilePicker library:
+          ~ - Activities for different file selection methods
+          ~ - FileProvider configuration for secure file sharing
+          ~ - Startup initialization
+          ~
+          ~ The library handles various file operations including:
+          ~ - Media file selection
+          ~ - Document file selection
+          ~ - Image capture
+          ~ - Video capture
+          -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
 
     <application
         android:allowBackup="true"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true">
+        <!--
+            Pop-up activity that likely provides a dialog-style UI
+            for file selection operations
+        -->
         <activity
             android:name=".ui.activitys.PopUpActivity"
-            android:theme="@style/Theme.FilePicker.Dialog"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.FilePicker.Dialog" />
+        <!--
+            Activity for selecting media files (images, audio, video)
+            with a dialog theme
+        -->
         <activity
             android:name=".ui.activitys.MediaFilePickerActivity"
-            android:theme="@style/Theme.FilePicker.Dialog"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.FilePicker.Dialog" />
+        <!--
+            Activity for selecting document files
+            with a dialog theme
+        -->
         <activity
             android:name=".ui.activitys.DocumentFilePickerActivity"
-            android:theme="@style/Theme.FilePicker.Dialog"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.FilePicker.Dialog" />
+        <!--
+            Activity for capturing images from camera
+            with a dialog theme
+        -->
         <activity
             android:name=".ui.activitys.ImageCaptureActivity"
-            android:theme="@style/Theme.FilePicker.Dialog"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.FilePicker.Dialog" />
+        <!--
+            Activity for capturing videos from camera
+            with a dialog theme
+        -->
         <activity
             android:name=".ui.activitys.VideoCaptureActivity"
-            android:theme="@style/Theme.FilePicker.Dialog"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.FilePicker.Dialog" />
 
+        <!--
+            Custom FileProvider implementation for securely sharing files
+            with other apps through content:// URIs rather than file:// URIs
+
+            The authorities value uses the app's package name (applicationId)
+            plus ".library.fileprovider" to create a unique authority
+        -->
         <provider
             android:name=".utilities.CustomFileProvider"
             android:authorities="${applicationId}.library.fileprovider"
@@ -40,11 +79,19 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_picker_library_provider" />
         </provider>
+        <!--
+            AndroidX Startup provider for automatic initialization of components
+            using the App Startup library, which helps optimize app startup time
+        -->
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
             android:exported="false"
             tools:node="merge">
+            <!--
+                Registers TimberInitializer to be initialized at app startup
+                for logging purposes
+            -->
             <meta-data
                 android:name="com.nareshchocha.filepickerlibrary.initializer.TimberInitializer"
                 android:value="androidx.startup" />

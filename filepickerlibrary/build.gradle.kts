@@ -12,6 +12,7 @@ plugins {
     // id("signing")
 }
 
+val versionName = project.findProperty("VERSION_NAME") as String? ?: "0.0.1"
 android {
     namespace = "com.nareshchocha.filepickerlibrary"
     compileSdk = libs.versions.compileSdk.get().toInt()
@@ -78,11 +79,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 }
 
-mavenPublishing {
-    publishToMavenCentral(SonatypeHost.S01, true)
-    signAllPublications()
-}
-
 detekt {
     toolVersion = "1.23.1"
     config.setFrom("$projectDir/config/detekt/detekt.yml")
@@ -90,7 +86,9 @@ detekt {
 }
 
 mavenPublishing {
-    coordinates("io.github.chochanaresh", "filepicker", "0.3.3")
+    publishToMavenCentral(SonatypeHost.S01)
+    signAllPublications()
+    coordinates("io.github.chochanaresh", "filepicker", versionName)
 
     pom {
         name.set("filepicker")
