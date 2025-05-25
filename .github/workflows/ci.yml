@@ -1,0 +1,118 @@
+name: Android CI/CD
+
+on:
+  push:
+    branches: [main, master]
+    tags:
+      - 'v*'  # Only version tags like v1.0.0, v0.1.0-alpha trigger publish
+  pull_request:
+    branches: [main, master]
+
+permissions:
+  contents: write  # Required to create GitHub Releases
+
+jobs:
+  build:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Cache Gradle
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Run unit tests
+        run: ./gradlew testDebugUnitTest
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: '**/build/test-results/testDebugUnitTest/'
+
+      - name: Build library
+        run: ./gradlew build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            **/build/outputs/aar/*.aar
+            **/build/libs/*.jar
+
+  publish:
+    name: Publish Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Extract version from Git tag
+        id: version
+        run: echo "VERSION_NAME=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
+      - name: Detect release type
+        id: release_type
+        run: |
+          if [[ "${GITHUB_REF}" == *alpha* ]]; then
+            echo "release_stage=alpha" >> $GITHUB_OUTPUT
+          elif [[ "${GITHUB_REF}" == *beta* ]]; then
+            echo "release_stage=beta" >> $GITHUB_OUTPUT
+          else
+            echo "release_stage=stable" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Publish to Maven Central
+        run: ./gradlew publishReleasePublicationToMavenRepository -PVERSION_NAME=${{ env.VERSION_NAME }}
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+
+      - name: Upload GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body: |
+            🚀 **Release:** `${{ github.ref_name }}`
+            🏷 **Type:** `${{ steps.release_type.outputs.release_stage }}`
+
+            This release was automatically published from CI.
+          draft: false
+          prerelease: ${{ steps.release_type.outputs.release_stage != 'stable' }}
+          files: |
+            **/build/outputs/aar/*.aar
+            **/build/libs/*.jar
