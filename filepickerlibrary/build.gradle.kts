@@ -1,124 +1,94 @@
-import com.android.build.api.dsl.ManagedVirtualDevice
 import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.jetbrains.kotlin.android)
-    alias(libs.plugins.arturbosch.detekt)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+    // alias(libs.plugins.arturbosch.detekt)
     alias(libs.plugins.maven.publish)
-    id("kotlin-parcelize")
-    id("maven-publish")
-    id("signing")
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.signing)
+    // id("maven-publish")
+    // id("signing")
 }
 
+val versionName = project.findProperty("VERSION_NAME") as String? ?: "0.0.1"
 android {
     namespace = "com.nareshchocha.filepickerlibrary"
-    compileSdk = 35
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = 21
+        minSdk = libs.versions.minSdk.get().toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
-        getByName("release") {
+        release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
+                "proguard-rules.pro"
             )
         }
     }
 
     buildFeatures {
-        buildConfig = true
-        viewBinding = true
+        compose = true
+        aidl = false
+        buildConfig = false
+        renderScript = false
+        shaders = false
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
+        targetCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
     }
+
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+        jvmTarget = JavaVersion.valueOf(libs.versions.jdkVersion.get()).toString()
     }
-    @Suppress("UnstableApiUsage")
-    testOptions {
-        unitTests.isIncludeAndroidResources = true
-        animationsDisabled = false
-        managedDevices {
-            devices {
-
-                maybeCreate<ManagedVirtualDevice>("pixel4api27").apply {
-                    // Use device profiles you typically see in Android Studio.
-                    device = "Pixel 4"
-                    // Use only API levels 27 and higher.
-                    apiLevel = 27
-                    // To include Google services, use "google".
-                    systemImageSource = "google"
-                } // ./gradlew pixel4api27debugAndroidTest
-
-                maybeCreate<ManagedVirtualDevice>("pixel4api28").apply {
-                    // Use device profiles you typically see in Android Studio.
-                    device = "Pixel 4"
-                    // Use only API levels 27 and higher.
-                    apiLevel = 28
-                    // To include Google services, use "google".
-                    systemImageSource = "google"
-                } // ./gradlew pixel4api28debugAndroidTest
-            }
-            groups {
-                maybeCreate("phoneAndTablet").apply {
-                    targetDevices.add(devices["pixel4api27"])
-                    targetDevices.add(devices["pixel4api28"])
-                } // ./gradlew phoneAndTabletGroupdebugAndroidTest
-            }
-        }
-    }
-
 }
 
 dependencies {
 
-    // core
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.startup.runtime)
+    // compose
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.material.icons.extended)
 
     // timber
     implementation(libs.timber)
 
-    // Coil
-    implementation(libs.coil)
-    implementation(libs.androidx.startup.runtime)
 
     // testing
     testImplementation(libs.junit)
-    testImplementation(libs.truth)
-    androidTestImplementation(libs.truth)
-    androidTestImplementation(libs.androidx.espresso.contrib)
-    androidTestImplementation(libs.androidx.espresso.intents)
-    androidTestImplementation(libs.androidx.rules)
-    androidTestImplementation(libs.androidx.uiautomator)
-    androidTestImplementation(libs.androidx.core.testing)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    testImplementation(libs.truth)
+    androidTestImplementation(libs.truth)
+
+
+    // testing compose
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }
 
-mavenPublishing {
-    publishToMavenCentral(SonatypeHost.S01, true)
-    signAllPublications()
-}
-
-detekt {
-    toolVersion = "1.23.1"
+/*detekt {
+    toolVersion = "1.23.8"
     config.setFrom("$projectDir/config/detekt/detekt.yml")
     buildUponDefaultConfig = true
-}
+}*/
 
 mavenPublishing {
-    coordinates("io.github.chochanaresh", "filepicker", "0.3.3")
+    publishToMavenCentral(SonatypeHost.S01)
+    signAllPublications()
+    coordinates("io.github.chochanaresh", "filepicker", versionName)
 
     pom {
         name.set("filepicker")

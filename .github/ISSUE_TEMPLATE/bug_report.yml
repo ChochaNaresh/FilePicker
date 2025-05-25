@@ -1,0 +1,29 @@
+name: Bug Report
+description: File a bug report
+title: "[Bug]: "
+labels: [bug]
+assignees: []
+
+body:
+  - type: textarea
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+      placeholder: The app crashes when...
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: Library Version
+      placeholder: e.g. 1.0.0-beta.1
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Import library
+        2. Call pickFile()
+        3. App crashes

@@ -22,11 +22,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FilePicker"
         tools:targetApi="31">
-      <!--  <activity
-            android:name=".JavaExampleActivity"
-            android:exported="false" />-->
+
         <activity
-            android:name=".JavaExampleActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
