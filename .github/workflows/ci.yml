@@ -92,6 +92,19 @@ jobs:
           else
             echo "release_stage=stable" >> $GITHUB_OUTPUT
           fi
+      - name: Restore gradle.properties
+        env:
+          GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
+        shell: bash
+        run: |
+          mkdir -p ~/.gradle/
+          echo "GRADLE_USER_HOME=${HOME}/.gradle" >> $GITHUB_ENV
+          echo "${GRADLE_PROPERTIES}" > ~/.gradle/gradle.properties
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
 
       - name: Publish to Maven Central
         run: ./gradlew filepickerlibrary:publishAllPublicationsToMavenCentral --no-configuration-cache -PVERSION_NAME=${{ env.VERSION_NAME }}
