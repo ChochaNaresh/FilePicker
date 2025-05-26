@@ -94,7 +94,7 @@ jobs:
           fi
 
       - name: Publish to Maven Central
-        run: ./gradlew publishReleasePublicationToMavenRepository -PVERSION_NAME=${{ env.VERSION_NAME }}
+        run: ./gradlew filepickerlibrary:publishReleasePublicationToMavenRepository -PVERSION_NAME=${{ env.VERSION_NAME }}
         env:
           mavenCentralUsername: ${{ secrets.OSSRH_USERNAME }}
           mavenCentralPassword: ${{ secrets.OSSRH_PASSWORD }}
