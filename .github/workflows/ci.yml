@@ -63,7 +63,7 @@ jobs:
     name: Publish Release
     needs: build
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
 
     steps:
       - name: Checkout code
@@ -112,24 +112,18 @@ jobs:
       - name: Publish to Maven Central
         run: ./gradlew filepickerlibrary:publishAllPublicationsToMavenCentral --no-configuration-cache -PVERSION_NAME=${{ env.VERSION_NAME }}
 
-      - name:  Append release notes to CHANGELOG.md
-        run: |
-          echo "" >> CHANGELOG.md
-          echo "🚀 **Release:** \`${{ github.ref_name }}\`" >> CHANGELOG.md
-          echo "🏷 **Type:** \`${{ steps.release_type.outputs.release_stage }}\`" >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
-          echo "This release was automatically published from CI." >> CHANGELOG.md
-
       - name: Upload GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
-          body_path: CHANGELOG.md
+          body: |
+            🚀 **Release:** `${{ github.ref_name }}`
+            🏷 **Type:** `${{ steps.release_type.outputs.release_stage }}`
+            
+            This release was automatically published from CI.
           draft: false
           prerelease: ${{ steps.release_type.outputs.release_stage != 'stable' }}
           files: |
             **/build/outputs/aar/*.aar
             **/build/libs/*.jar
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
