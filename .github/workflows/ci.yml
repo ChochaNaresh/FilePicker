@@ -63,7 +63,7 @@ jobs:
     name: Publish Release
     needs: build
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
 
     steps:
       - name: Checkout code
@@ -80,7 +80,10 @@ jobs:
 
       - name: Extract version from Git tag
         id: version
-        run: echo "VERSION_NAME=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          VERSION_NAME=${TAG#v}
+          echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
 
       - name: Detect release type
         id: release_type
