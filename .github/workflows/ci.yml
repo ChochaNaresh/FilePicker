@@ -39,7 +39,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Run unit tests
-        run: ./gradlew testDebugUnitTest
+        run: ./gradlew filepickerlibrary:testDebugUnitTest
 
       - name: Upload test results
         if: always()
@@ -49,7 +49,7 @@ jobs:
           path: '**/build/test-results/testDebugUnitTest/'
 
       - name: Build library
-        run: ./gradlew build
+        run: ./gradlew filepickerlibrary:build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -94,7 +94,7 @@ jobs:
           fi
 
       - name: Publish to Maven Central
-        run: ./gradlew filepickerlibrary:publishReleasePublicationToMavenRepository -PVERSION_NAME=${{ env.VERSION_NAME }}
+        run: ./gradlew filepickerlibrary:publishAllPublicationsToMavenCentral --no-configuration-cache -PVERSION_NAME=${{ env.VERSION_NAME }}
         env:
           mavenCentralUsername: ${{ secrets.OSSRH_USERNAME }}
           mavenCentralPassword: ${{ secrets.OSSRH_PASSWORD }}
