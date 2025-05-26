@@ -4,7 +4,7 @@ on:
   push:
     branches: [main, master]
     tags:
-      - 'v*'  # Only version tags like v1.0.0, v0.1.0-alpha trigger publish
+      - '[0-9]*'  # matches 1.0.0, 0.1.0-alpha etc.
   pull_request:
     branches: [main, master]
 
@@ -108,24 +108,25 @@ jobs:
 
       - name: Publish to Maven Central
         run: ./gradlew filepickerlibrary:publishAllPublicationsToMavenCentral --no-configuration-cache -PVERSION_NAME=${{ env.VERSION_NAME }}
-        env:
-          mavenCentralUsername: ${{ secrets.OSSRH_USERNAME }}
-          mavenCentralPassword: ${{ secrets.OSSRH_PASSWORD }}
-          SIGNING_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+
+      - name:  Append release notes to CHANGELOG.md
+        run: |
+          echo "" >> CHANGELOG.md
+          echo "🚀 **Release:** \`${{ github.ref_name }}\`" >> CHANGELOG.md
+          echo "🏷 **Type:** \`${{ steps.release_type.outputs.release_stage }}\`" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "This release was automatically published from CI." >> CHANGELOG.md
 
       - name: Upload GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
-          body: |
-            🚀 **Release:** `${{ github.ref_name }}`
-            🏷 **Type:** `${{ steps.release_type.outputs.release_stage }}`
-
-            This release was automatically published from CI.
+          body_path: CHANGELOG.md
           draft: false
           prerelease: ${{ steps.release_type.outputs.release_stage != 'stable' }}
           files: |
             **/build/outputs/aar/*.aar
             **/build/libs/*.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
