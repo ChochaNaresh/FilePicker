@@ -9,15 +9,16 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -25,18 +26,19 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.models.BaseConfig
 import com.nareshchocha.filepickerlibrary.models.DocumentFilePickerConfig
 import com.nareshchocha.filepickerlibrary.models.ImageCaptureConfig
+import com.nareshchocha.filepickerlibrary.models.Orientation
 import com.nareshchocha.filepickerlibrary.models.PickMediaConfig
 import com.nareshchocha.filepickerlibrary.models.PickerData
+import com.nareshchocha.filepickerlibrary.models.PopUpConfig
 import com.nareshchocha.filepickerlibrary.models.VideoCaptureConfig
 import com.nareshchocha.filepickerlibrary.ui.FilePicker
 import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppDialog
@@ -66,75 +68,153 @@ internal class PopUpActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            if (mPickerData == null) {
+                setCanceledResult()
+                finish()
+                return@setContent
+            }
             val context = LocalContext.current
-            val showDialog =
-                remember { mutableStateOf(mPickerData?.mPopUpConfig?.mPopUpType?.isDialog() == true) }
-            val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
             val items = mPickerData?.listIntents ?: emptyList()
-            val title = mPickerData?.mPopUpConfig?.chooserTitle.takeUnless { it.isNullOrEmpty() }
-                ?: context.getString(R.string.str_choose_option)
 
-            if (showDialog.value) {
-                AppDialog(
-                    modifier = Modifier
-                        .background(
-                            color = MaterialTheme.colorScheme.background,
-                            shape = RoundedCornerShape(Const.CARD_RADIUS.dp)
-                        )
-                        .padding(16.dp),
-                    onDismissRequest = {
-                        setCanceledResult()
-                        finish()
-                    },
-                ) {
-                    Column {
-                        Text(title, style = MaterialTheme.typography.titleLarge)
-                        Spacer(Modifier.height(8.dp))
-                        ItemList(
-                            items = items,
-                            onItemClick = { item ->
-                                handleItemClick(context, item)
-                            }
-                        )
-                    }
-                }
+            if (mPickerData?.mPopUpConfig?.mPopUpType?.isDialog() == true) {
+                LoadDialogUI(
+                    mPopUpConfig = mPickerData?.mPopUpConfig ?: PopUpConfig(),
+                    items = items,
+                    onItemClick = { item ->
+                        handleItemClick(context, item)
+                    })
             } else {
-                ModalBottomSheet(
-                    onDismissRequest = {
-                        setCanceledResult()
-                        finish()
-                    },
-                    dragHandle = null,
-                    sheetState = sheetState,
-                    shape = RoundedCornerShape(
-                        topStart = Const.CARD_RADIUS.dp,
-                        topEnd = Const.CARD_RADIUS.dp
-                    )
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(title, style = MaterialTheme.typography.titleLarge)
-                        Spacer(Modifier.height(8.dp))
-                        ItemList(
-                            items = items,
-                            onItemClick = { item ->
-                                handleItemClick(context, item)
-                            }
-                        )
+                LoadBottomSheetUI(
+                    mPopUpConfig = mPickerData?.mPopUpConfig ?: PopUpConfig(),
+                    items = items,
+                    onItemClick = { item ->
+                        handleItemClick(context, item)
                     }
-                }
+                )
             }
         }
     }
 
     @Composable
-    private fun ItemList(
-        items: List<BaseConfig>,
+    fun LoadDialogUI(
+        mPopUpConfig: PopUpConfig,
+        items: List<BaseConfig> = emptyList(),
         onItemClick: (BaseConfig) -> Unit
     ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(0.dp),
+        val title = mPopUpConfig.chooserTitle ?: stringResource(R.string.str_choose_option)
+        AppDialog(
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colorScheme.background,
+                    shape = RoundedCornerShape(mPopUpConfig.cornerSize.dp)
+                ),
+            onDismissRequest = {
+                setCanceledResult()
+                finish()
+            },
         ) {
-            items.forEach { item ->
+            Column {
+                if (mPopUpConfig.title != null) {
+                    mPopUpConfig.title(title)
+                } else {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+                ItemList(
+                    orientation = mPopUpConfig.mOrientation ?: Orientation.VERTICAL,
+                    items = items,
+                    item = mPopUpConfig.item,
+                    onItemClick = onItemClick
+                )
+            }
+
+        }
+    }
+
+    @Composable
+    fun LoadBottomSheetUI(
+        mPopUpConfig: PopUpConfig,
+        items: List<BaseConfig> = emptyList(),
+        onItemClick: (BaseConfig) -> Unit
+    ) {
+        val sheetState = rememberModalBottomSheetState()
+        val title = mPopUpConfig.chooserTitle ?: stringResource(R.string.str_choose_option)
+        ModalBottomSheet(
+            onDismissRequest = {
+                setCanceledResult()
+                finish()
+            },
+            dragHandle = null,
+            sheetState = sheetState,
+            shape = RoundedCornerShape(
+                topStart = mPopUpConfig.cornerSize.dp,
+                topEnd = mPopUpConfig.cornerSize.dp
+            )
+        ) {
+            Column(modifier = Modifier) {
+                if (mPopUpConfig.title != null) {
+                    mPopUpConfig.title(title)
+                } else {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+                ItemList(
+                    orientation = mPopUpConfig.mOrientation ?: Orientation.VERTICAL,
+                    items = items,
+                    item = mPopUpConfig.item,
+                    onItemClick = onItemClick
+                )
+            }
+        }
+
+    }
+
+
+    @Composable
+    private fun ItemList(
+        modifier: Modifier = Modifier,
+        orientation: Orientation, items: List<BaseConfig>,
+        item: @Composable ((item: BaseConfig) -> Unit)? = null,
+        onItemClick: (BaseConfig) -> Unit
+    ) {
+        if (orientation.isHorizontal()) {
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 6.dp)
+                    .horizontalScroll(rememberScrollState())
+            ) {
+                ItemList(items, item, onItemClick)
+            }
+        } else {
+            Column(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 6.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                ItemList(items, item, onItemClick)
+            }
+        }
+    }
+
+
+    @Composable
+    private fun ItemList(
+        items: List<BaseConfig>,
+        itemView: @Composable ((item: BaseConfig) -> Unit)? = null,
+        onItemClick: (BaseConfig) -> Unit
+    ) {
+        items.forEach { item ->
+            if (itemView != null) {
+                itemView(item)
+            } else {
                 TextButton(
                     onClick = { onItemClick(item) },
                 ) {

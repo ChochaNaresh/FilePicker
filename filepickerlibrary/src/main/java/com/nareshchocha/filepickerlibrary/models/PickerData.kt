@@ -1,8 +1,11 @@
 package com.nareshchocha.filepickerlibrary.models
 
+import android.graphics.drawable.shapes.Shape
 import android.os.Parcelable
 import androidx.annotation.DrawableRes
 import androidx.annotation.Keep
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.Dp
 import kotlinx.parcelize.Parcelize
 import java.io.File
 
@@ -19,11 +22,17 @@ data class PopUpConfig(
     val chooserTitle: String? = null,
     val mPopUpType: PopUpType? = null,
     val mOrientation: Orientation? = null,
+    val cornerSize: Float = 8f,
+    val title: @Composable ((title: String) -> Unit)? = null,
+    val item: @Composable ((item: BaseConfig) -> Unit)? = null,
 ) : Parcelable
 
 enum class Orientation {
     HORIZONTAL,
-    VERTICAL
+    VERTICAL;
+
+    fun isHorizontal() = this == HORIZONTAL
+    fun isVertical() = this == VERTICAL
 }
 
 @Parcelize
