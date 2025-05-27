@@ -8,6 +8,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -37,6 +39,7 @@ import com.nareshchocha.filepickerlibrary.models.PickMediaConfig
 import com.nareshchocha.filepickerlibrary.models.PickerData
 import com.nareshchocha.filepickerlibrary.models.VideoCaptureConfig
 import com.nareshchocha.filepickerlibrary.ui.FilePicker
+import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppDialog
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.extentions.setCanceledResult
 
@@ -72,23 +75,29 @@ internal class PopUpActivity : ComponentActivity() {
                 ?: context.getString(R.string.str_choose_option)
 
             if (showDialog.value) {
-                AlertDialog(
+                AppDialog(
+                    modifier = Modifier
+                        .background(
+                            color = MaterialTheme.colorScheme.background,
+                            shape = RoundedCornerShape(Const.CARD_RADIUS.dp)
+                        )
+                        .padding(16.dp),
                     onDismissRequest = {
                         setCanceledResult()
                         finish()
                     },
-                    title = { Text(title) },
-                    text = {
+                ) {
+                    Column {
+                        Text(title, style = MaterialTheme.typography.titleLarge)
+                        Spacer(Modifier.height(8.dp))
                         ItemList(
                             items = items,
                             onItemClick = { item ->
                                 handleItemClick(context, item)
                             }
                         )
-                    },
-                    confirmButton = {},
-                    shape = RoundedCornerShape(Const.CARD_RADIUS.dp)
-                )
+                    }
+                }
             } else {
                 ModalBottomSheet(
                     onDismissRequest = {
@@ -122,12 +131,12 @@ internal class PopUpActivity : ComponentActivity() {
         items: List<BaseConfig>,
         onItemClick: (BaseConfig) -> Unit
     ) {
-        Column {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(0.dp),
+        ) {
             items.forEach { item ->
                 TextButton(
                     onClick = { onItemClick(item) },
-                    modifier = Modifier
-                        .padding(vertical = 2.dp)
                 ) {
                     Row {
                         val iconRes = item.popUpIcon
