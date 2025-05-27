@@ -86,7 +86,7 @@ dependencies {
 }*/
 
 mavenPublishing {
-    publishToMavenCentral(SonatypeHost.S01)
+    publishToMavenCentral(SonatypeHost.S01,true)
     signAllPublications()
     coordinates("io.github.chochanaresh", "filepicker", versionName)
 
