@@ -11,17 +11,25 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.Keep
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.models.ImageCaptureConfig
 import com.nareshchocha.filepickerlibrary.picker.PickerUtils.createFileGetUri
 import com.nareshchocha.filepickerlibrary.picker.PickerUtils.createMediaFileFolder
+import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppAlertDialog
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const.DefaultPaths.defaultFolder
 import com.nareshchocha.filepickerlibrary.utilities.extentions.getImageCaptureIntent
@@ -59,169 +67,213 @@ internal class ImageCaptureActivity : ComponentActivity() {
 
             val imageCaptureLauncher =
                 rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                    if (result.resultCode == Activity.RESULT_OK) {
-                        Timber.tag(Const.LogTag.FILE_RESULT)
-                            .v("File Uri ::: ${imageFileUri?.toString()}")
-                        Timber.tag(Const.LogTag.FILE_RESULT).v("filePath ::: ${imageFile?.absoluteFile}")
-                        Timber.tag(Const.LogTag.FILE_RESULT).v("file read:: ${imageFile?.canRead()}")
-                        setSuccessResult(imageFileUri, imageFile?.absolutePath, true)
-                    } else {
-                        Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
-                            .v(getString(R.string.err_capture_error, "imageCapture"))
-                        setCanceledResult(getString(R.string.err_capture_error, "imageCapture"))
-                    }
-                    finish()
+                    handleImageCaptureResult(result.resultCode)
                 }
 
             val permissionLauncher =
                 rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
-                    val allGranted = result.all { permission ->
-                        ContextCompat.checkSelfPermission(
-                            context,
-                            permission.key,
-                        ) == PackageManager.PERMISSION_GRANTED
-                    }
-                    val isShowRationale = result.any { permission ->
-                        ActivityCompat.shouldShowRequestPermissionRationale(
-                            this,
-                            permission.key,
-                        )
-                    }
-                    if (allGranted) {
-                        launchCamera(context, imageCaptureLauncher)
-                    } else if (isShowRationale) {
-                        showAskDialog = true
-                    } else {
-                        showGotoSettingDialog = true
+                    handlePermissionResult(
+                        result,
+                        context,
+                        imageCaptureLauncher
+                    ) { askDialog, settingDialog ->
+                        showAskDialog = askDialog
+                        showGotoSettingDialog = settingDialog
                     }
                 }
 
             val settingLauncher =
                 rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                    val allGranted = getPermissionsList(context).all { permission ->
-                        ContextCompat.checkSelfPermission(
-                            context,
-                            permission,
-                        ) == PackageManager.PERMISSION_GRANTED
-                    }
-                    if (allGranted) {
-                        launchCamera(context, imageCaptureLauncher)
-                    } else {
-                        setCanceledResult(getString(R.string.err_permission_result))
-                        finish()
-                    }
+                    checkPermissionsAndLaunchCamera(context, imageCaptureLauncher)
                 }
 
             // Initial permission check
             LaunchedEffect(Unit) {
                 if (!permissionRequested) {
                     permissionRequested = true
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q || getPermissionsList(context).isNotEmpty()) {
+                    checkAndRequestPermissions(
+                        context,
+                        permissionLauncher = {
                             permissionLauncher.launch(getPermissionsList(context).toTypedArray())
-                        } else {
+                        },
+                        launchCamera = {
                             launchCamera(context, imageCaptureLauncher)
-                        }
-                    } else {
-                        launchCamera(context, imageCaptureLauncher)
-                    }
+                        },
+                    )
                 }
             }
-
             // Ask Permission Dialog
             if (showAskDialog) {
-                AlertDialog(
-                    onDismissRequest = {
-                        setCanceledResult(getString(R.string.err_permission_result))
-                        finish()
-                    },
-                    title = {
-                        Text(
-                            mImageCaptureConfig?.askPermissionTitle
-                                ?: getString(R.string.err_permission_denied)
-                        )
-                    },
-                    text = {
-                        Text(
-                            mImageCaptureConfig?.askPermissionMessage ?: getString(
-                                R.string.err_write_storage_permission,
-                                getPermissionsListString(context),
-                            )
-                        )
-                    },
-                    confirmButton = {
-                        TextButton(onClick = {
-                            showAskDialog = false
-                            permissionLauncher.launch(getPermissionsList(context).toTypedArray())
-                        }) { Text(getString(android.R.string.ok)) }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = {
-                            setCanceledResult(getString(R.string.err_permission_result))
-                            finish()
-                        }) { Text(getString(android.R.string.cancel)) }
-                    }
-                )
+                PermissionDialog(context, onConfirm = {
+                    showAskDialog = false
+                    permissionLauncher.launch(getPermissionsList(context).toTypedArray())
+                }, onDismiss = {
+                    setCanceledResult(getString(R.string.err_permission_result))
+                    finish()
+                })
             }
 
             // Go to Setting Dialog
             if (showGotoSettingDialog) {
-                AlertDialog(
-                    onDismissRequest = {
-                        setCanceledResult(getString(R.string.err_permission_result))
-                        finish()
-                    },
-                    title = {
-                        Text(
-                            mImageCaptureConfig?.settingPermissionTitle
-                                ?: getString(R.string.err_permission_denied)
-                        )
-                    },
-                    text = {
-                        Text(
-                            mImageCaptureConfig?.settingPermissionMessage ?: getString(
-                                R.string.err_write_storage_setting,
-                                getPermissionsListString(context),
-                            )
-                        )
-                    },
-                    confirmButton = {
-                        TextButton(onClick = {
-                            showGotoSettingDialog = false
-                            settingLauncher.launch(getSettingIntent())
-                        }) { Text(getString(R.string.str_go_to_setting)) }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = {
-                            setCanceledResult(getString(R.string.err_permission_result))
-                            finish()
-                        }) { Text(getString(android.R.string.cancel)) }
-                    }
-                )
+                SettingDialog(context, onConfirm = {
+                    showGotoSettingDialog = false
+                    settingLauncher.launch(getSettingIntent())
+                }, onDismiss = {
+                    setCanceledResult(getString(R.string.err_permission_result))
+                    finish()
+                })
             }
         }
     }
 
+
+    private fun checkAndRequestPermissions(
+        context: Context,
+        permissionLauncher: (Array<String>) -> Unit,
+        launchCamera: () -> Unit
+    ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val permissionsList = getPermissionsList(context)
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q || permissionsList.isNotEmpty()) {
+                permissionLauncher(permissionsList.toTypedArray())
+            } else {
+                launchCamera()
+            }
+        } else {
+            launchCamera()
+        }
+    }
+
+    private fun checkPermissionsAndLaunchCamera(
+        context: Context,
+        imageCaptureLauncher: ActivityResultLauncher<Intent>
+    ) {
+        val allGranted = getPermissionsList(context).all { permission ->
+            ContextCompat.checkSelfPermission(
+                context,
+                permission,
+            ) == PackageManager.PERMISSION_GRANTED
+        }
+
+        if (allGranted) {
+            launchCamera(context, imageCaptureLauncher)
+        } else {
+            setCanceledResult(getString(R.string.err_permission_result))
+            finish()
+        }
+    }
+
+    private fun handlePermissionResult(
+        result: Map<String, Boolean>,
+        context: Context,
+        imageCaptureLauncher: ActivityResultLauncher<Intent>,
+        onShowDialog: (askDialog: Boolean, settingDialog: Boolean) -> Unit
+    ) {
+        val allGranted = result.all { permission ->
+            ContextCompat.checkSelfPermission(
+                context,
+                permission.key,
+            ) == PackageManager.PERMISSION_GRANTED
+        }
+
+        val isShowRationale = result.any { permission ->
+            ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                permission.key,
+            )
+        }
+
+        if (allGranted) {
+            launchCamera(context, imageCaptureLauncher)
+        } else if (isShowRationale) {
+            onShowDialog(true, false)
+        } else {
+            onShowDialog(false, true)
+        }
+    }
+
+    private fun handleImageCaptureResult(resultCode: Int) {
+        if (resultCode == RESULT_OK) {
+            Timber.tag(Const.LogTag.FILE_RESULT)
+                .v("File Uri ::: ${imageFileUri?.toString()}")
+            Timber.tag(Const.LogTag.FILE_RESULT)
+                .v("filePath ::: ${imageFile?.absoluteFile}")
+            Timber.tag(Const.LogTag.FILE_RESULT)
+                .v("file read:: ${imageFile?.canRead()}")
+            setSuccessResult(imageFileUri, imageFile?.absolutePath, true)
+        } else {
+            Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
+                .v(getString(R.string.err_capture_error, "imageCapture"))
+            setCanceledResult(getString(R.string.err_capture_error, "imageCapture"))
+        }
+        finish()
+    }
+
+    @Composable
+    private fun PermissionDialog(
+        context: Context,
+        onConfirm: () -> Unit,
+        onDismiss: () -> Unit,
+    ) {
+        AppAlertDialog(
+            onDismissRequest = {
+                setCanceledResult(getString(R.string.err_permission_result))
+                finish()
+            },
+            title = mImageCaptureConfig?.askPermissionTitle
+                ?: stringResource(R.string.err_permission_denied),
+            message = mImageCaptureConfig?.askPermissionMessage ?: stringResource(
+                R.string.err_write_storage_permission,
+                getPermissionsListString(context),
+            ),
+            onConfirm = onConfirm,
+            onDismiss = onDismiss
+        )
+    }
+
+    @Composable
+    private fun SettingDialog(
+        context: Context,
+        onConfirm: () -> Unit,
+        onDismiss: () -> Unit,
+    ) {
+        AppAlertDialog(
+            onDismissRequest = {
+                setCanceledResult(getString(R.string.err_permission_result))
+                finish()
+            },
+            title = mImageCaptureConfig?.settingPermissionTitle
+                ?: stringResource(R.string.err_permission_denied),
+            message = mImageCaptureConfig?.settingPermissionMessage ?: getString(
+                R.string.err_write_storage_setting,
+                getPermissionsListString(context),
+            ),
+            onConfirm = onConfirm,
+            onDismiss = onDismiss
+        )
+    }
+
+
     private fun launchCamera(
         context: Context,
-        imageCaptureLauncher: androidx.activity.result.ActivityResultLauncher<Intent>
+        imageCaptureLauncher: ActivityResultLauncher<Intent>
     ) {
         imageFileUri = if (mImageCaptureConfig != null) {
             imageFile = createMediaFileFolder(
-                folderFile = mImageCaptureConfig!!.mFolder ?: defaultFolder(),
+                folderFile = mImageCaptureConfig!!.mFolder ?: context.defaultFolder(),
                 fileName = mImageCaptureConfig!!.fileName ?: Const.DefaultPaths.defaultImageFile(),
             )
-            createFileGetUri(imageFile!!)
+            context.createFileGetUri(imageFile!!)
         } else {
             imageFile = createMediaFileFolder(
-                folderFile = defaultFolder(),
+                folderFile = context.defaultFolder(),
                 fileName = Const.DefaultPaths.defaultImageFile(),
             )
-            createFileGetUri(imageFile!!)
+            context.createFileGetUri(imageFile!!)
         }
         imageFileUri?.let {
             imageCaptureLauncher.launch(
-                getImageCaptureIntent(
+                context.getImageCaptureIntent(
                     it,
                     mImageCaptureConfig?.isUseRearCamera ?: true
                 )

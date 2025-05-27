@@ -5,13 +5,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.nareshchocha.filepickerlibrary.R
 
 @Composable
 fun AppAlertDialog(
     title: String,
     message: String,
-    confirmText: String = "OK",
-    dismissText: String = "Cancel",
+    confirmText: String = stringResource(R.string.str_ok),
+    dismissText: String = stringResource(R.string.str_cancel),
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     onDismissRequest: () -> Unit = onDismiss,
