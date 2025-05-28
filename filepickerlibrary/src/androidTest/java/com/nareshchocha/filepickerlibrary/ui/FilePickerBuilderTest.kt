@@ -41,7 +41,7 @@ class FilePickerBuilderTest {
             @Suppress("DEPRECATION")
             intentActivity.getParcelableExtra(Const.BundleInternalExtras.IMAGE_CAPTURE) as ImageCaptureConfig?
         }
-        assertThat(data).isEqualTo(mImageCaptureConfig)
+        assertThat(data).isSameInstanceAs(mImageCaptureConfig)
     }
 
     @Test
@@ -57,7 +57,7 @@ class FilePickerBuilderTest {
             @Suppress("DEPRECATION")
             intentActivity.getParcelableExtra(Const.BundleInternalExtras.VIDEO_CAPTURE) as VideoCaptureConfig?
         }
-        assertThat(data).isEqualTo(mVideoCaptureConfig)
+        assertThat(data).isSameInstanceAs(mVideoCaptureConfig)
     }
 
     @Test
@@ -73,7 +73,7 @@ class FilePickerBuilderTest {
             @Suppress("DEPRECATION")
             intentActivity.getParcelableExtra(Const.BundleInternalExtras.PICK_MEDIA) as PickMediaConfig?
         }
-        assertThat(data).isEqualTo(mPickMediaConfig)
+        assertThat(data).isSameInstanceAs(mPickMediaConfig)
     }
 
     @Test
@@ -90,6 +90,6 @@ class FilePickerBuilderTest {
             @Suppress("DEPRECATION")
             intentActivity.getParcelableExtra(Const.BundleInternalExtras.PICK_DOCUMENT) as DocumentFilePickerConfig?
         }
-        assertThat(data).isEqualTo(mDocumentFilePickerConfig)
+        assertThat(data).isSameInstanceAs(mDocumentFilePickerConfig)
     }
 }
