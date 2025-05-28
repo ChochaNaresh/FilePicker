@@ -50,27 +50,27 @@ internal object PickerUtils {
      */
     @Keep
     fun Context.createFileGetUri(mFile: File): Uri? {
+        var uri: Uri? = null
         if (!mFile.exists()) {
             try {
                 mFile.createNewFile()
             } catch (e: IOException) {
                 Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
                     .e(e, "IO exception creating file: ${mFile.path}")
-                return null
             } catch (e: SecurityException) {
                 Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
                     .e(e, "Security exception creating file: ${mFile.path}")
-                return null
             }
         }
-
-        return try {
-            getUriForFile(mFile)
-        } catch (e: Exception) {
-            Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
-                .e(e, "Failed to get URI for file: ${mFile.path}")
-            null
+        if (mFile.exists()) {
+            try {
+                uri = getUriForFile(mFile)
+            } catch (e: IOException) {
+                Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
+                    .e(e, "Failed to get URI for file: ${mFile.path}")
+            }
         }
+        return uri
     }
 
     /**

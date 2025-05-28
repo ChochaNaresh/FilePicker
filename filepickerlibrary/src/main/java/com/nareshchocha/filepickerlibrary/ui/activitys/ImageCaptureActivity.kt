@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.app.ActivityCompat
@@ -60,72 +61,78 @@ internal class ImageCaptureActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val context = LocalContext.current
-            var showAskDialog by remember { mutableStateOf(false) }
-            var showGotoSettingDialog by remember { mutableStateOf(false) }
-            var permissionRequested by remember { mutableStateOf(false) }
-
-            val imageCaptureLauncher =
-                rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                    handleImageCaptureResult(result.resultCode)
-                }
-
-            val permissionLauncher =
-                rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
-                    handlePermissionResult(
-                        result,
-                        context,
-                        imageCaptureLauncher
-                    ) { askDialog, settingDialog ->
-                        showAskDialog = askDialog
-                        showGotoSettingDialog = settingDialog
-                    }
-                }
-
-            val settingLauncher =
-                rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                    checkPermissionsAndLaunchCamera(context, imageCaptureLauncher)
-                }
-
-            // Initial permission check
-            LaunchedEffect(Unit) {
-                if (!permissionRequested) {
-                    permissionRequested = true
-                    checkAndRequestPermissions(
-                        context,
-                        permissionLauncher = {
-                            permissionLauncher.launch(getPermissionsList(context).toTypedArray())
-                        },
-                        launchCamera = {
-                            launchCamera(context, imageCaptureLauncher)
-                        },
-                    )
-                }
-            }
-            // Ask Permission Dialog
-            if (showAskDialog) {
-                PermissionDialog(context, onConfirm = {
-                    showAskDialog = false
-                    permissionLauncher.launch(getPermissionsList(context).toTypedArray())
-                }, onDismiss = {
-                    setCanceledResult(getString(R.string.err_permission_result))
-                    finish()
-                })
-            }
-
-            // Go to Setting Dialog
-            if (showGotoSettingDialog) {
-                SettingDialog(context, onConfirm = {
-                    showGotoSettingDialog = false
-                    settingLauncher.launch(getSettingIntent())
-                }, onDismiss = {
-                    setCanceledResult(getString(R.string.err_permission_result))
-                    finish()
-                })
-            }
+            SetUI()
         }
     }
 
+
+    @Composable
+    fun SetUI() {
+        val context = LocalContext.current
+        var showAskDialog by remember { mutableStateOf(false) }
+        var showGotoSettingDialog by remember { mutableStateOf(false) }
+        var permissionRequested by remember { mutableStateOf(false) }
+
+        val imageCaptureLauncher =
+            rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                handleImageCaptureResult(result.resultCode)
+            }
+
+        val permissionLauncher =
+            rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
+                handlePermissionResult(
+                    result,
+                    context,
+                    imageCaptureLauncher
+                ) { askDialog, settingDialog ->
+                    showAskDialog = askDialog
+                    showGotoSettingDialog = settingDialog
+                }
+            }
+
+        val settingLauncher =
+            rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                checkPermissionsAndLaunchCamera(context, imageCaptureLauncher)
+            }
+
+        // Initial permission check
+        LaunchedEffect(Unit) {
+            if (!permissionRequested) {
+                permissionRequested = true
+                checkAndRequestPermissions(
+                    context,
+                    permissionLauncher = {
+                        permissionLauncher.launch(getPermissionsList(context).toTypedArray())
+                    },
+                    launchCamera = {
+                        launchCamera(context, imageCaptureLauncher)
+                    },
+                )
+            }
+        }
+        // Ask Permission Dialog
+        if (showAskDialog) {
+            PermissionDialog(context, onConfirm = {
+                showAskDialog = false
+                permissionLauncher.launch(getPermissionsList(context).toTypedArray())
+            }, onDismiss = {
+                setCanceledResult(getString(R.string.err_permission_result))
+                finish()
+            })
+        }
+
+        // Go to Setting Dialog
+        if (showGotoSettingDialog) {
+            SettingDialog(context, onConfirm = {
+                showGotoSettingDialog = false
+                settingLauncher.launch(getSettingIntent())
+            }, onDismiss = {
+                setCanceledResult(getString(R.string.err_permission_result))
+                finish()
+            })
+        }
+
+    }
 
     private fun checkAndRequestPermissions(
         context: Context,

@@ -61,14 +61,16 @@ internal object FileUtils {
                 context.copyFileToInternalStorage(uri)
             }
         }
-        filePath?.let {
+        return if (filePath != null) {
             val file = File(filePath)
-            return if (file.canRead()) {
+            if (file.canRead()) {
                 file.absolutePath
             } else {
                 context.copyFileToInternalStorage(uri)
             }
-        } ?: return null
+        } else {
+            null
+        }
     }
 
     private fun getDocumentUri(context: Context, uri: Uri) = when {
