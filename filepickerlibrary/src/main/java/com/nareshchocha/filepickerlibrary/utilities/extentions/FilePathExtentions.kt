@@ -120,7 +120,7 @@ internal fun Context.getDriveFilePath(uri: Uri): String? {
     val nameIndex = returnCursor?.getColumnIndex(OpenableColumns.DISPLAY_NAME) ?: return null
     returnCursor.moveToFirst()
     val name = returnCursor.getString(nameIndex)
-    val file = File(cacheDir, name)
+    val file = File(cacheDir, sanitizeFileName(name))
     returnCursor.close()
     return try {
         val inputStream: InputStream? = contentResolver.openInputStream(uri)
@@ -142,6 +142,31 @@ internal fun Context.getDriveFilePath(uri: Uri): String? {
 
 }
 
+/**
+ * Sanitizes a filename to prevent directory traversal attacks and other security issues
+ */
+private fun sanitizeFileName(fileName: String): String {
+    // Remove any path components that could cause directory traversal
+    val name = fileName.replace("[\\\\/:*?\"<>|]".toRegex(), "_")
+
+    // Limit filename length if needed
+    return if (name.length > FILE_NAME_LENGTH) {
+        val extension = name.substringAfterLast('.', "")
+        val baseName = name.substringBeforeLast('.')
+        val maxBaseLength =
+            FILE_NAME_LENGTH - extension.length - (if (extension.isNotEmpty()) 1 else 0)
+        if (extension.isNotEmpty()) {
+            "${baseName.take(maxBaseLength)}.$extension"
+        } else {
+            baseName.take(maxBaseLength)
+        }
+    } else {
+        name
+    }
+}
+
+const val FILE_NAME_LENGTH = 255
+
 
 /***
  * Used for Android Q+
@@ -160,7 +185,7 @@ internal fun Context.copyFileToInternalStorage(
     )
     val nameIndex = returnCursor?.getColumnIndex(OpenableColumns.DISPLAY_NAME) ?: return null
     returnCursor.moveToFirst()
-    val name = returnCursor.getString(nameIndex)
+    val name = sanitizeFileName(returnCursor.getString(nameIndex))
     returnCursor.close()
     val output: File = if (newDirName != "") {
         val dir = File(cacheDir, newDirName)

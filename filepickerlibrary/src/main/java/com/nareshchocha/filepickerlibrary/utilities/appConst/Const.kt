@@ -36,7 +36,7 @@ object Const {
         /** Tag for file picker error logs. */
         const val FILE_PICKER_ERROR = "FILE_PICKER_ERROR ::"
         /** Tag for file picker exception logs. */
-        const val FILE_PICKER_EXCEPTION = "FILE_PICKER_EXCEPTION ::"
+        const val FILE_PICKER_EXCEPTION = "FILE_PICKER_EXCEPTION :"
     }
 
     /**

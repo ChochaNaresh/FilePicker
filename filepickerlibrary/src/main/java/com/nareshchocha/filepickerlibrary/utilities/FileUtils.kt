@@ -18,6 +18,7 @@ import com.nareshchocha.filepickerlibrary.utilities.extentions.isGoogleDriveUri
 import com.nareshchocha.filepickerlibrary.utilities.extentions.isGooglePhotosUri
 import com.nareshchocha.filepickerlibrary.utilities.extentions.isMediaDocument
 import java.io.File
+import androidx.core.net.toUri
 
 @Keep
 internal object FileUtils {
@@ -61,14 +62,16 @@ internal object FileUtils {
                 context.copyFileToInternalStorage(uri)
             }
         }
-        filePath?.let {
+        return if (filePath != null) {
             val file = File(filePath)
-            return if (file.canRead()) {
+            if (file.canRead()) {
                 file.absolutePath
             } else {
                 context.copyFileToInternalStorage(uri)
             }
-        } ?: return null
+        } else {
+            null
+        }
     }
 
     private fun getDocumentUri(context: Context, uri: Uri) = when {
@@ -117,7 +120,7 @@ internal object FileUtils {
         for (contentUriPrefix in contentUriPrefixesToTry) {
             try {
                 val contentUri = ContentUris.withAppendedId(
-                    Uri.parse(contentUriPrefix),
+                    contentUriPrefix.toUri(),
                     java.lang.Long.valueOf(id)
                 )
                 filePath = getDataColumn(this, contentUri, null, null)

@@ -44,17 +44,7 @@ class FilePicker private constructor() {
         @Keep
         fun addImageCapture(mImageCaptureConfig: ImageCaptureConfig? = null): Builder {
             listIntents.add(
-                ImageCaptureConfig(
-                    popUpIcon = mImageCaptureConfig?.popUpIcon ?: R.drawable.ic_camera,
-                    popUpText = mImageCaptureConfig?.popUpText ?: "Camera",
-                    mFolder = mImageCaptureConfig?.mFolder,
-                    fileName = mImageCaptureConfig?.fileName
-                        ?: Const.DefaultPaths.defaultImageFile(),
-                    askPermissionTitle = mImageCaptureConfig?.askPermissionTitle,
-                    askPermissionMessage = mImageCaptureConfig?.askPermissionMessage,
-                    settingPermissionTitle = mImageCaptureConfig?.settingPermissionTitle,
-                    settingPermissionMessage = mImageCaptureConfig?.settingPermissionMessage,
-                ),
+                mImageCaptureConfig?: ImageCaptureConfig(),
             )
             return this
         }
@@ -62,20 +52,7 @@ class FilePicker private constructor() {
         @Keep
         fun addVideoCapture(mVideoCaptureConfig: VideoCaptureConfig? = null): Builder {
             listIntents.add(
-                VideoCaptureConfig(
-                    popUpIcon = mVideoCaptureConfig?.popUpIcon ?: R.drawable.ic_video,
-                    popUpText = mVideoCaptureConfig?.popUpText ?: "Video",
-                    mFolder = mVideoCaptureConfig?.mFolder,
-                    fileName = mVideoCaptureConfig?.fileName
-                        ?: Const.DefaultPaths.defaultVideoFile(),
-                    maxSeconds = mVideoCaptureConfig?.maxSeconds,
-                    maxSizeLimit = mVideoCaptureConfig?.maxSizeLimit,
-                    isHighQuality = mVideoCaptureConfig?.isHighQuality,
-                    askPermissionTitle = mVideoCaptureConfig?.askPermissionTitle,
-                    askPermissionMessage = mVideoCaptureConfig?.askPermissionMessage,
-                    settingPermissionTitle = mVideoCaptureConfig?.settingPermissionTitle,
-                    settingPermissionMessage = mVideoCaptureConfig?.settingPermissionMessage,
-                ),
+                mVideoCaptureConfig?:VideoCaptureConfig(),
             )
             return this
         }
@@ -83,48 +60,14 @@ class FilePicker private constructor() {
         @Keep
         fun addPickMedia(mPickMediaConfig: PickMediaConfig? = null): Builder {
             listIntents.add(
-                PickMediaConfig(
-                    popUpIcon = mPickMediaConfig?.popUpIcon ?: R.drawable.ic_media,
-                    popUpText = mPickMediaConfig?.popUpText ?: "Pick Media",
-                    allowMultiple = mPickMediaConfig?.allowMultiple ?: false,
-                    maxFiles = mPickMediaConfig?.maxFiles
-                        ?: if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            MediaStore.getPickImagesMaxLimit()
-                        } else {
-                            Int.MAX_VALUE
-                        },
-                    mPickMediaType = mPickMediaConfig?.mPickMediaType
-                        ?: PickMediaType.ImageAndVideo,
-                    askPermissionTitle = mPickMediaConfig?.askPermissionTitle,
-                    askPermissionMessage = mPickMediaConfig?.askPermissionMessage,
-                    settingPermissionTitle = mPickMediaConfig?.settingPermissionTitle,
-                    settingPermissionMessage = mPickMediaConfig?.settingPermissionMessage,
-                ),
+                mPickMediaConfig ?: PickMediaConfig(),
             )
             return this
         }
 
         @Keep
         fun addPickDocumentFile(mDocumentFilePickerConfig: DocumentFilePickerConfig? = null): Builder {
-            listIntents.add(
-                DocumentFilePickerConfig(
-                    popUpIcon = mDocumentFilePickerConfig?.popUpIcon ?: R.drawable.ic_file,
-                    popUpText = mDocumentFilePickerConfig?.popUpText ?: "File Media",
-                    allowMultiple = mDocumentFilePickerConfig?.allowMultiple ?: false,
-                    maxFiles = mDocumentFilePickerConfig?.maxFiles
-                        ?: if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            MediaStore.getPickImagesMaxLimit()
-                        } else {
-                            Int.MAX_VALUE
-                        },
-                    mMimeTypes = mDocumentFilePickerConfig?.mMimeTypes ?: listOf("*/*"),
-                    askPermissionTitle = mDocumentFilePickerConfig?.askPermissionTitle,
-                    askPermissionMessage = mDocumentFilePickerConfig?.askPermissionMessage,
-                    settingPermissionTitle = mDocumentFilePickerConfig?.settingPermissionTitle,
-                    settingPermissionMessage = mDocumentFilePickerConfig?.settingPermissionMessage,
-
-                    ),
-            )
+            listIntents.add(mDocumentFilePickerConfig ?: DocumentFilePickerConfig())
             return this
         }
 
@@ -132,83 +75,28 @@ class FilePicker private constructor() {
         fun imageCaptureBuild(mImageCaptureConfig: ImageCaptureConfig? = null): Intent =
             ImageCaptureActivity.getInstance(
                 context,
-                ImageCaptureConfig(
-                    popUpIcon = mImageCaptureConfig?.popUpIcon ?: R.drawable.ic_camera,
-                    popUpText = mImageCaptureConfig?.popUpText ?: "Camera",
-                    mFolder = mImageCaptureConfig?.mFolder,
-                    fileName = mImageCaptureConfig?.fileName
-                        ?: Const.DefaultPaths.defaultImageFile(),
-                    isUseRearCamera = mImageCaptureConfig?.isUseRearCamera ?: true,
-                    askPermissionTitle = mImageCaptureConfig?.askPermissionTitle,
-                    askPermissionMessage = mImageCaptureConfig?.askPermissionMessage,
-                    settingPermissionTitle = mImageCaptureConfig?.settingPermissionTitle,
-                    settingPermissionMessage = mImageCaptureConfig?.settingPermissionMessage,
-                ),
+                mImageCaptureConfig,
             )
 
         @Keep
         fun videoCaptureBuild(mVideoCaptureConfig: VideoCaptureConfig? = null): Intent =
             VideoCaptureActivity.getInstance(
                 context,
-                VideoCaptureConfig(
-                    popUpIcon = mVideoCaptureConfig?.popUpIcon ?: R.drawable.ic_video,
-                    popUpText = mVideoCaptureConfig?.popUpText ?: "Video",
-                    mFolder = mVideoCaptureConfig?.mFolder,
-                    fileName = mVideoCaptureConfig?.fileName
-                        ?: Const.DefaultPaths.defaultVideoFile(),
-                    maxSeconds = mVideoCaptureConfig?.maxSeconds,
-                    maxSizeLimit = mVideoCaptureConfig?.maxSizeLimit,
-                    isHighQuality = mVideoCaptureConfig?.isHighQuality,
-                    askPermissionTitle = mVideoCaptureConfig?.askPermissionTitle,
-                    askPermissionMessage = mVideoCaptureConfig?.askPermissionMessage,
-                    settingPermissionTitle = mVideoCaptureConfig?.settingPermissionTitle,
-                    settingPermissionMessage = mVideoCaptureConfig?.settingPermissionMessage,
-                ),
+                mVideoCaptureConfig,
             )
 
         @Keep
         fun pickMediaBuild(mPickMediaConfig: PickMediaConfig? = null): Intent =
             MediaFilePickerActivity.getInstance(
                 context,
-                PickMediaConfig(
-                    popUpIcon = mPickMediaConfig?.popUpIcon ?: R.drawable.ic_media,
-                    popUpText = mPickMediaConfig?.popUpText ?: "Pick Media",
-                    allowMultiple = mPickMediaConfig?.allowMultiple ?: false,
-                    maxFiles = mPickMediaConfig?.maxFiles
-                        ?: if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            MediaStore.getPickImagesMaxLimit()
-                        } else {
-                            Int.MAX_VALUE
-                        },
-                    mPickMediaType = mPickMediaConfig?.mPickMediaType
-                        ?: PickMediaType.ImageAndVideo,
-                    askPermissionTitle = mPickMediaConfig?.askPermissionTitle,
-                    askPermissionMessage = mPickMediaConfig?.askPermissionMessage,
-                    settingPermissionTitle = mPickMediaConfig?.settingPermissionTitle,
-                    settingPermissionMessage = mPickMediaConfig?.settingPermissionMessage,
-                ),
+                mPickMediaConfig,
             )
 
         @Keep
         fun pickDocumentFileBuild(mDocumentFilePickerConfig: DocumentFilePickerConfig? = null): Intent =
             DocumentFilePickerActivity.getInstance(
                 context,
-                DocumentFilePickerConfig(
-                    popUpIcon = mDocumentFilePickerConfig?.popUpIcon ?: R.drawable.ic_file,
-                    popUpText = mDocumentFilePickerConfig?.popUpText ?: "File Media",
-                    allowMultiple = mDocumentFilePickerConfig?.allowMultiple ?: false,
-                    maxFiles = mDocumentFilePickerConfig?.maxFiles
-                        ?: if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            MediaStore.getPickImagesMaxLimit()
-                        } else {
-                            Int.MAX_VALUE
-                        },
-                    mMimeTypes = mDocumentFilePickerConfig?.mMimeTypes ?: listOf("*/*"),
-                    askPermissionTitle = mDocumentFilePickerConfig?.askPermissionTitle,
-                    askPermissionMessage = mDocumentFilePickerConfig?.askPermissionMessage,
-                    settingPermissionTitle = mDocumentFilePickerConfig?.settingPermissionTitle,
-                    settingPermissionMessage = mDocumentFilePickerConfig?.settingPermissionMessage,
-                ),
+                mDocumentFilePickerConfig,
             )
 
         @Keep

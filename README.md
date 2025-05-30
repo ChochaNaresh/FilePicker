@@ -3,7 +3,7 @@
 This library is designed to simplify the process of selecting and retrieving media files from an Android device, and supports media capture for images and videos.
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.chochanaresh/filepicker.svg)](https://search.maven.org/artifact/io.github.chochanaresh/filepicker)
-[![Build Workflow](https://github.com/ChochaNaresh/FilePicker/actions/workflows/android.yml/badge.svg)](https://github.com/ChochaNaresh/FilePicker/actions?query=Android%20CI/CD)
+![Build Workflow](https://github.com/ChochaNaresh/FilePicker/actions/workflows/ci.yml/badge.svg)
 [![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
 ![Language](https://img.shields.io/badge/language-Kotlin-orange.svg)
 ![Language](https://img.shields.io/badge/Kotlin-2.1.0-blue)
