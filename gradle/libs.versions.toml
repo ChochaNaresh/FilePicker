@@ -1,12 +1,12 @@
 [versions]
-agp = "8.10.0"
+agp = "8.10.1"
 mavenPublish = "0.25.3"
 kotlin = "2.1.20"
 detekt = "1.23.8"
 
 # build config
-compileSdk = "35"
-targetSdk = "35"
+compileSdk = "36"
+targetSdk = "36"
 minSdk = "21"
 jdkVersion = "VERSION_17"
 
