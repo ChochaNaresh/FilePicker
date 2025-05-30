@@ -1,6 +1,7 @@
 package com.nareshchocha.filepickerlibrary.ui.activitys
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -18,11 +19,14 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.core.app.ActivityCompat
 import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.models.DocumentFilePickerConfig
@@ -52,129 +56,124 @@ internal class DocumentFilePickerActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
-            var showAskDialog by remember { mutableStateOf(false) }
-            var showGotoSettingDialog by remember { mutableStateOf(false) }
-            var permissionRequested by remember { mutableStateOf(false) }
-            val filePickerLauncher =
-                rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                    handleFilePickerResult(result)
-                }
-            // Launchers
-            val permissionLauncher =
-                rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-                    if (granted) {
-                        launchFilePicker(filePickerLauncher)
-                    } else if (ActivityCompat.shouldShowRequestPermissionRationale(
-                            this,
-                            getPermission()
-                        )
-                    ) {
-                        showAskDialog = true
-                    } else {
-                        showGotoSettingDialog = true
-                    }
-                }
+            StatingDocument()
+        }
+    }
 
-            val settingLauncher =
-                rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                    if (ActivityCompat.checkSelfPermission(
-                            this,
-                            getPermission()
-                        ) == PackageManager.PERMISSION_GRANTED
-                    ) {
-                        launchFilePicker(filePickerLauncher)
-                    } else {
-                        setCanceledResult(getString(R.string.err_permission_result))
-                        finish()
-                    }
-                }
+    @Composable
+    fun StatingDocument() {
+        var showAskDialog by remember { mutableStateOf(false) }
+        var showGotoSettingDialog by remember { mutableStateOf(false) }
+        var permissionRequested by remember { mutableStateOf(false) }
 
-            // Initial permission check
-            LaunchedEffect(Unit) {
-                if (!permissionRequested) {
-                    permissionRequested = true
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        checkPermissionFlow(permissionLauncher)
-                    } else {
-                        launchFilePicker(filePickerLauncher)
-                    }
-                }
+        val filePickerLauncher = rememberFilePickerLauncher()
+        val permissionLauncher = rememberPermissionLauncher(
+            onGranted = { launchFilePicker(filePickerLauncher) },
+            onShowRationale = { showAskDialog = true },
+            onDenied = { showGotoSettingDialog = true }
+        )
+        val settingLauncher = rememberSettingsLauncher(
+            onGranted = { launchFilePicker(filePickerLauncher) },
+            onDenied = {
+                setCanceledResult(getString(R.string.err_permission_result))
+                finish()
             }
+        )
 
-            // Ask Permission Dialog
-            if (showAskDialog) {
-                AlertDialog(
-                    onDismissRequest = {
-                        setCanceledResult(getString(R.string.err_permission_result))
-                        finish()
-                    },
-                    title = {
-                        Text(
-                            mDocumentFilePickerConfig?.askPermissionTitle
-                                ?: getString(R.string.err_permission_denied)
-                        )
-                    },
-                    text = {
-                        Text(
-                            mDocumentFilePickerConfig?.askPermissionMessage ?: getString(
-                                R.string.err_write_storage_permission,
-                                getPermission().split(".").lastOrNull() ?: "",
-                            )
-                        )
-                    },
-                    confirmButton = {
-                        TextButton(onClick = {
-                            showAskDialog = false
-                            permissionLauncher.launch(getPermission())
-                        }) { Text(getString(android.R.string.ok)) }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = {
-                            setCanceledResult(getString(R.string.err_permission_result))
-                            finish()
-                        }) { Text(getString(android.R.string.cancel)) }
-                    }
-                )
-            }
+        // Initial permission check
+        CheckInitialPermissions(
+            permissionRequested = permissionRequested,
+            onPermissionRequested = { permissionRequested = true },
+            onCheckPermission = { checkPermissionFlow(permissionLauncher) },
+            onLaunchPicker = { launchFilePicker(filePickerLauncher) }
+        )
 
-            // Go to Setting Dialog
-            if (showGotoSettingDialog) {
-                AlertDialog(
-                    onDismissRequest = {
-                        setCanceledResult(getString(R.string.err_permission_result))
-                        finish()
-                    },
-                    title = {
-                        Text(
-                            mDocumentFilePickerConfig?.settingPermissionTitle
-                                ?: getString(R.string.err_permission_denied)
-                        )
-                    },
-                    text = {
-                        Text(
-                            mDocumentFilePickerConfig?.settingPermissionMessage ?: getString(
-                                R.string.err_write_storage_setting,
-                                getPermission().split(".").lastOrNull() ?: "",
-                            )
-                        )
-                    },
-                    confirmButton = {
-                        TextButton(onClick = {
-                            showGotoSettingDialog = false
-                            settingLauncher.launch(getSettingIntent())
-                        }) { Text(getString(R.string.str_go_to_setting)) }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = {
-                            setCanceledResult(getString(R.string.err_permission_result))
-                            finish()
-                        }) { Text(getString(android.R.string.cancel)) }
-                    }
-                )
+        // Permission dialogs
+        if (showAskDialog) {
+            ShowAskPermissionDialog(
+                mDocumentFilePickerConfig = mDocumentFilePickerConfig,
+                onConfirm = {
+                    showAskDialog = false
+                    permissionLauncher.launch(getPermission())
+                },
+                onDismiss = {
+                    setCanceledResult(getString(R.string.err_permission_result))
+                    finish()
+                }
+            )
+        }
+
+        if (showGotoSettingDialog) {
+            ShowSettingsPermissionDialog(
+                onConfirm = {
+                    showGotoSettingDialog = false
+                    settingLauncher.launch(getSettingIntent())
+                },
+                onDismiss = {
+                    setCanceledResult(getString(R.string.err_permission_result))
+                    finish()
+                }
+            )
+        }
+    }
+
+    @Composable
+    private fun rememberFilePickerLauncher(): ManagedActivityResultLauncher<Intent, ActivityResult> {
+        return rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            handleFilePickerResult(result)
+        }
+    }
+
+
+    @Composable
+    private fun CheckInitialPermissions(
+        permissionRequested: Boolean,
+        onPermissionRequested: () -> Unit,
+        onCheckPermission: () -> Unit,
+        onLaunchPicker: () -> Unit
+    ) {
+        LaunchedEffect(Unit) {
+            if (!permissionRequested) {
+                onPermissionRequested()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    onCheckPermission()
+                } else {
+                    onLaunchPicker()
+                }
             }
         }
+    }
+
+
+    @Composable
+    private fun ShowSettingsPermissionDialog(
+        onConfirm: () -> Unit,
+        onDismiss: () -> Unit
+    ) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = {
+                Text(
+                    mDocumentFilePickerConfig?.settingPermissionTitle
+                        ?: getString(R.string.err_permission_denied)
+                )
+            },
+            text = {
+                Text(
+                    mDocumentFilePickerConfig?.settingPermissionMessage ?: getString(
+                        R.string.err_write_storage_setting,
+                        getPermission().split(".").lastOrNull() ?: "",
+                    )
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = onConfirm) { Text(getString(R.string.str_go_to_setting)) }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismiss) { Text(getString(android.R.string.cancel)) }
+            }
+        )
     }
 
     private fun checkPermissionFlow(permissionLauncher: ManagedActivityResultLauncher<String, Boolean>) {
@@ -275,13 +274,6 @@ internal class DocumentFilePickerActivity : ComponentActivity() {
             }
         }
 
-        private fun getPermission(): String {
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                Manifest.permission.READ_MEDIA_VIDEO
-            } else {
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            }
-        }
 
         @Keep
         fun getInstance(
@@ -295,4 +287,85 @@ internal class DocumentFilePickerActivity : ComponentActivity() {
             return filePickerIntent
         }
     }
+}
+
+@SuppressLint("ContextCastToActivity")
+@Composable
+private fun rememberPermissionLauncher(
+    onGranted: () -> Unit,
+    onShowRationale: () -> Unit,
+    onDenied: () -> Unit
+): ManagedActivityResultLauncher<String, Boolean> {
+    val activity = LocalContext.current as ComponentActivity
+    return rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) {
+            onGranted()
+        } else if (ActivityCompat.shouldShowRequestPermissionRationale(
+                activity,
+                getPermission()
+            )
+        ) {
+            onShowRationale()
+        } else {
+            onDenied()
+        }
+    }
+}
+
+@Composable
+private fun rememberSettingsLauncher(
+    onGranted: () -> Unit,
+    onDenied: () -> Unit
+): ManagedActivityResultLauncher<Intent, ActivityResult> {
+    val context = LocalContext.current
+    return rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                getPermission()
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            onGranted()
+        } else {
+            onDenied()
+        }
+    }
+}
+
+private fun getPermission(): String {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        Manifest.permission.READ_MEDIA_VIDEO
+    } else {
+        Manifest.permission.READ_EXTERNAL_STORAGE
+    }
+}
+
+@Composable
+private fun ShowAskPermissionDialog(
+    mDocumentFilePickerConfig: DocumentFilePickerConfig? = null,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                mDocumentFilePickerConfig?.askPermissionTitle
+                    ?: stringResource(R.string.err_permission_denied)
+            )
+        },
+        text = {
+            Text(
+                mDocumentFilePickerConfig?.askPermissionMessage ?: stringResource(
+                    R.string.err_write_storage_permission,
+                    getPermission().split(".").lastOrNull() ?: "",
+                )
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirm) { Text(stringResource(android.R.string.ok)) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(android.R.string.cancel)) }
+        }
+    )
 }
