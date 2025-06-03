@@ -37,7 +37,6 @@ import com.nareshchocha.filepickerlibrary.utilities.extentions.getRequestedPermi
 import com.nareshchocha.filepickerlibrary.utilities.extentions.getSettingIntent
 import com.nareshchocha.filepickerlibrary.utilities.extentions.setCanceledResult
 import com.nareshchocha.filepickerlibrary.utilities.extentions.setSuccessResult
-import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 internal class DocumentFilePickerActivity : ComponentActivity() {
@@ -215,20 +214,14 @@ internal class DocumentFilePickerActivity : ComponentActivity() {
             if (mDocumentFilePickerConfig?.allowMultiple == true && result.data?.clipData != null) {
                 val uris = result.data?.getClipDataUris()
                 val filePaths = uris?.getFilePathList(this)
-                Timber.tag(Const.LogTag.FILE_RESULT).v("File Uri ::: $uris")
-                Timber.tag(Const.LogTag.FILE_RESULT).v("filePath ::: $filePaths")
                 setSuccessResult(uris, filePath = filePaths)
             } else if (result.data?.data != null) {
                 val data = result.data?.data
                 val filePath = data?.let { FileUtils.getRealPath(this, it) }
-                Timber.tag(Const.LogTag.FILE_RESULT).v("File Uri ::: ${data?.toString()}")
-                Timber.tag(Const.LogTag.FILE_RESULT).v("filePath ::: $filePath")
                 setSuccessResult(data, filePath)
             }
         } else {
-            Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
-                .v(getString(R.string.err_document_pick_error))
-            setCanceledResult(getString(R.string.err_document_pick_error))
+            setCanceledResult("File Picker Result Error: ${result.resultCode}")
         }
         finish()
     }

@@ -12,8 +12,6 @@ import java.io.File
  */
 @Keep
 object Const {
-    /** Default card corner radius. */
-    internal const val CARD_RADIUS = 10f
 
     /** FileProvider authority suffix. */
     internal const val AUTHORITY = ".library.fileprovider"
@@ -32,11 +30,9 @@ object Const {
      */
     internal object LogTag {
         /** Tag for file result logs. */
-        const val FILE_RESULT = "FILE_RESULT ::"
+        const val FILE_PICKER_RESULT = "FILE_PICKER_RESULT :"
         /** Tag for file picker error logs. */
-        const val FILE_PICKER_ERROR = "FILE_PICKER_ERROR ::"
-        /** Tag for file picker exception logs. */
-        const val FILE_PICKER_EXCEPTION = "FILE_PICKER_EXCEPTION :"
+        const val FILE_PICKER_ERROR = "FILE_PICKER_ERROR :"
     }
 
     /**

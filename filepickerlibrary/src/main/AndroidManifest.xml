@@ -79,23 +79,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_picker_library_provider" />
         </provider>
-        <!--
-            AndroidX Startup provider for automatic initialization of components
-            using the App Startup library, which helps optimize app startup time
-        -->
-        <provider
-            android:name="androidx.startup.InitializationProvider"
-            android:authorities="${applicationId}.androidx-startup"
-            android:exported="false"
-            tools:node="merge">
-            <!--
-                Registers TimberInitializer to be initialized at app startup
-                for logging purposes
-            -->
-            <meta-data
-                android:name="com.nareshchocha.filepickerlibrary.initializer.TimberInitializer"
-                android:value="androidx.startup" />
-        </provider>
+
     </application>
 
 </manifest>

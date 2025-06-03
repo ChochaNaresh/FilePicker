@@ -7,8 +7,9 @@ import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import androidx.annotation.Keep
+import com.nareshchocha.filepickerlibrary.utilities.LogPriority
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
-import timber.log.Timber
+import com.nareshchocha.filepickerlibrary.utilities.log
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -136,7 +137,11 @@ internal fun Context.getDriveFilePath(uri: Uri): String? {
         outputStream.close()
         file.path
     } catch (e: IOException) {
-        Timber.tag(Const.LogTag.FILE_PICKER_EXCEPTION).e(e.message ?: "")
+        log(
+            "Error file from Google Drive: ${e.message}",
+            priority = LogPriority.ERROR_LOG,
+            throwable = e
+        )
         null
     }
 
@@ -208,7 +213,11 @@ internal fun Context.copyFileToInternalStorage(
         outputStream.close()
         output.path
     } catch (e: IOException) {
-        Timber.tag(Const.LogTag.FILE_PICKER_EXCEPTION).e(e.message ?: "")
+        log(
+            "Error file to internal storage: ${e.message}",
+            priority = LogPriority.ERROR_LOG,
+            throwable = e
+        )
         output.delete()
         null
     }

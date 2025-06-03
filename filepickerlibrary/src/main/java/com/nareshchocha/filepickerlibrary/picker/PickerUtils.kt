@@ -4,8 +4,9 @@ import android.content.Context
 import android.net.Uri
 import androidx.annotation.Keep
 import androidx.core.content.FileProvider
+import com.nareshchocha.filepickerlibrary.utilities.LogPriority
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
-import timber.log.Timber
+import com.nareshchocha.filepickerlibrary.utilities.log
 import java.io.File
 import java.io.IOException
 
@@ -30,12 +31,17 @@ internal object PickerUtils {
         if (!folderFile.exists()) {
             try {
                 if (!folderFile.mkdirs()) {
-                    Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
-                        .e("Failed to create directory: ${folderFile.path}")
+                    log(
+                        "Failed to create directory: ${folderFile.path}",
+                        priority = LogPriority.ERROR_LOG
+                    )
                 }
             } catch (e: SecurityException) {
-                Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
-                    .e(e, "Security exception creating directory: ${folderFile.path}")
+                log(
+                    "Security exception creating directory: ${folderFile.path}",
+                    priority = LogPriority.ERROR_LOG,
+                    throwable = e
+                )
             }
         }
         return File(folderFile.path + File.separator + fileName)
@@ -55,19 +61,28 @@ internal object PickerUtils {
             try {
                 mFile.createNewFile()
             } catch (e: IOException) {
-                Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
-                    .e(e, "IO exception creating file: ${mFile.path}")
+                log(
+                    "IO exception creating file: ${mFile.path}",
+                    priority = LogPriority.ERROR_LOG,
+                    throwable = e
+                )
             } catch (e: SecurityException) {
-                Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
-                    .e(e, "Security exception creating file: ${mFile.path}")
+                log(
+                    "Security exception creating file: ${mFile.path}",
+                    priority = LogPriority.ERROR_LOG,
+                    throwable = e
+                )
             }
         }
         if (mFile.exists()) {
             try {
                 uri = getUriForFile(mFile)
             } catch (e: IOException) {
-                Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
-                    .e(e, "Failed to get URI for file: ${mFile.path}")
+                log(
+                    "IO exception getting URI for file: ${mFile.path}",
+                    priority = LogPriority.ERROR_LOG,
+                    throwable = e
+                )
             }
         }
         return uri

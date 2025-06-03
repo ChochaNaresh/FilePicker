@@ -2,16 +2,12 @@ package com.nareshchocha.filepickerlibrary.ui
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.provider.MediaStore
 import androidx.annotation.Keep
-import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.models.BaseConfig
 import com.nareshchocha.filepickerlibrary.models.DocumentFilePickerConfig
 import com.nareshchocha.filepickerlibrary.models.ImageCaptureConfig
 import com.nareshchocha.filepickerlibrary.models.Orientation
 import com.nareshchocha.filepickerlibrary.models.PickMediaConfig
-import com.nareshchocha.filepickerlibrary.models.PickMediaType
 import com.nareshchocha.filepickerlibrary.models.PickerData
 import com.nareshchocha.filepickerlibrary.models.PopUpConfig
 import com.nareshchocha.filepickerlibrary.models.PopUpType
@@ -21,10 +17,13 @@ import com.nareshchocha.filepickerlibrary.ui.activitys.ImageCaptureActivity
 import com.nareshchocha.filepickerlibrary.ui.activitys.MediaFilePickerActivity
 import com.nareshchocha.filepickerlibrary.ui.activitys.PopUpActivity
 import com.nareshchocha.filepickerlibrary.ui.activitys.VideoCaptureActivity
-import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 
 @Keep
 class FilePicker private constructor() {
+
+    companion object {
+        var isLoggingEnabled: Boolean = false
+    }
 
     @Keep
     class Builder(private val context: Context) {
@@ -44,7 +43,7 @@ class FilePicker private constructor() {
         @Keep
         fun addImageCapture(mImageCaptureConfig: ImageCaptureConfig? = null): Builder {
             listIntents.add(
-                mImageCaptureConfig?: ImageCaptureConfig(),
+                mImageCaptureConfig ?: ImageCaptureConfig(),
             )
             return this
         }
@@ -52,7 +51,7 @@ class FilePicker private constructor() {
         @Keep
         fun addVideoCapture(mVideoCaptureConfig: VideoCaptureConfig? = null): Builder {
             listIntents.add(
-                mVideoCaptureConfig?:VideoCaptureConfig(),
+                mVideoCaptureConfig ?: VideoCaptureConfig(),
             )
             return this
         }

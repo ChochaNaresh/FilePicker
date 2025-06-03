@@ -15,8 +15,9 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import com.nareshchocha.filepickerlibrary.models.DocumentFilePickerConfig
 import com.nareshchocha.filepickerlibrary.models.PickMediaConfig
+import com.nareshchocha.filepickerlibrary.utilities.LogPriority
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
-import timber.log.Timber
+import com.nareshchocha.filepickerlibrary.utilities.log
 
 
 fun Context.getRequestedPermissions(): Array<String>? {
@@ -148,6 +149,16 @@ internal fun Activity.setSuccessResult(
     filePath: String? = null,
     isFromCapture: Boolean = false,
 ) {
+    log(
+        "File Uri : $fileUri",
+        priority = LogPriority.INFO_LOG,
+        Const.LogTag.FILE_PICKER_RESULT
+    )
+    log(
+        "filePath : $filePath",
+        priority = LogPriority.INFO_LOG,
+        Const.LogTag.FILE_PICKER_RESULT
+    )
     setResult(
         Activity.RESULT_OK,
         Intent().also { mIntent ->
@@ -173,6 +184,16 @@ internal fun Activity.setSuccessResult(
     filePath: ArrayList<String>? = null,
     isFromCapture: Boolean = false,
 ) {
+    log(
+        "File Uri : $fileUri",
+        priority = LogPriority.INFO_LOG,
+        Const.LogTag.FILE_PICKER_RESULT
+    )
+    log(
+        "filePath : $filePath",
+        priority = LogPriority.INFO_LOG,
+        Const.LogTag.FILE_PICKER_RESULT
+    )
     setResult(
         Activity.RESULT_OK,
         Intent().also { mIntent ->
@@ -204,7 +225,11 @@ internal fun Activity.setSuccessResult(
 }
 
 internal fun Activity.setCanceledResult(error: String? = null) {
-    Timber.tag("FILE_RESULT").e("ERROR: $error")
+    log(
+        "Error: $error",
+        priority = LogPriority.ERROR_LOG,
+        Const.LogTag.FILE_PICKER_RESULT
+    )
     setResult(
         Activity.RESULT_CANCELED,
         Intent().also { mIntent ->

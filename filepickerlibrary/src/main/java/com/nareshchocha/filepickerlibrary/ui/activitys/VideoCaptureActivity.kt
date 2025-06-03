@@ -24,7 +24,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -38,7 +37,6 @@ import com.nareshchocha.filepickerlibrary.utilities.extentions.getSettingIntent
 import com.nareshchocha.filepickerlibrary.utilities.extentions.getVideoCaptureIntent
 import com.nareshchocha.filepickerlibrary.utilities.extentions.setCanceledResult
 import com.nareshchocha.filepickerlibrary.utilities.extentions.setSuccessResult
-import timber.log.Timber
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -121,15 +119,10 @@ internal class VideoCaptureActivity : ComponentActivity() {
     private fun rememberVideoCaptureResultLauncher(): ActivityResultLauncher<Intent> {
         return rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                Timber.tag(Const.LogTag.FILE_RESULT)
-                    .v("File Uri ::: ${videoFileUri?.toString()}")
-                Timber.tag(Const.LogTag.FILE_RESULT)
-                    .v("filePath ::: ${videoFile?.absoluteFile}")
+
                 setSuccessResult(videoFileUri, videoFile?.absolutePath, true)
             } else {
-                Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
-                    .v(getString(R.string.err_capture_error, "videoCapture"))
-                setCanceledResult(getString(R.string.err_capture_error, "videoCapture"))
+                setCanceledResult("File Picker Result Error: ${result.resultCode}")
             }
             finish()
         }

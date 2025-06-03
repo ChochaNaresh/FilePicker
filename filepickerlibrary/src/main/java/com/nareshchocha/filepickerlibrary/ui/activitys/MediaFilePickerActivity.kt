@@ -14,17 +14,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.app.ActivityCompat
 import com.nareshchocha.filepickerlibrary.R
@@ -37,7 +32,6 @@ import com.nareshchocha.filepickerlibrary.utilities.extentions.getRequestedPermi
 import com.nareshchocha.filepickerlibrary.utilities.extentions.getSettingIntent
 import com.nareshchocha.filepickerlibrary.utilities.extentions.setCanceledResult
 import com.nareshchocha.filepickerlibrary.utilities.extentions.setSuccessResult
-import timber.log.Timber
 
 internal class MediaFilePickerActivity : ComponentActivity() {
 
@@ -199,22 +193,15 @@ internal class MediaFilePickerActivity : ComponentActivity() {
         if (result.resultCode == Activity.RESULT_OK && result.data != null) {
             if (mPickMediaConfig?.allowMultiple == true && result.data?.clipData != null) {
                 val uris = result.data?.getClipDataUris()
-                Timber.tag(Const.LogTag.FILE_RESULT).v("File Uri ::: $uris")
                 val filePaths = uris?.getFilePathList(context)
-                Timber.tag(Const.LogTag.FILE_RESULT).v("filePath ::: $filePaths")
                 setSuccessResult(uris, filePath = filePaths)
             } else if (result.data?.data != null) {
                 val data = result.data?.data
-                Timber.tag(Const.LogTag.FILE_RESULT)
-                    .v("File Uri ::: ${data?.toString()}")
                 val filePath = data?.let { FileUtils.getRealPath(context, it) }
-                Timber.tag(Const.LogTag.FILE_RESULT).v("filePath ::: $filePath")
                 setSuccessResult(data, filePath)
             }
         } else {
-            Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
-                .v(getString(R.string.err_media_pick_error))
-            setCanceledResult(getString(R.string.err_media_pick_error))
+            setCanceledResult("File Picker Result Error: ${result.resultCode}")
         }
         finish()
     }

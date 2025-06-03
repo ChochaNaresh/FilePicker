@@ -1,7 +1,6 @@
 package com.nareshchocha.filepickerlibrary.ui.activitys
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -21,7 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.app.ActivityCompat
@@ -38,7 +36,7 @@ import com.nareshchocha.filepickerlibrary.utilities.extentions.getRequestedPermi
 import com.nareshchocha.filepickerlibrary.utilities.extentions.getSettingIntent
 import com.nareshchocha.filepickerlibrary.utilities.extentions.setCanceledResult
 import com.nareshchocha.filepickerlibrary.utilities.extentions.setSuccessResult
-import timber.log.Timber
+import com.nareshchocha.filepickerlibrary.utilities.log
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -201,17 +199,9 @@ internal class ImageCaptureActivity : ComponentActivity() {
 
     private fun handleImageCaptureResult(resultCode: Int) {
         if (resultCode == RESULT_OK) {
-            Timber.tag(Const.LogTag.FILE_RESULT)
-                .v("File Uri ::: ${imageFileUri?.toString()}")
-            Timber.tag(Const.LogTag.FILE_RESULT)
-                .v("filePath ::: ${imageFile?.absoluteFile}")
-            Timber.tag(Const.LogTag.FILE_RESULT)
-                .v("file read:: ${imageFile?.canRead()}")
             setSuccessResult(imageFileUri, imageFile?.absolutePath, true)
         } else {
-            Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
-                .v(getString(R.string.err_capture_error, "imageCapture"))
-            setCanceledResult(getString(R.string.err_capture_error, "imageCapture"))
+            setCanceledResult("File Picker Result Error: $resultCode")
         }
         finish()
     }
