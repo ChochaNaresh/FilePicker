@@ -48,8 +48,6 @@ android {
 }
 
 dependencies {
-
-    implementation(libs.androidx.startup.runtime)
     // compose
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -63,8 +61,6 @@ dependencies {
     // File Picker
     implementation(project(":filepickerlibrary"))
 
-    // timber
-    implementation(libs.timber)
 
 
     // testing

@@ -3,6 +3,7 @@ package com.nareshchocha.filepicker
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -35,12 +36,12 @@ import com.nareshchocha.filepickerlibrary.models.PickMediaType
 import com.nareshchocha.filepickerlibrary.models.PopUpConfig
 import com.nareshchocha.filepickerlibrary.models.PopUpType
 import com.nareshchocha.filepickerlibrary.ui.FilePicker
-import timber.log.Timber
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FilePicker.isLoggingEnabled=true
         setContent {
             val uriList = remember { mutableStateListOf<Uri>() }
 
@@ -50,14 +51,15 @@ class MainActivity : ComponentActivity() {
                         uriList.clear()
                         if (result.data?.data != null) {
                             result.data?.data?.let { uriList.add(it) }
+                            Log.d("RESULT", "ActivityResult: ${result.data?.data}")
                         } else {
                             val listData = result.data?.getClipDataUris()
+                            Log.d("RESULT", "ActivityResult: $listData")
                             listData?.let { uriList.addAll(it) }
                         }
-                        Timber.tag("FILE_RESULT").v(result.toString())
-                        Timber.tag("FILE_RESULT").v(result.data?.extras?.toString())
+                        Log.d("RESULT", "ActivityResult Extras : ${result.data?.extras?.toString()}")
                     } else {
-                        Timber.tag("FILE_PICKER_ERROR").v("capture Error")
+                        Log.e("RESULT", "ActivityResult: ${result.resultCode}")
                     }
                 }
 
