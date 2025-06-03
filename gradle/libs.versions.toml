@@ -8,7 +8,7 @@ detekt = "1.23.8"
 compileSdk = "36"
 targetSdk = "36"
 minSdk = "21"
-jdkVersion = "VERSION_17"
+jdkVersion = "VERSION_21"
 
 
 # compose
@@ -20,17 +20,11 @@ junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 
-# core
-startupRuntime = "1.2.0"
-timber = "5.0.1"
 
 # testing
 truth = "1.1.5"
 
 [libraries]
-# core
-androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "startupRuntime" }
-timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 # compose
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
