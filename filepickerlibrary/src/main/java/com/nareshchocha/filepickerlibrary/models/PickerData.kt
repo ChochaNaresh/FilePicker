@@ -1,13 +1,11 @@
 package com.nareshchocha.filepickerlibrary.models
 
-import android.graphics.drawable.shapes.Shape
 import android.os.Build
 import android.os.Parcelable
 import android.provider.MediaStore
 import androidx.annotation.DrawableRes
 import androidx.annotation.Keep
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.Dp
 import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import kotlinx.parcelize.Parcelize
@@ -23,9 +21,9 @@ data class PickerData(
 @Keep
 @Parcelize
 data class PopUpConfig(
-    val chooserTitle: String? = null,
-    val mPopUpType: PopUpType? = null,
-    val mOrientation: Orientation? = null,
+    val chooserTitle: String? = "Choose Option",
+    val mPopUpType: PopUpType? = PopUpType.BOTTOM_SHEET,
+    val mOrientation: Orientation? = Orientation.VERTICAL,
     val cornerSize: Float = 8f,
     val title: @Composable ((title: String) -> Unit)? = null,
     val item: @Composable ((item: BaseConfig) -> Unit)? = null,

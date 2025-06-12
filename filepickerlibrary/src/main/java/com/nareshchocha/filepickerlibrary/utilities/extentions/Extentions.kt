@@ -99,6 +99,26 @@ internal fun getDocumentFilePick(mDocumentFilePickerConfig: DocumentFilePickerCo
     }
 }
 
+
+
+// Helper extension for getting clip data URIs
+internal fun Intent.getClipDataUris(): ArrayList<Uri> {
+    val resultSet = LinkedHashSet<Uri>()
+    data?.let { data -> resultSet.add(data) }
+    val clipData = clipData
+    if (clipData == null && resultSet.isEmpty()) {
+        return ArrayList()
+    } else if (clipData != null) {
+        for (i in 0 until clipData.itemCount) {
+            val uri = clipData.getItemAt(i).uri
+            if (uri != null) {
+                resultSet.add(uri)
+            }
+        }
+    }
+    return ArrayList(resultSet)
+}
+
 internal fun Context.getMediaIntent(mPickMediaConfig: PickMediaConfig): Intent {
     val mPickMediaType = mPickMediaConfig.getPickMediaType(mPickMediaConfig.mPickMediaType)
     return if (mPickMediaConfig.allowMultiple == true) {
