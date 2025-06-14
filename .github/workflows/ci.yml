@@ -48,6 +48,7 @@ jobs:
             path: build/reports/detekt/detekt.html
   build:
     name: Build & Test
+    needs: check
     runs-on: ubuntu-latest
 
     steps:
