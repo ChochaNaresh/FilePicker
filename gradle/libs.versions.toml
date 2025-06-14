@@ -56,6 +56,7 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 # code style review
 arturbosch-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+spotless = { id = "com.diffplug.spotless", version = "7.0.4" }
 # maven publish
 maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish" }
 # signing
