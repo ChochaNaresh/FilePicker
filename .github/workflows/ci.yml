@@ -45,7 +45,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
             name: detekt-html-report
-            path: build/reports/detekt/detekt.html
+            path: | 
+              **/build/reports/detekt/detekt.html
   build:
     name: Build & Test
     needs: check
