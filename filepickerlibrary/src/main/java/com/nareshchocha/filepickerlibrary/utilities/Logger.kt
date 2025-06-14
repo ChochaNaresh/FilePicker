@@ -4,12 +4,11 @@ import android.util.Log
 import com.nareshchocha.filepickerlibrary.ui.FilePicker
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 
-
 fun log(
     message: String,
     priority: LogPriority = LogPriority.DEBUG_LOG,
     customTag: String = Const.LogTag.FILE_PICKER_ERROR,
-    throwable: Throwable? = null,
+    throwable: Throwable? = null
 ) {
     if (FilePicker.isLoggingEnabled) {
         message.printToLog(
@@ -23,7 +22,7 @@ fun log(
 fun Any?.printToLog(
     customTag: String? = null,
     priority: LogPriority = LogPriority.DEBUG_LOG,
-    throwable: Throwable? = null,
+    throwable: Throwable? = null
 ) {
     printToLog(customTag, priority, throwable) { this?.toString() ?: "null" }
 }
@@ -32,7 +31,7 @@ fun printToLog(
     customTag: String? = null,
     priority: LogPriority = LogPriority.DEBUG_LOG,
     throwable: Throwable? = null,
-    messageProvider: () -> String,
+    messageProvider: () -> String
 ) {
     if (!FilePicker.isLoggingEnabled) return
     val tag = customTag ?: priority.getString()
@@ -47,12 +46,16 @@ fun printToLog(
 }
 
 enum class LogPriority {
-    DEBUG_LOG, ERROR_LOG, INFO_LOG, WARNING_LOG;
+    DEBUG_LOG,
+    ERROR_LOG,
+    INFO_LOG,
+    WARNING_LOG
 }
 
-private fun LogPriority.getString(): String = when (this) {
-    LogPriority.DEBUG_LOG -> "DEBUG =>"
-    LogPriority.ERROR_LOG -> "ERROR =>"
-    LogPriority.INFO_LOG -> "INFO =>"
-    LogPriority.WARNING_LOG -> "WARNING =>"
-}
+private fun LogPriority.getString(): String =
+    when (this) {
+        LogPriority.DEBUG_LOG -> "DEBUG =>"
+        LogPriority.ERROR_LOG -> "ERROR =>"
+        LogPriority.INFO_LOG -> "INFO =>"
+        LogPriority.WARNING_LOG -> "WARNING =>"
+    }

@@ -15,7 +15,7 @@ import java.io.File
 @Parcelize
 data class PickerData(
     val mPopUpConfig: PopUpConfig? = null,
-    val listIntents: List<BaseConfig> = emptyList(),
+    val listIntents: List<BaseConfig> = emptyList()
 ) : Parcelable
 
 @Keep
@@ -26,7 +26,7 @@ data class PopUpConfig(
     val mOrientation: Orientation? = Orientation.VERTICAL,
     val cornerSize: Float = 8f,
     val title: @Composable ((title: String) -> Unit)? = null,
-    val item: @Composable ((item: BaseConfig) -> Unit)? = null,
+    val item: @Composable ((item: BaseConfig) -> Unit)? = null
 ) : Parcelable
 
 enum class Orientation {
@@ -34,6 +34,7 @@ enum class Orientation {
     VERTICAL;
 
     fun isHorizontal() = this == HORIZONTAL
+
     fun isVertical() = this == VERTICAL
 }
 
@@ -50,15 +51,16 @@ data class ImageCaptureConfig(
     override val askPermissionTitle: String? = null,
     override val askPermissionMessage: String? = null,
     override val settingPermissionTitle: String? = null,
-    override val settingPermissionMessage: String? = null,
-) : Parcelable, BaseConfig(
-    popUpIcon,
-    popUpText,
-    askPermissionTitle,
-    askPermissionMessage,
-    settingPermissionTitle,
-    settingPermissionMessage,
-)
+    override val settingPermissionMessage: String? = null
+) : BaseConfig(
+        popUpIcon,
+        popUpText,
+        askPermissionTitle,
+        askPermissionMessage,
+        settingPermissionTitle,
+        settingPermissionMessage
+    ),
+    Parcelable
 
 @Parcelize
 data class VideoCaptureConfig(
@@ -72,15 +74,16 @@ data class VideoCaptureConfig(
     override val askPermissionTitle: String? = null,
     override val askPermissionMessage: String? = null,
     override val settingPermissionTitle: String? = null,
-    override val settingPermissionMessage: String? = null,
-) : Parcelable, BaseConfig(
-    popUpIcon,
-    popUpText,
-    askPermissionTitle,
-    askPermissionMessage,
-    settingPermissionTitle,
-    settingPermissionMessage,
-)
+    override val settingPermissionMessage: String? = null
+) : BaseConfig(
+        popUpIcon,
+        popUpText,
+        askPermissionTitle,
+        askPermissionMessage,
+        settingPermissionTitle,
+        settingPermissionMessage
+    ),
+    Parcelable
 
 @Parcelize
 data class PickMediaConfig(
@@ -90,32 +93,33 @@ data class PickMediaConfig(
     /**
      *  MaxFiles work after SDK 33 or above versions
      */
-    val maxFiles: Int? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        MediaStore.getPickImagesMaxLimit()
-    } else {
-        Int.MAX_VALUE
-    },
+    val maxFiles: Int? =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            MediaStore.getPickImagesMaxLimit()
+        } else {
+            Int.MAX_VALUE
+        },
     val mPickMediaType: PickMediaType? = PickMediaType.ImageAndVideo,
     override val askPermissionTitle: String? = null,
     override val askPermissionMessage: String? = null,
     override val settingPermissionTitle: String? = null,
-    override val settingPermissionMessage: String? = null,
-) : Parcelable, BaseConfig(
-    popUpIcon,
-    popUpText,
-    askPermissionTitle,
-    askPermissionMessage,
-    settingPermissionTitle,
-    settingPermissionMessage,
-) {
-    fun getPickMediaType(input: PickMediaType?): String? {
-        return when (input) {
+    override val settingPermissionMessage: String? = null
+) : BaseConfig(
+        popUpIcon,
+        popUpText,
+        askPermissionTitle,
+        askPermissionMessage,
+        settingPermissionTitle,
+        settingPermissionMessage
+    ),
+    Parcelable {
+    fun getPickMediaType(input: PickMediaType?): String? =
+        when (input) {
             PickMediaType.ImageOnly -> "image/*"
             PickMediaType.VideoOnly -> "video/*"
             PickMediaType.ImageAndVideo -> null
             else -> null
         }
-    }
 }
 
 @Parcelize
@@ -126,34 +130,39 @@ data class DocumentFilePickerConfig(
     /**
      *  MaxFiles work after SDK 33 or above versions
      */
-    val maxFiles: Int? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        MediaStore.getPickImagesMaxLimit()
-    } else {
-        Int.MAX_VALUE
-    },
+    val maxFiles: Int? =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            MediaStore.getPickImagesMaxLimit()
+        } else {
+            Int.MAX_VALUE
+        },
     val mMimeTypes: List<String>? = listOf("*/*"),
     override val askPermissionTitle: String? = null,
     override val askPermissionMessage: String? = null,
     override val settingPermissionTitle: String? = null,
-    override val settingPermissionMessage: String? = null,
-) : Parcelable, BaseConfig(
-    popUpIcon,
-    popUpText,
-    askPermissionTitle,
-    askPermissionMessage,
-    settingPermissionTitle,
-    settingPermissionMessage,
-)
+    override val settingPermissionMessage: String? = null
+) : BaseConfig(
+        popUpIcon,
+        popUpText,
+        askPermissionTitle,
+        askPermissionMessage,
+        settingPermissionTitle,
+        settingPermissionMessage
+    ),
+    Parcelable
 
 @Keep
 @Parcelize
 enum class PopUpType : Parcelable {
-    BOTTOM_SHEET, DIALOG;
+    BOTTOM_SHEET,
+    DIALOG;
 
     fun isDialog() = this == DIALOG
 }
 
 @Parcelize
 enum class PickMediaType : Parcelable {
-    ImageOnly, VideoOnly, ImageAndVideo
+    ImageOnly,
+    VideoOnly,
+    ImageAndVideo
 }

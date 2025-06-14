@@ -20,30 +20,32 @@ import com.nareshchocha.filepickerlibrary.ui.activitys.VideoCaptureActivity
 
 @Keep
 class FilePicker private constructor() {
-
     companion object {
         var isLoggingEnabled: Boolean = false
     }
 
     @Keep
-    class Builder(private val context: Context) {
+    class Builder(
+        private val context: Context
+    ) {
         private val listIntents: ArrayList<BaseConfig> = ArrayList()
         private var mPopUpConfig: PopUpConfig? = null
 
         @Keep
         fun setPopUpConfig(mPopUpConfig: PopUpConfig? = null): Builder {
-            this.mPopUpConfig = PopUpConfig(
-                chooserTitle = mPopUpConfig?.chooserTitle ?: "Choose Option",
-                mPopUpType = mPopUpConfig?.mPopUpType ?: PopUpType.BOTTOM_SHEET,
-                mOrientation = mPopUpConfig?.mOrientation ?: Orientation.VERTICAL,
-            )
+            this.mPopUpConfig =
+                PopUpConfig(
+                    chooserTitle = mPopUpConfig?.chooserTitle ?: "Choose Option",
+                    mPopUpType = mPopUpConfig?.mPopUpType ?: PopUpType.BOTTOM_SHEET,
+                    mOrientation = mPopUpConfig?.mOrientation ?: Orientation.VERTICAL
+                )
             return this
         }
 
         @Keep
         fun addImageCapture(mImageCaptureConfig: ImageCaptureConfig? = null): Builder {
             listIntents.add(
-                mImageCaptureConfig ?: ImageCaptureConfig(),
+                mImageCaptureConfig ?: ImageCaptureConfig()
             )
             return this
         }
@@ -51,7 +53,7 @@ class FilePicker private constructor() {
         @Keep
         fun addVideoCapture(mVideoCaptureConfig: VideoCaptureConfig? = null): Builder {
             listIntents.add(
-                mVideoCaptureConfig ?: VideoCaptureConfig(),
+                mVideoCaptureConfig ?: VideoCaptureConfig()
             )
             return this
         }
@@ -59,7 +61,7 @@ class FilePicker private constructor() {
         @Keep
         fun addPickMedia(mPickMediaConfig: PickMediaConfig? = null): Builder {
             listIntents.add(
-                mPickMediaConfig ?: PickMediaConfig(),
+                mPickMediaConfig ?: PickMediaConfig()
             )
             return this
         }
@@ -74,34 +76,35 @@ class FilePicker private constructor() {
         fun imageCaptureBuild(mImageCaptureConfig: ImageCaptureConfig? = null): Intent =
             ImageCaptureActivity.getInstance(
                 context,
-                mImageCaptureConfig,
+                mImageCaptureConfig
             )
 
         @Keep
         fun videoCaptureBuild(mVideoCaptureConfig: VideoCaptureConfig? = null): Intent =
             VideoCaptureActivity.getInstance(
                 context,
-                mVideoCaptureConfig,
+                mVideoCaptureConfig
             )
 
         @Keep
         fun pickMediaBuild(mPickMediaConfig: PickMediaConfig? = null): Intent =
             MediaFilePickerActivity.getInstance(
                 context,
-                mPickMediaConfig,
+                mPickMediaConfig
             )
 
         @Keep
         fun pickDocumentFileBuild(mDocumentFilePickerConfig: DocumentFilePickerConfig? = null): Intent =
             DocumentFilePickerActivity.getInstance(
                 context,
-                mDocumentFilePickerConfig,
+                mDocumentFilePickerConfig
             )
 
         @Keep
-        fun build(): Intent = PopUpActivity.getInstance(
-            context,
-            PickerData(mPopUpConfig = mPopUpConfig, listIntents = listIntents),
-        )
+        fun build(): Intent =
+            PopUpActivity.getInstance(
+                context,
+                PickerData(mPopUpConfig = mPopUpConfig, listIntents = listIntents)
+            )
     }
 }

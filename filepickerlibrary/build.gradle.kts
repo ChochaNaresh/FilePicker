@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.arturbosch.detekt)
     alias(libs.plugins.maven.publish)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.signing)
@@ -13,10 +12,16 @@ plugins {
 val versionName = project.findProperty("VERSION_NAME") as String? ?: "0.0.1"
 android {
     namespace = "com.nareshchocha.filepickerlibrary"
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    compileSdk =
+        libs.versions.compileSdk
+            .get()
+            .toInt()
 
     defaultConfig {
-        minSdk = libs.versions.minSdk.get().toInt()
+        minSdk =
+            libs.versions.minSdk
+                .get()
+                .toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -56,14 +61,12 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended)
 
-
     // testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     testImplementation(libs.truth)
     androidTestImplementation(libs.truth)
-
 
     // testing compose
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -72,20 +75,16 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 }
 
-detekt {
-    toolVersion = libs.versions.detekt.get()
-    config.setFrom("$projectDir/config/detekt/detekt.yml")
-    buildUponDefaultConfig = true
-}
-
 mavenPublishing {
-    publishToMavenCentral(SonatypeHost.S01,true)
+    publishToMavenCentral(SonatypeHost.S01, true)
     signAllPublications()
     coordinates("io.github.chochanaresh", "filepicker", versionName)
 
     pom {
         name.set("filepicker")
-        description.set("All file and media picker library for android. This library is designed to simplify the process of selecting and retrieving media files from an Android device, and supports media capture for images and videos.")
+        description.set(
+            "All file and media picker library for android. This library is designed to simplify the process of selecting and retrieving media files from an Android device, and supports media capture for images and videos."
+        )
         inceptionYear.set("2023")
         url.set("https://github.com/ChochaNaresh/FilePicker")
         licenses {

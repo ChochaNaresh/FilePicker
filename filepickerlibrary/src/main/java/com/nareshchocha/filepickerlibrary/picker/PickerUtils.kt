@@ -15,7 +15,6 @@ import java.io.IOException
  * Contains methods for creating file directories, generating files, and obtaining content URIs.
  */
 internal object PickerUtils {
-
     /**
      * Creates a file within the specified folder directory.
      *
@@ -26,7 +25,7 @@ internal object PickerUtils {
     @Keep
     fun createMediaFileFolder(
         folderFile: File,
-        fileName: String,
+        fileName: String
     ): File {
         if (!folderFile.exists()) {
             try {
@@ -95,12 +94,11 @@ internal object PickerUtils {
      * @return A content URI for the file
      * @throws IllegalArgumentException if the file cannot be shared
      */
-    private fun Context.getUriForFile(mFile: File): Uri? {
-        return FileProvider.getUriForFile(
+    private fun Context.getUriForFile(mFile: File): Uri? =
+        FileProvider.getUriForFile(
             this.applicationContext,
             applicationContext.packageName +
-                    Const.AUTHORITY,
-            mFile,
+                Const.AUTHORITY,
+            mFile
         )
-    }
 }

@@ -1,4 +1,4 @@
-package  com.nareshchocha.filepickerlibrary.ui.components.dialogs
+package com.nareshchocha.filepickerlibrary.ui.components.dialogs
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
@@ -16,7 +16,7 @@ fun AppAlertDialog(
     dismissText: String = stringResource(R.string.str_cancel),
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
-    onDismissRequest: () -> Unit = onDismiss,
+    onDismissRequest: () -> Unit = onDismiss
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,

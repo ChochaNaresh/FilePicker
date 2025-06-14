@@ -18,56 +18,49 @@ import java.io.InputStream
 /**
  * @return Whether the Uri authority is ExternalStorageProvider.
  */
-internal fun Uri.isExternalStorageDocument(): Boolean {
-    return "com.android.externalstorage.documents" == authority
-}
+internal fun Uri.isExternalStorageDocument(): Boolean = "com.android.externalstorage.documents" == authority
 
 /**
  * @return Whether the Uri authority is DownloadsProvider.
  */
-internal fun Uri.isDownloadsDocument(): Boolean {
-    return "com.android.providers.downloads.documents" == authority
-}
+internal fun Uri.isDownloadsDocument(): Boolean = "com.android.providers.downloads.documents" == authority
 
 /**
  * @return Whether the Uri authority is MediaProvider.
  */
-internal fun Uri.isMediaDocument(): Boolean {
-    return "com.android.providers.media.documents" == authority
-}
+internal fun Uri.isMediaDocument(): Boolean = "com.android.providers.media.documents" == authority
 
 /**
  * @return Whether the Uri authority is Google Photos.
  */
-internal fun Uri.isGooglePhotosUri(): Boolean {
-    return "com.google.android.apps.photos.content" == authority
-}
+internal fun Uri.isGooglePhotosUri(): Boolean = "com.google.android.apps.photos.content" == authority
 
-internal fun Uri.isGoogleDriveUri(): Boolean {
-    return "com.google.android.apps.docs.storage" == authority ||
-            "com.google.android.apps.docs.storage.legacy" == authority
-}
+internal fun Uri.isGoogleDriveUri(): Boolean =
+    "com.google.android.apps.docs.storage" == authority ||
+        "com.google.android.apps.docs.storage.legacy" == authority
 
 @Keep
 internal fun getDataColumn(
     context: Context,
     uri: Uri?,
     selection: String?,
-    selectionArgs: Array<String>?,
+    selectionArgs: Array<String>?
 ): String? {
     var cursor: Cursor? = null
     val column = "_data"
-    val projection = arrayOf(
-        column,
-    )
-    try {
-        cursor = context.contentResolver.query(
-            uri!!,
-            projection,
-            selection,
-            selectionArgs,
-            null,
+    val projection =
+        arrayOf(
+            column
         )
+    try {
+        cursor =
+            context.contentResolver.query(
+                uri!!,
+                projection,
+                selection,
+                selectionArgs,
+                null
+            )
         if (cursor != null && cursor.moveToFirst()) {
             val index = cursor.getColumnIndexOrThrow(column)
             return cursor.getString(index)
@@ -77,7 +70,6 @@ internal fun getDataColumn(
     }
     return null
 }
-
 
 @Keep
 internal fun Context.getMediaDocumentPath(uri: Uri): String? {
@@ -104,20 +96,22 @@ internal fun Context.getMediaDocumentPath(uri: Uri): String? {
         }
     }
     val selection = "_id=?"
-    val selectionArgs = arrayOf(
-        split[1],
-    )
+    val selectionArgs =
+        arrayOf(
+            split[1]
+        )
     return getDataColumn(this, contentUri, selection, selectionArgs)
 }
 
 internal fun Context.getDriveFilePath(uri: Uri): String? {
-    val returnCursor: Cursor? = contentResolver.query(
-        uri,
-        null,
-        null,
-        null,
-        null
-    )
+    val returnCursor: Cursor? =
+        contentResolver.query(
+            uri,
+            null,
+            null,
+            null,
+            null
+        )
     val nameIndex = returnCursor?.getColumnIndex(OpenableColumns.DISPLAY_NAME) ?: return null
     returnCursor.moveToFirst()
     val name = returnCursor.getString(nameIndex)
@@ -144,7 +138,6 @@ internal fun Context.getDriveFilePath(uri: Uri): String? {
         )
         null
     }
-
 }
 
 /**
@@ -172,7 +165,6 @@ private fun sanitizeFileName(fileName: String): String {
 
 const val FILE_NAME_LENGTH = 255
 
-
 /***
  * Used for Android Q+
  * @param uri
@@ -181,26 +173,33 @@ const val FILE_NAME_LENGTH = 255
  */
 internal fun Context.copyFileToInternalStorage(
     uri: Uri,
-    newDirName: String = Const.copyFileFolder
+    newDirName: String = Const.COPY_FILE_FOLDER
 ): String? {
-    val returnCursor: Cursor? = this.contentResolver.query(
-        uri, arrayOf(
-            OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE
-        ), null, null, null
-    )
+    val returnCursor: Cursor? =
+        this.contentResolver.query(
+            uri,
+            arrayOf(
+                OpenableColumns.DISPLAY_NAME,
+                OpenableColumns.SIZE
+            ),
+            null,
+            null,
+            null
+        )
     val nameIndex = returnCursor?.getColumnIndex(OpenableColumns.DISPLAY_NAME) ?: return null
     returnCursor.moveToFirst()
     val name = sanitizeFileName(returnCursor.getString(nameIndex))
     returnCursor.close()
-    val output: File = if (newDirName != "") {
-        val dir = File(cacheDir, newDirName)
-        if (!dir.exists()) {
-            dir.mkdir()
+    val output: File =
+        if (newDirName != "") {
+            val dir = File(cacheDir, newDirName)
+            if (!dir.exists()) {
+                dir.mkdir()
+            }
+            File(cacheDir, "$newDirName/$name")
+        } else {
+            File(cacheDir, "/$name")
         }
-        File(cacheDir, "$newDirName/$name")
-    } else {
-        File(cacheDir, "/$name")
-    }
     return try {
         val inputStream: InputStream? = contentResolver.openInputStream(uri)
         val outputStream = FileOutputStream(output)

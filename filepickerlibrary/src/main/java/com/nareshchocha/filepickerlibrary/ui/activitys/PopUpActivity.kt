@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -51,7 +50,7 @@ internal class PopUpActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(
                 Const.BundleInternalExtras.PICKER_DATA,
-                PickerData::class.java,
+                PickerData::class.java
             )
         } else {
             @Suppress("DEPRECATION")
@@ -82,7 +81,8 @@ internal class PopUpActivity : ComponentActivity() {
                     items = items,
                     onItemClick = { item ->
                         handleItemClick(context, item)
-                    })
+                    }
+                )
             } else {
                 LoadBottomSheetUI(
                     mPopUpConfig = mPickerData?.mPopUpConfig ?: PopUpConfig(),
@@ -103,15 +103,16 @@ internal class PopUpActivity : ComponentActivity() {
     ) {
         val title = mPopUpConfig.chooserTitle ?: stringResource(R.string.str_choose_option)
         AppDialog(
-            modifier = Modifier
-                .background(
-                    color = MaterialTheme.colorScheme.background,
-                    shape = RoundedCornerShape(mPopUpConfig.cornerSize.dp)
-                ),
+            modifier =
+                Modifier
+                    .background(
+                        color = MaterialTheme.colorScheme.background,
+                        shape = RoundedCornerShape(mPopUpConfig.cornerSize.dp)
+                    ),
             onDismissRequest = {
                 setCanceledResult()
                 finish()
-            },
+            }
         ) {
             Column {
                 if (mPopUpConfig.title != null) {
@@ -130,7 +131,6 @@ internal class PopUpActivity : ComponentActivity() {
                     onItemClick = onItemClick
                 )
             }
-
         }
     }
 
@@ -149,10 +149,12 @@ internal class PopUpActivity : ComponentActivity() {
             },
             dragHandle = null,
             sheetState = sheetState,
-            shape = RoundedCornerShape(
-                topStart = mPopUpConfig.cornerSize.dp,
-                topEnd = mPopUpConfig.cornerSize.dp
-            )
+            shape =
+
+                RoundedCornerShape(
+                    topStart = mPopUpConfig.cornerSize.dp,
+                    topEnd = mPopUpConfig.cornerSize.dp
+                )
         ) {
             Column(modifier = Modifier) {
                 if (mPopUpConfig.title != null) {
@@ -172,38 +174,38 @@ internal class PopUpActivity : ComponentActivity() {
                 )
             }
         }
-
     }
-
 
     @Composable
     private fun ItemList(
         modifier: Modifier = Modifier,
-        orientation: Orientation, items: List<BaseConfig>,
+        orientation: Orientation,
+        items: List<BaseConfig>,
         item: @Composable ((item: BaseConfig) -> Unit)? = null,
         onItemClick: (BaseConfig) -> Unit
     ) {
         if (orientation.isHorizontal()) {
             Row(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 6.dp)
-                    .horizontalScroll(rememberScrollState())
+                modifier =
+                    modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 6.dp)
+                        .horizontalScroll(rememberScrollState())
             ) {
                 ItemList(items, item, onItemClick)
             }
         } else {
             Column(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 6.dp)
-                    .verticalScroll(rememberScrollState())
+                modifier =
+                    modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 6.dp)
+                        .verticalScroll(rememberScrollState())
             ) {
                 ItemList(items, item, onItemClick)
             }
         }
     }
-
 
     @Composable
     private fun ItemList(
@@ -216,7 +218,7 @@ internal class PopUpActivity : ComponentActivity() {
                 itemView(item)
             } else {
                 TextButton(
-                    onClick = { onItemClick(item) },
+                    onClick = { onItemClick(item) }
                 ) {
                     Row {
                         val iconRes = item.popUpIcon
@@ -224,9 +226,10 @@ internal class PopUpActivity : ComponentActivity() {
                             Image(
                                 painter = painterResource(id = iconRes),
                                 contentDescription = null,
-                                modifier = Modifier
-                                    .padding(end = 8.dp)
-                                    .height(24.dp)
+                                modifier =
+                                    Modifier
+                                        .padding(end = 8.dp)
+                                        .height(24.dp)
                             )
                         }
                         Text(item.popUpText ?: "")
@@ -236,7 +239,10 @@ internal class PopUpActivity : ComponentActivity() {
         }
     }
 
-    private fun handleItemClick(context: Context, item: BaseConfig) {
+    private fun handleItemClick(
+        context: Context,
+        item: BaseConfig
+    ) {
         when (item) {
             is ImageCaptureConfig -> {
                 intentResultLauncher.launch(FilePicker.Builder(context).imageCaptureBuild(item))
@@ -257,7 +263,10 @@ internal class PopUpActivity : ComponentActivity() {
     }
 
     companion object {
-        fun getInstance(mContext: Context, mPickerData: PickerData?): Intent {
+        fun getInstance(
+            mContext: Context,
+            mPickerData: PickerData?
+        ): Intent {
             val filePickerIntent = Intent(mContext, PopUpActivity::class.java)
             mPickerData?.let {
                 filePickerIntent.putExtra(Const.BundleInternalExtras.PICKER_DATA, it)

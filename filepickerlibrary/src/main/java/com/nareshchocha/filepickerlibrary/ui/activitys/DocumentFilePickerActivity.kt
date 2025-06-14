@@ -40,12 +40,11 @@ import com.nareshchocha.filepickerlibrary.utilities.extentions.setSuccessResult
 
 @OptIn(ExperimentalMaterial3Api::class)
 internal class DocumentFilePickerActivity : ComponentActivity() {
-
     private val mDocumentFilePickerConfig: DocumentFilePickerConfig? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(
                 Const.BundleInternalExtras.PICK_DOCUMENT,
-                DocumentFilePickerConfig::class.java,
+                DocumentFilePickerConfig::class.java
             )
         } else {
             @Suppress("DEPRECATION")
@@ -67,18 +66,20 @@ internal class DocumentFilePickerActivity : ComponentActivity() {
         var permissionRequested by remember { mutableStateOf(false) }
 
         val filePickerLauncher = rememberFilePickerLauncher()
-        val permissionLauncher = rememberPermissionLauncher(
-            onGranted = { launchFilePicker(filePickerLauncher) },
-            onShowRationale = { showAskDialog = true },
-            onDenied = { showGotoSettingDialog = true }
-        )
-        val settingLauncher = rememberSettingsLauncher(
-            onGranted = { launchFilePicker(filePickerLauncher) },
-            onDenied = {
-                setCanceledResult(getString(R.string.err_permission_result))
-                finish()
-            }
-        )
+        val permissionLauncher =
+            rememberPermissionLauncher(
+                onGranted = { launchFilePicker(filePickerLauncher) },
+                onShowRationale = { showAskDialog = true },
+                onDenied = { showGotoSettingDialog = true }
+            )
+        val settingLauncher =
+            rememberSettingsLauncher(
+                onGranted = { launchFilePicker(filePickerLauncher) },
+                onDenied = {
+                    setCanceledResult(getString(R.string.err_permission_result))
+                    finish()
+                }
+            )
 
         // Initial permission check
         CheckInitialPermissions(
@@ -118,12 +119,10 @@ internal class DocumentFilePickerActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun rememberFilePickerLauncher(): ManagedActivityResultLauncher<Intent, ActivityResult> {
-        return rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private fun rememberFilePickerLauncher(): ManagedActivityResultLauncher<Intent, ActivityResult> =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             handleFilePickerResult(result)
         }
-    }
-
 
     @Composable
     private fun CheckInitialPermissions(
@@ -144,7 +143,6 @@ internal class DocumentFilePickerActivity : ComponentActivity() {
         }
     }
 
-
     @Composable
     private fun ShowSettingsPermissionDialog(
         onConfirm: () -> Unit,
@@ -162,7 +160,7 @@ internal class DocumentFilePickerActivity : ComponentActivity() {
                 Text(
                     mDocumentFilePickerConfig?.settingPermissionMessage ?: getString(
                         R.string.err_write_storage_setting,
-                        getPermission().split(".").lastOrNull() ?: "",
+                        getPermission().split(".").lastOrNull() ?: ""
                     )
                 )
             },
@@ -254,24 +252,24 @@ internal class DocumentFilePickerActivity : ComponentActivity() {
     }
 
     companion object {
-        private fun getPermissionManifestCheck(context: Context) = ArrayList<String>().also {
-            val permissions = context.getRequestedPermissions()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                if (permissions?.contains(Manifest.permission.READ_MEDIA_VIDEO) == true) {
-                    it.add(Manifest.permission.READ_MEDIA_VIDEO)
-                }
-            } else {
-                if (permissions?.contains(Manifest.permission.READ_EXTERNAL_STORAGE) == true) {
-                    it.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+        private fun getPermissionManifestCheck(context: Context) =
+            ArrayList<String>().also {
+                val permissions = context.getRequestedPermissions()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    if (permissions?.contains(Manifest.permission.READ_MEDIA_VIDEO) == true) {
+                        it.add(Manifest.permission.READ_MEDIA_VIDEO)
+                    }
+                } else {
+                    if (permissions?.contains(Manifest.permission.READ_EXTERNAL_STORAGE) == true) {
+                        it.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    }
                 }
             }
-        }
-
 
         @Keep
         fun getInstance(
             mContext: Context,
-            mDocumentFilePickerConfig: DocumentFilePickerConfig?,
+            mDocumentFilePickerConfig: DocumentFilePickerConfig?
         ): Intent {
             val filePickerIntent = Intent(mContext, DocumentFilePickerActivity::class.java)
             mDocumentFilePickerConfig?.let {
@@ -324,13 +322,12 @@ private fun rememberSettingsLauncher(
     }
 }
 
-private fun getPermission(): String {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+private fun getPermission(): String =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         Manifest.permission.READ_MEDIA_VIDEO
     } else {
         Manifest.permission.READ_EXTERNAL_STORAGE
     }
-}
 
 @Composable
 private fun ShowAskPermissionDialog(
@@ -350,7 +347,7 @@ private fun ShowAskPermissionDialog(
             Text(
                 mDocumentFilePickerConfig?.askPermissionMessage ?: stringResource(
                     R.string.err_write_storage_permission,
-                    getPermission().split(".").lastOrNull() ?: "",
+                    getPermission().split(".").lastOrNull() ?: ""
                 )
             )
         },

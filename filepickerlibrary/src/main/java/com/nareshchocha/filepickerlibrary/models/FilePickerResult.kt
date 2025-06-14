@@ -8,5 +8,5 @@ data class FilePickerResult(
     val selectedFileUri: Uri? = null,
     val selectedFilePath: String? = null,
     val isMultipleSelection: Boolean = false,
-    val errorMessage: String? = null,
+    val errorMessage: String? = null
 )

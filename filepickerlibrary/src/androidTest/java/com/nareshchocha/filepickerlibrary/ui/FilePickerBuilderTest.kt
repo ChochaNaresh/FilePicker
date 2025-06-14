@@ -2,7 +2,6 @@ package com.nareshchocha.filepickerlibrary.ui
 
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.test.filters.SmallTest
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import androidx.test.platform.app.InstrumentationRegistry
@@ -26,21 +25,20 @@ class FilePickerBuilderTest {
         appContext = InstrumentationRegistry.getInstrumentation().targetContext
     }
 
-
-
     @Test
     fun testImageCaptureBuild() {
         val mImageCaptureConfig = ImageCaptureConfig()
         val intentActivity = FilePicker.Builder(appContext).imageCaptureBuild(mImageCaptureConfig)
-        val data = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intentActivity.getParcelableExtra(
-                Const.BundleInternalExtras.IMAGE_CAPTURE,
-                ImageCaptureConfig::class.java,
-            )
-        } else {
-            @Suppress("DEPRECATION")
-            intentActivity.getParcelableExtra(Const.BundleInternalExtras.IMAGE_CAPTURE) as ImageCaptureConfig?
-        }
+        val data =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intentActivity.getParcelableExtra(
+                    Const.BundleInternalExtras.IMAGE_CAPTURE,
+                    ImageCaptureConfig::class.java
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                intentActivity.getParcelableExtra(Const.BundleInternalExtras.IMAGE_CAPTURE) as ImageCaptureConfig?
+            }
         assertThat(data).isSameInstanceAs(mImageCaptureConfig)
     }
 
@@ -48,15 +46,16 @@ class FilePickerBuilderTest {
     fun testVideoCaptureBuild() {
         val mVideoCaptureConfig = VideoCaptureConfig()
         val intentActivity = FilePicker.Builder(appContext).videoCaptureBuild(mVideoCaptureConfig)
-        val data = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intentActivity.getParcelableExtra(
-                Const.BundleInternalExtras.VIDEO_CAPTURE,
-                VideoCaptureConfig::class.java,
-            )
-        } else {
-            @Suppress("DEPRECATION")
-            intentActivity.getParcelableExtra(Const.BundleInternalExtras.VIDEO_CAPTURE) as VideoCaptureConfig?
-        }
+        val data =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intentActivity.getParcelableExtra(
+                    Const.BundleInternalExtras.VIDEO_CAPTURE,
+                    VideoCaptureConfig::class.java
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                intentActivity.getParcelableExtra(Const.BundleInternalExtras.VIDEO_CAPTURE) as VideoCaptureConfig?
+            }
         assertThat(data).isSameInstanceAs(mVideoCaptureConfig)
     }
 
@@ -64,15 +63,16 @@ class FilePickerBuilderTest {
     fun testPickMediaBuild() {
         val mPickMediaConfig = PickMediaConfig()
         val intentActivity = FilePicker.Builder(appContext).pickMediaBuild(mPickMediaConfig)
-        val data = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intentActivity.getParcelableExtra(
-                Const.BundleInternalExtras.PICK_MEDIA,
-                PickMediaConfig::class.java,
-            )
-        } else {
-            @Suppress("DEPRECATION")
-            intentActivity.getParcelableExtra(Const.BundleInternalExtras.PICK_MEDIA) as PickMediaConfig?
-        }
+        val data =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intentActivity.getParcelableExtra(
+                    Const.BundleInternalExtras.PICK_MEDIA,
+                    PickMediaConfig::class.java
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                intentActivity.getParcelableExtra(Const.BundleInternalExtras.PICK_MEDIA) as PickMediaConfig?
+            }
         assertThat(data).isSameInstanceAs(mPickMediaConfig)
     }
 
@@ -81,15 +81,16 @@ class FilePickerBuilderTest {
         val mDocumentFilePickerConfig = DocumentFilePickerConfig()
         val intentActivity =
             FilePicker.Builder(appContext).pickDocumentFileBuild(mDocumentFilePickerConfig)
-        val data = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intentActivity.getParcelableExtra(
-                Const.BundleInternalExtras.PICK_DOCUMENT,
-                DocumentFilePickerConfig::class.java,
-            )
-        } else {
-            @Suppress("DEPRECATION")
-            intentActivity.getParcelableExtra(Const.BundleInternalExtras.PICK_DOCUMENT) as DocumentFilePickerConfig?
-        }
+        val data =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intentActivity.getParcelableExtra(
+                    Const.BundleInternalExtras.PICK_DOCUMENT,
+                    DocumentFilePickerConfig::class.java
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                intentActivity.getParcelableExtra(Const.BundleInternalExtras.PICK_DOCUMENT) as DocumentFilePickerConfig?
+            }
         assertThat(data).isSameInstanceAs(mDocumentFilePickerConfig)
     }
 }

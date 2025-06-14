@@ -12,5 +12,5 @@ open class BaseConfig(
     open val askPermissionTitle: String?,
     open val askPermissionMessage: String?,
     open val settingPermissionTitle: String?,
-    open val settingPermissionMessage: String?,
+    open val settingPermissionMessage: String?
 ) : Parcelable

@@ -36,7 +36,6 @@ import com.nareshchocha.filepickerlibrary.utilities.extentions.getRequestedPermi
 import com.nareshchocha.filepickerlibrary.utilities.extentions.getSettingIntent
 import com.nareshchocha.filepickerlibrary.utilities.extentions.setCanceledResult
 import com.nareshchocha.filepickerlibrary.utilities.extentions.setSuccessResult
-import com.nareshchocha.filepickerlibrary.utilities.log
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,7 +47,7 @@ internal class ImageCaptureActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(
                 Const.BundleInternalExtras.IMAGE_CAPTURE,
-                ImageCaptureConfig::class.java,
+                ImageCaptureConfig::class.java
             )
         } else {
             @Suppress("DEPRECATION")
@@ -62,7 +61,6 @@ internal class ImageCaptureActivity : ComponentActivity() {
             SetUI()
         }
     }
-
 
     @Composable
     fun SetUI() {
@@ -104,7 +102,7 @@ internal class ImageCaptureActivity : ComponentActivity() {
                     },
                     launchCamera = {
                         launchCamera(context, imageCaptureLauncher)
-                    },
+                    }
                 )
             }
         }
@@ -129,7 +127,6 @@ internal class ImageCaptureActivity : ComponentActivity() {
                 finish()
             })
         }
-
     }
 
     private fun checkAndRequestPermissions(
@@ -153,12 +150,13 @@ internal class ImageCaptureActivity : ComponentActivity() {
         context: Context,
         imageCaptureLauncher: ActivityResultLauncher<Intent>
     ) {
-        val allGranted = getPermissionsList(context).all { permission ->
-            ContextCompat.checkSelfPermission(
-                context,
-                permission,
-            ) == PackageManager.PERMISSION_GRANTED
-        }
+        val allGranted =
+            getPermissionsList(context).all { permission ->
+                ContextCompat.checkSelfPermission(
+                    context,
+                    permission
+                ) == PackageManager.PERMISSION_GRANTED
+            }
 
         if (allGranted) {
             launchCamera(context, imageCaptureLauncher)
@@ -174,19 +172,21 @@ internal class ImageCaptureActivity : ComponentActivity() {
         imageCaptureLauncher: ActivityResultLauncher<Intent>,
         onShowDialog: (askDialog: Boolean, settingDialog: Boolean) -> Unit
     ) {
-        val allGranted = result.all { permission ->
-            ContextCompat.checkSelfPermission(
-                context,
-                permission.key,
-            ) == PackageManager.PERMISSION_GRANTED
-        }
+        val allGranted =
+            result.all { permission ->
+                ContextCompat.checkSelfPermission(
+                    context,
+                    permission.key
+                ) == PackageManager.PERMISSION_GRANTED
+            }
 
-        val isShowRationale = result.any { permission ->
-            ActivityCompat.shouldShowRequestPermissionRationale(
-                this,
-                permission.key,
-            )
-        }
+        val isShowRationale =
+            result.any { permission ->
+                ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    permission.key
+                )
+            }
 
         if (allGranted) {
             launchCamera(context, imageCaptureLauncher)
@@ -210,19 +210,21 @@ internal class ImageCaptureActivity : ComponentActivity() {
     private fun PermissionDialog(
         context: Context,
         onConfirm: () -> Unit,
-        onDismiss: () -> Unit,
+        onDismiss: () -> Unit
     ) {
         AppAlertDialog(
             onDismissRequest = {
                 setCanceledResult(getString(R.string.err_permission_result))
                 finish()
             },
-            title = mImageCaptureConfig?.askPermissionTitle
-                ?: stringResource(R.string.err_permission_denied),
-            message = mImageCaptureConfig?.askPermissionMessage ?: stringResource(
-                R.string.err_write_storage_permission,
-                getPermissionsListString(context),
-            ),
+            title =
+                mImageCaptureConfig?.askPermissionTitle
+                    ?: stringResource(R.string.err_permission_denied),
+            message =
+                mImageCaptureConfig?.askPermissionMessage ?: stringResource(
+                    R.string.err_write_storage_permission,
+                    getPermissionsListString(context)
+                ),
             onConfirm = onConfirm,
             onDismiss = onDismiss
         )
@@ -232,42 +234,46 @@ internal class ImageCaptureActivity : ComponentActivity() {
     private fun SettingDialog(
         context: Context,
         onConfirm: () -> Unit,
-        onDismiss: () -> Unit,
+        onDismiss: () -> Unit
     ) {
         AppAlertDialog(
             onDismissRequest = {
                 setCanceledResult(getString(R.string.err_permission_result))
                 finish()
             },
-            title = mImageCaptureConfig?.settingPermissionTitle
-                ?: stringResource(R.string.err_permission_denied),
-            message = mImageCaptureConfig?.settingPermissionMessage ?: getString(
-                R.string.err_write_storage_setting,
-                getPermissionsListString(context),
-            ),
+            title =
+                mImageCaptureConfig?.settingPermissionTitle
+                    ?: stringResource(R.string.err_permission_denied),
+            message =
+                mImageCaptureConfig?.settingPermissionMessage ?: getString(
+                    R.string.err_write_storage_setting,
+                    getPermissionsListString(context)
+                ),
             onConfirm = onConfirm,
             onDismiss = onDismiss
         )
     }
 
-
     private fun launchCamera(
         context: Context,
         imageCaptureLauncher: ActivityResultLauncher<Intent>
     ) {
-        imageFileUri = if (mImageCaptureConfig != null) {
-            imageFile = createMediaFileFolder(
-                folderFile = mImageCaptureConfig!!.mFolder ?: context.defaultFolder(),
-                fileName = mImageCaptureConfig!!.fileName ?: Const.DefaultPaths.defaultImageFile(),
-            )
-            context.createFileGetUri(imageFile!!)
-        } else {
-            imageFile = createMediaFileFolder(
-                folderFile = context.defaultFolder(),
-                fileName = Const.DefaultPaths.defaultImageFile(),
-            )
-            context.createFileGetUri(imageFile!!)
-        }
+        imageFileUri =
+            if (mImageCaptureConfig != null) {
+                imageFile =
+                    createMediaFileFolder(
+                        folderFile = mImageCaptureConfig!!.mFolder ?: context.defaultFolder(),
+                        fileName = mImageCaptureConfig!!.fileName ?: Const.DefaultPaths.defaultImageFile()
+                    )
+                context.createFileGetUri(imageFile!!)
+            } else {
+                imageFile =
+                    createMediaFileFolder(
+                        folderFile = context.defaultFolder(),
+                        fileName = Const.DefaultPaths.defaultImageFile()
+                    )
+                context.createFileGetUri(imageFile!!)
+            }
         imageFileUri?.let {
             imageCaptureLauncher.launch(
                 context.getImageCaptureIntent(
@@ -279,26 +285,32 @@ internal class ImageCaptureActivity : ComponentActivity() {
     }
 
     private fun getPermissionsListString(context: Context): String {
-        val listString = getPermissionsList(context).map {
-            it.split(".").lastOrNull() ?: ""
-        }.toString()
+        val listString =
+            getPermissionsList(context)
+                .map {
+                    it.split(".").lastOrNull() ?: ""
+                }.toString()
         return listString.substring(1, listString.length - 1).replace(",", " and ")
     }
 
     companion object {
         @Keep
-        private fun getPermissionsList(context: Context) = ArrayList<String>().also {
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-                it.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        private fun getPermissionsList(context: Context) =
+            ArrayList<String>().also {
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+                    it.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                }
+                val permissions = context.getRequestedPermissions()
+                if (permissions?.contains(Manifest.permission.CAMERA) == true) {
+                    it.add(Manifest.permission.CAMERA)
+                }
             }
-            val permissions = context.getRequestedPermissions()
-            if (permissions?.contains(Manifest.permission.CAMERA) == true) {
-                it.add(Manifest.permission.CAMERA)
-            }
-        }
 
         @Keep
-        fun getInstance(mContext: Context, mImageCaptureConfig: ImageCaptureConfig?): Intent {
+        fun getInstance(
+            mContext: Context,
+            mImageCaptureConfig: ImageCaptureConfig?
+        ): Intent {
             val filePickerIntent = Intent(mContext, ImageCaptureActivity::class.java)
             mImageCaptureConfig?.let {
                 filePickerIntent.putExtra(Const.BundleInternalExtras.IMAGE_CAPTURE, it)
