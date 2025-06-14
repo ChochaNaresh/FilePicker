@@ -7,12 +7,21 @@ plugins {
 
 android {
     namespace = "com.nareshchocha.filepicker"
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    compileSdk =
+        libs.versions.compileSdk
+            .get()
+            .toInt()
 
     defaultConfig {
         applicationId = "com.nareshchocha.filepicker"
-        minSdk = libs.versions.minSdk.get().toInt()
-        targetSdk = libs.versions.targetSdk.get().toInt()
+        minSdk =
+            libs.versions.minSdk
+                .get()
+                .toInt()
+        targetSdk =
+            libs.versions.targetSdk
+                .get()
+                .toInt()
         versionCode = 2
         versionName = "1.1"
 
@@ -44,7 +53,6 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.valueOf(libs.versions.jdkVersion.get()).toString()
     }
-
 }
 
 dependencies {
@@ -61,8 +69,6 @@ dependencies {
     // File Picker
     implementation(project(":filepickerlibrary"))
 
-
-
     // testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -70,11 +76,9 @@ dependencies {
     testImplementation(libs.truth)
     androidTestImplementation(libs.truth)
 
-
     // testing compose
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
 }
