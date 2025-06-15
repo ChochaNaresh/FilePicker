@@ -33,10 +33,10 @@ import com.nareshchocha.filepickerlibrary.picker.PickerUtils.createFileGetUri
 import com.nareshchocha.filepickerlibrary.picker.PickerUtils.createMediaFileFolder
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const.DefaultPaths.defaultFolder
-import com.nareshchocha.filepickerlibrary.utilities.extentions.getSettingIntent
-import com.nareshchocha.filepickerlibrary.utilities.extentions.getVideoCaptureIntent
-import com.nareshchocha.filepickerlibrary.utilities.extentions.setCanceledResult
-import com.nareshchocha.filepickerlibrary.utilities.extentions.setSuccessResult
+import com.nareshchocha.filepickerlibrary.utilities.extensions.getSettingIntent
+import com.nareshchocha.filepickerlibrary.utilities.extensions.getVideoCaptureIntent
+import com.nareshchocha.filepickerlibrary.utilities.extensions.setCanceledResult
+import com.nareshchocha.filepickerlibrary.utilities.extensions.setSuccessResult
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)

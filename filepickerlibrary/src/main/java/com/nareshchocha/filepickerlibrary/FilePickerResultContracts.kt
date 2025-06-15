@@ -17,7 +17,7 @@ import com.nareshchocha.filepickerlibrary.ui.activitys.MediaFilePickerActivity
 import com.nareshchocha.filepickerlibrary.ui.activitys.PopUpActivity
 import com.nareshchocha.filepickerlibrary.ui.activitys.VideoCaptureActivity
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
-import com.nareshchocha.filepickerlibrary.utilities.extentions.getClipDataUris
+import com.nareshchocha.filepickerlibrary.utilities.extensions.getClipDataUris
 
 class FilePickerResultContracts private constructor() {
     companion object {

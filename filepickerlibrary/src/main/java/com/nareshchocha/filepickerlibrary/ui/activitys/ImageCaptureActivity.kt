@@ -31,11 +31,11 @@ import com.nareshchocha.filepickerlibrary.picker.PickerUtils.createMediaFileFold
 import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppAlertDialog
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const.DefaultPaths.defaultFolder
-import com.nareshchocha.filepickerlibrary.utilities.extentions.getImageCaptureIntent
-import com.nareshchocha.filepickerlibrary.utilities.extentions.getRequestedPermissions
-import com.nareshchocha.filepickerlibrary.utilities.extentions.getSettingIntent
-import com.nareshchocha.filepickerlibrary.utilities.extentions.setCanceledResult
-import com.nareshchocha.filepickerlibrary.utilities.extentions.setSuccessResult
+import com.nareshchocha.filepickerlibrary.utilities.extensions.getImageCaptureIntent
+import com.nareshchocha.filepickerlibrary.utilities.extensions.getRequestedPermissions
+import com.nareshchocha.filepickerlibrary.utilities.extensions.getSettingIntent
+import com.nareshchocha.filepickerlibrary.utilities.extensions.setCanceledResult
+import com.nareshchocha.filepickerlibrary.utilities.extensions.setSuccessResult
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)

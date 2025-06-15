@@ -27,11 +27,11 @@ import com.nareshchocha.filepickerlibrary.models.PickMediaConfig
 import com.nareshchocha.filepickerlibrary.models.PickMediaType
 import com.nareshchocha.filepickerlibrary.utilities.FileUtils
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
-import com.nareshchocha.filepickerlibrary.utilities.extentions.getMediaIntent
-import com.nareshchocha.filepickerlibrary.utilities.extentions.getRequestedPermissions
-import com.nareshchocha.filepickerlibrary.utilities.extentions.getSettingIntent
-import com.nareshchocha.filepickerlibrary.utilities.extentions.setCanceledResult
-import com.nareshchocha.filepickerlibrary.utilities.extentions.setSuccessResult
+import com.nareshchocha.filepickerlibrary.utilities.extensions.getMediaIntent
+import com.nareshchocha.filepickerlibrary.utilities.extensions.getRequestedPermissions
+import com.nareshchocha.filepickerlibrary.utilities.extensions.getSettingIntent
+import com.nareshchocha.filepickerlibrary.utilities.extensions.setCanceledResult
+import com.nareshchocha.filepickerlibrary.utilities.extensions.setSuccessResult
 
 internal class MediaFilePickerActivity : ComponentActivity() {
     private val mPickMediaConfig: PickMediaConfig? by lazy {

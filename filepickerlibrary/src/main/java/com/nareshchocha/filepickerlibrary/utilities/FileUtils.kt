@@ -9,15 +9,15 @@ import android.provider.DocumentsContract
 import android.provider.MediaStore
 import androidx.annotation.Keep
 import androidx.core.net.toUri
-import com.nareshchocha.filepickerlibrary.utilities.extentions.copyFileToInternalStorage
-import com.nareshchocha.filepickerlibrary.utilities.extentions.getDataColumn
-import com.nareshchocha.filepickerlibrary.utilities.extentions.getDriveFilePath
-import com.nareshchocha.filepickerlibrary.utilities.extentions.getMediaDocumentPath
-import com.nareshchocha.filepickerlibrary.utilities.extentions.isDownloadsDocument
-import com.nareshchocha.filepickerlibrary.utilities.extentions.isExternalStorageDocument
-import com.nareshchocha.filepickerlibrary.utilities.extentions.isGoogleDriveUri
-import com.nareshchocha.filepickerlibrary.utilities.extentions.isGooglePhotosUri
-import com.nareshchocha.filepickerlibrary.utilities.extentions.isMediaDocument
+import com.nareshchocha.filepickerlibrary.utilities.extensions.copyFileToInternalStorage
+import com.nareshchocha.filepickerlibrary.utilities.extensions.getDataColumn
+import com.nareshchocha.filepickerlibrary.utilities.extensions.getDriveFilePath
+import com.nareshchocha.filepickerlibrary.utilities.extensions.getMediaDocumentPath
+import com.nareshchocha.filepickerlibrary.utilities.extensions.isDownloadsDocument
+import com.nareshchocha.filepickerlibrary.utilities.extensions.isExternalStorageDocument
+import com.nareshchocha.filepickerlibrary.utilities.extensions.isGoogleDriveUri
+import com.nareshchocha.filepickerlibrary.utilities.extensions.isGooglePhotosUri
+import com.nareshchocha.filepickerlibrary.utilities.extensions.isMediaDocument
 import java.io.File
 
 @Keep

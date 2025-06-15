@@ -1,4 +1,4 @@
-package com.nareshchocha.filepickerlibrary.utilities.extentions
+package com.nareshchocha.filepickerlibrary.utilities.extensions
 
 import android.content.Context
 import android.database.Cursor
