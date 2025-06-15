@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Keep()
 @Parcelize
-open class BaseConfig(
+sealed class BaseConfig(
     open val popUpIcon: Int?,
     open val popUpText: String?,
     open val askPermissionTitle: String?,

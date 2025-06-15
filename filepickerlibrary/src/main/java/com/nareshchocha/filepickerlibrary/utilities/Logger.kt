@@ -1,7 +1,7 @@
 package com.nareshchocha.filepickerlibrary.utilities
 
 import android.util.Log
-import com.nareshchocha.filepickerlibrary.ui.FilePicker
+import com.nareshchocha.filepickerlibrary.FilePickerResultContracts
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 
 fun log(
@@ -10,7 +10,7 @@ fun log(
     customTag: String = Const.LogTag.FILE_PICKER_ERROR,
     throwable: Throwable? = null
 ) {
-    if (FilePicker.isLoggingEnabled) {
+    if (FilePickerResultContracts.isLoggingEnabled) {
         message.printToLog(
             priority = priority,
             customTag = customTag,
@@ -33,7 +33,7 @@ fun printToLog(
     throwable: Throwable? = null,
     messageProvider: () -> String
 ) {
-    if (!FilePicker.isLoggingEnabled) return
+    if (!FilePickerResultContracts.isLoggingEnabled) return
     val tag = customTag ?: priority.getString()
     val message = messageProvider()
 

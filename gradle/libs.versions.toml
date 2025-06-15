@@ -10,10 +10,12 @@ targetSdk = "36"
 minSdk = "21"
 jdkVersion = "VERSION_21"
 
+# core
+core-splashscreen="1.0.1"
 
 # compose
 activityCompose = "1.10.1"
-composeBom = "2025.05.01"
+composeBom = "2025.06.00"
 
 # Testing
 junit = "4.13.2"
@@ -23,9 +25,12 @@ espressoCore = "3.6.1"
 
 # testing
 truth = "1.1.5"
+lifecycleRuntimeKtx = "2.9.1"
 
 [libraries]
-
+# core
+core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "core-splashscreen" }
+androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityCompose" }
 # compose
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
@@ -45,6 +50,7 @@ androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 # testing
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

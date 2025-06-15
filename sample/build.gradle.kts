@@ -44,18 +44,18 @@ android {
         renderScript = false
         shaders = false
     }
-
     compileOptions {
-        sourceCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
-        targetCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
-
     kotlinOptions {
-        jvmTarget = JavaVersion.valueOf(libs.versions.jdkVersion.get()).toString()
+        jvmTarget = "11"
     }
 }
 
 dependencies {
+    implementation(libs.core.splashscreen)
+    implementation(libs.androidx.activity.ktx)
     // compose
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -68,6 +68,7 @@ dependencies {
     implementation("io.coil-kt.coil3:coil-compose:3.2.0")
     // File Picker
     implementation(project(":filepickerlibrary"))
+    implementation(libs.androidx.lifecycle.runtime.ktx)
 
     // testing
     testImplementation(libs.junit)

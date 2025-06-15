@@ -61,7 +61,11 @@ subprojects {
     afterEvaluate {
         tasks.withType<KotlinCompile> {
             finalizedBy("spotlessApply")
+        }
+        
+        tasks.withType<KotlinCompile> {
             finalizedBy("detekt")
         }
+
     }
 }
