@@ -10,6 +10,7 @@ import android.os.Build
 import com.nareshchocha.filepickerlibrary.utilities.LogPriority
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.log
+import kotlin.text.substring
 
 internal fun Context.getRequestedPermissions(): Array<String>? =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -23,6 +24,13 @@ internal fun Context.getRequestedPermissions(): Array<String>? =
             PackageManager.GET_PERMISSIONS
         )
     }.requestedPermissions
+
+fun List<String>.asString() = this.map {
+    it.split(".").lastOrNull() ?: ""
+}.toString().let { listString ->
+    listString.substring(1, listString.length - 1).replace(",", " and ")
+}
+
 
 // Helper extension for getting clip data URIs
 internal fun Intent.getClipDataUris(): ArrayList<Uri> {

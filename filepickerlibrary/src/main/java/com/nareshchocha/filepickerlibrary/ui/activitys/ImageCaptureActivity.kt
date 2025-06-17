@@ -29,6 +29,8 @@ import com.nareshchocha.filepickerlibrary.models.ImageCaptureConfig
 import com.nareshchocha.filepickerlibrary.picker.PickerUtils.createFileGetUri
 import com.nareshchocha.filepickerlibrary.picker.PickerUtils.createMediaFileFolder
 import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppAlertDialog
+import com.nareshchocha.filepickerlibrary.ui.components.dialogs.SettingDialog
+import com.nareshchocha.filepickerlibrary.utilities.PermissionsManager
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const.DefaultPaths.defaultFolder
 import com.nareshchocha.filepickerlibrary.utilities.extensions.getImageCaptureIntent
@@ -38,7 +40,6 @@ import com.nareshchocha.filepickerlibrary.utilities.extensions.setCanceledResult
 import com.nareshchocha.filepickerlibrary.utilities.extensions.setSuccessResult
 import java.io.File
 
-@OptIn(ExperimentalMaterial3Api::class)
 internal class ImageCaptureActivity : ComponentActivity() {
     private var imageFileUri: Uri? = null
     private var imageFile: File? = null
@@ -54,9 +55,30 @@ internal class ImageCaptureActivity : ComponentActivity() {
             intent.getParcelableExtra(Const.BundleInternalExtras.IMAGE_CAPTURE) as ImageCaptureConfig?
         }
     }
+    val mPermissionsManager: PermissionsManager by lazy {
+        PermissionsManager(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mPermissionsManager.requestPermission(
+            this,
+            permission = getPermissionsList(this).first(),
+            onPermissionGranted = {
+                // Permissions are already granted, proceed with camera launch
+                checkPermissionsAndLaunchCamera(this, imageCaptureLauncher)
+            },
+            onPermissionDenied = {
+                // Handle permission denial
+                setCanceledResult(getString(R.string.err_permission_result))
+                finish()
+            },
+            onShowRationale = {
+                /*askDialog, settingDialog ->
+  showAskDialog = askDialog
+  showGotoSettingDialog = settingDialog*/
+            }
+        )
         setContent {
             SetUI()
         }
@@ -119,6 +141,17 @@ internal class ImageCaptureActivity : ComponentActivity() {
 
         // Go to Setting Dialog
         if (showGotoSettingDialog) {
+            SettingDialog(
+                context,
+                onConfirm = {
+                    showGotoSettingDialog = false
+                    settingLauncher.launch(getSettingIntent())
+                },
+                onDismiss = {
+                    setCanceledResult(getString(R.string.err_permission_result))
+                    finish()
+                }
+            ) { }
             SettingDialog(context, onConfirm = {
                 showGotoSettingDialog = false
                 settingLauncher.launch(getSettingIntent())
@@ -231,7 +264,7 @@ internal class ImageCaptureActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun SettingDialog(
+    private fun SettingDialogssssss(
         context: Context,
         onConfirm: () -> Unit,
         onDismiss: () -> Unit
@@ -263,7 +296,8 @@ internal class ImageCaptureActivity : ComponentActivity() {
                 imageFile =
                     createMediaFileFolder(
                         folderFile = mImageCaptureConfig!!.mFolder ?: context.defaultFolder(),
-                        fileName = mImageCaptureConfig!!.fileName ?: Const.DefaultPaths.defaultImageFile()
+                        fileName = mImageCaptureConfig!!.fileName
+                            ?: Const.DefaultPaths.defaultImageFile()
                     )
                 context.createFileGetUri(imageFile!!)
             } else {

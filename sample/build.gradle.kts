@@ -45,11 +45,12 @@ android {
         shaders = false
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
+        targetCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
     }
+
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = JavaVersion.valueOf(libs.versions.jdkVersion.get()).toString()
     }
 }
 
