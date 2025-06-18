@@ -33,16 +33,6 @@ import com.nareshchocha.filepickerlibrary.utilities.extensions.setSuccessResult
 import java.io.File
 
 internal class ImageCaptureActivity : ComponentActivity() {
-    private val imageFile: File? by lazy {
-        createMediaFileFolder(
-            folderFile = mImageCaptureConfig!!.mFolder ?: defaultFolder(),
-            fileName =
-                mImageCaptureConfig!!.fileName
-                    ?: Const.DefaultPaths.defaultImageFile()
-        )
-    }
-    private val imageFileUri: Uri? by lazy { createFileGetUri(imageFile) }
-
     private val mImageCaptureConfig: ImageCaptureConfig? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(
@@ -54,6 +44,18 @@ internal class ImageCaptureActivity : ComponentActivity() {
             intent.getParcelableExtra(Const.BundleInternalExtras.IMAGE_CAPTURE) as ImageCaptureConfig?
         }
     }
+    private var imageFile: File? = null
+    private val imageFileUri: Uri? by lazy {
+        imageFile = createMediaFileFolder(
+            folderFile = mImageCaptureConfig!!.mFolder ?: defaultFolder(),
+            fileName =
+                mImageCaptureConfig!!.fileName
+                    ?: Const.DefaultPaths.defaultImageFile()
+        )
+        createFileGetUri(imageFile)
+    }
+
+
     val imageCaptureLauncher =
         registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
