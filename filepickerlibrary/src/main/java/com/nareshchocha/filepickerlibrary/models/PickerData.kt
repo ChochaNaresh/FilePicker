@@ -99,7 +99,7 @@ data class PickMediaConfig(
         } else {
             Int.MAX_VALUE
         },
-    val mPickMediaType: PickMediaType? = PickMediaType.ImageAndVideo,
+    val mPickMediaType: PickMediaType? = PickMediaType.ImageOnly,
     override val askPermissionTitle: String? = null,
     override val askPermissionMessage: String? = null,
     override val settingPermissionTitle: String? = null,
@@ -164,6 +164,5 @@ enum class PopUpType : Parcelable {
 enum class PickMediaType : Parcelable {
     ImageOnly,
     VideoOnly,
-    AudioOnly,
     ImageAndVideo
 }

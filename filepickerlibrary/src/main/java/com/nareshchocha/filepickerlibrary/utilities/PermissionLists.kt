@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.os.Build
 import com.nareshchocha.filepickerlibrary.models.PickMediaConfig
-import com.nareshchocha.filepickerlibrary.models.PickMediaType
 import com.nareshchocha.filepickerlibrary.utilities.extensions.getRequestedPermissions
 
 internal object PermissionLists {
@@ -29,8 +28,8 @@ internal object PermissionLists {
     // MediaFilePicker permissions
     fun mediaFilePickerPermissions(config: PickMediaConfig): List<String> =
         buildList {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                when (config.mPickMediaType) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                /*when (config.mPickMediaType) {
                     PickMediaType.ImageOnly -> add(Manifest.permission.READ_MEDIA_IMAGES)
                     PickMediaType.VideoOnly -> add(Manifest.permission.READ_MEDIA_VIDEO)
                     PickMediaType.ImageAndVideo -> {
@@ -42,7 +41,7 @@ internal object PermissionLists {
                 }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                     add(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
-                }
+                }*/
             } else {
                 add(Manifest.permission.READ_EXTERNAL_STORAGE)
             }

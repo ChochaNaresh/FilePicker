@@ -13,11 +13,13 @@ import com.nareshchocha.filepickerlibrary.models.PickerData
 import com.nareshchocha.filepickerlibrary.models.VideoCaptureConfig
 import com.nareshchocha.filepickerlibrary.ui.activitys.DocumentFilePickerActivity
 import com.nareshchocha.filepickerlibrary.ui.activitys.ImageCaptureActivity
-import com.nareshchocha.filepickerlibrary.ui.activitys.MediaFilePickerActivity
 import com.nareshchocha.filepickerlibrary.ui.activitys.PopUpActivity
 import com.nareshchocha.filepickerlibrary.ui.activitys.VideoCaptureActivity
+import com.nareshchocha.filepickerlibrary.utilities.FileUtils
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.extensions.getClipDataUris
+import com.nareshchocha.filepickerlibrary.utilities.extensions.getFilePathList
+import com.nareshchocha.filepickerlibrary.utilities.extensions.getMediaIntent
 
 class FilePickerResultContracts private constructor() {
     companion object {
@@ -65,10 +67,16 @@ class FilePickerResultContracts private constructor() {
     }
 
     class PickMedia : ActivityResultContract<PickMediaConfig?, FilePickerResult>() {
+        var context: Context? = null
+
         override fun createIntent(
             context: Context,
             input: PickMediaConfig?
-        ): Intent = MediaFilePickerActivity.getInstance(context, input ?: PickMediaConfig())
+        ): Intent {
+            this.context = context
+            return context.getMediaIntent(input ?: PickMediaConfig())
+        }
+        // MediaFilePickerActivity.getInstance(context, input ?: PickMediaConfig())
 
         override fun parseResult(
             resultCode: Int,
@@ -78,6 +86,26 @@ class FilePickerResultContracts private constructor() {
                 FilePickerResult(errorMessage = "Media selection failed or cancelled")
             } else {
                 if (intent.clipData != null) {
+                    val uris = intent.getClipDataUris()
+                    val filePaths = uris.getFilePathList(context!!)
+                    if (uris.isEmpty()) {
+                        FilePickerResult(errorMessage = "No media selected")
+                    } else {
+                        FilePickerResult(
+                            selectedFileUris = uris,
+                            selectedFilePaths = filePaths
+                        )
+                    }
+                } else if (intent.data != null) {
+                    FilePickerResult(
+                        selectedFileUri = intent.data,
+                        selectedFilePath = intent.data?.let { FileUtils.getRealPath(context!!, it) }
+                    )
+                } else {
+                    FilePickerResult(errorMessage = "No media selected")
+                }
+
+                /*if (intent.clipData != null) {
                     FilePickerResult(
                         selectedFileUris = intent.getClipDataUris(),
                         selectedFilePaths = intent.getStringArrayListExtra(Const.BundleExtras.FILE_PATH_LIST)
@@ -89,7 +117,7 @@ class FilePickerResultContracts private constructor() {
                     )
                 } else {
                     FilePickerResult(errorMessage = "No media selected")
-                }
+                }*/
             }
     }
 
@@ -171,7 +199,7 @@ class FilePickerResultContracts private constructor() {
             when (input) {
                 is ImageCaptureConfig -> ImageCaptureActivity.getInstance(context, input)
                 is VideoCaptureConfig -> VideoCaptureActivity.getInstance(context, input)
-                is PickMediaConfig -> MediaFilePickerActivity.getInstance(context, input)
+                is PickMediaConfig -> PickMedia().createIntent(context, input)
                 is DocumentFilePickerConfig ->
                     DocumentFilePickerActivity.getInstance(
                         context,

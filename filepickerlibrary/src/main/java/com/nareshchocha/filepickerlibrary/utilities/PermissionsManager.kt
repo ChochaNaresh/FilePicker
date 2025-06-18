@@ -3,6 +3,7 @@ package com.nareshchocha.filepickerlibrary.utilities
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -162,6 +163,101 @@ class MultiplePermissionManager(
                 val permissionsRequiringRationale =
                     permissions.any { shouldShowRationale(activity, it) }
                 if (isAllPermissionsGranted) {
+                    onMultiplePermissionsGranted()
+                } else if (permissionsRequiringRationale) {
+                    onShowMultipleRationale()
+                } else {
+                    onMultiplePermissionsDenied()
+                }
+            }
+    }
+
+    @Composable
+    fun RegisterForSettingLauncher() {
+        settingLauncherLauncher =
+            rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                permissionsCheck()
+            }
+    }
+
+    @Composable
+    override fun Check() {
+        if (permissions.isEmpty()) {
+            onMultiplePermissionsGranted()
+        } else if (!isPermissionsAdded(activity, permissions)) {
+            onPermissionsMissing(getMissingPermissions())
+        } else {
+            RegisterForMultiplePermissions()
+            RegisterForSettingLauncher()
+            LaunchedEffect(Unit) {
+                permissionsCheck()
+            }
+        }
+    }
+
+    fun openAppSettings() {
+        if (::settingLauncherLauncher.isInitialized) {
+            settingLauncherLauncher.launch(activity.getSettingIntent())
+        }
+    }
+
+    fun permissionsCheck() {
+        if (::requestMultiplePermissionsLauncher.isInitialized) {
+            requestMultiplePermissionsLauncher.launch(permissions.toTypedArray())
+        }
+    }
+}
+
+class MediaMultiplePermissionManager(
+    private val activity: ComponentActivity,
+    private val permissions: List<String>,
+    private val onPermissionsMissing: (permissions: List<String>) -> Unit = { },
+    private val onMultiplePermissionsGranted: () -> Unit = {},
+    private val onMultiplePermissionsDenied: () -> Unit = {},
+    private val onShowMultipleRationale: () -> Unit = { }
+) : PermissionsManager {
+    lateinit var requestMultiplePermissionsLauncher: ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>>
+    lateinit var settingLauncherLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>
+
+    fun getDeniedPermissions(): List<String> =
+        permissions.filter {
+            ContextCompat.checkSelfPermission(
+                activity,
+                it
+            ) != PackageManager.PERMISSION_GRANTED
+        }
+
+    fun getRationalePermissions(): List<String> =
+        permissions.filter {
+            shouldShowRationale(activity, it)
+        }
+
+    fun getMissingPermissions(): List<String> =
+        permissions.filterNot {
+            isPermissionAdded(activity, it)
+        }
+
+    @Composable
+    fun RegisterForMultiplePermissions() {
+        requestMultiplePermissionsLauncher =
+            rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissionsMap ->
+                val isAllPermissionsGranted = permissionsMap.all { it.value }
+                val isReadMediaVisualUserSelected =
+                    permissionsMap
+                        .filter {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                                it.key == android.Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
+                            } else {
+                                false
+                            }
+                        }.values
+                        .firstOrNull() == true
+                val permissionsRequiringRationale =
+                    permissions.any { shouldShowRationale(activity, it) }
+
+                if (isReadMediaVisualUserSelected && !isAllPermissionsGranted) {
+                    onMultiplePermissionsGranted()
+                } else if (isAllPermissionsGranted) {
                     onMultiplePermissionsGranted()
                 } else if (permissionsRequiringRationale) {
                     onShowMultipleRationale()
