@@ -164,5 +164,6 @@ enum class PopUpType : Parcelable {
 enum class PickMediaType : Parcelable {
     ImageOnly,
     VideoOnly,
+    AudioOnly,
     ImageAndVideo
 }

@@ -1,117 +1,173 @@
 package com.nareshchocha.filepickerlibrary.utilities
 
 import android.app.Activity
-import android.content.Context
 import android.content.pm.PackageManager
-import androidx.activity.result.ActivityResultCaller
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.nareshchocha.filepickerlibrary.utilities.extensions.getRequestedPermissions
 
-class PermissionsManager(private val context: Context) {
+interface PermissionsManager {
+    fun shouldShowRationale(
+        context: ComponentActivity,
+        permission: String
+    ) = ActivityCompat.shouldShowRequestPermissionRationale(
+        context as Activity,
+        permission
+    )
 
-    // Single Permission Request
-    fun requestPermission(
-        activityResultCaller: ActivityResultCaller,
-        permission: String,
-        onPermissionGranted: () -> Unit,
-        onPermissionDenied: () -> Unit,
-        onShowRationale: (permissions: String) -> Unit
-    ) {
-        val permissionsRequiringRationale = permission.let {
-            ActivityCompat.shouldShowRequestPermissionRationale(context as Activity, it)
+    fun getRequestedPermissions(context: ComponentActivity): Array<String>? = context.getRequestedPermissions()
+
+    fun isPermissionsAdded(
+        context: ComponentActivity,
+        permissions: List<String>
+    ): Boolean {
+        val requestedPermissions = getRequestedPermissions(context) ?: return false
+        return permissions.all { requestedPermissions.contains(it) }
+    }
+
+    fun isPermissionAdded(
+        context: ComponentActivity,
+        permission: String
+    ): Boolean {
+        val requestedPermissions = getRequestedPermissions(context) ?: return false
+        return requestedPermissions.contains(permission)
+    }
+
+    @Composable
+    fun Check()
+}
+
+class SinglePermissionManager(
+    private val activity: ComponentActivity,
+    private val permission: String,
+    private val onPermissionMissing: (permission: String) -> Unit = { },
+    private val onPermissionGranted: () -> Unit = {},
+    private val onPermissionDenied: () -> Unit = { },
+    private val onShowRationale: () -> Unit = { }
+) : PermissionsManager {
+    lateinit var requestPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>
+
+    fun getDeniedPermissions(): List<String> =
+        listOf(permission).filter {
+            ContextCompat.checkSelfPermission(
+                activity,
+                it
+            ) != PackageManager.PERMISSION_GRANTED
         }
 
-        if (permissionsRequiringRationale) {
-            onShowRationale(permission)
-        } else {
-            val requestPermissionLauncher =
-                activityResultCaller.let { activity ->
-                    activity.registerForActivityResult(
-                        ActivityResultContracts.RequestPermission()
-                    ) { isGranted ->
-                        if (isGranted) {
-                            onPermissionGranted()
-                        } else {
-                            onPermissionDenied()
-                        }
-                    }
+    fun getRationalePermissions(): List<String> =
+        listOf(permission).filter {
+            shouldShowRationale(activity, it)
+        }
+
+    fun getMissingPermissions(): List<String> =
+        listOf(permission).filterNot {
+            isPermissionAdded(activity, it)
+        }
+
+    @Composable
+    fun RegisterForSinglePermission() {
+        requestPermissionLauncher =
+            rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+                if (isGranted) {
+                    onPermissionGranted()
+                } else if (shouldShowRationale(activity, permission)) {
+                    onShowRationale()
+                } else {
+                    onPermissionDenied()
                 }
+            }
+    }
 
-            // Check if permission is already granted
-            if (ContextCompat.checkSelfPermission(
-                    context,
-                    permission
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                onPermissionGranted()
-            } else {
-                requestPermissionLauncher.launch(permission)
+    @Composable
+    override fun Check() {
+        if (permission.isBlank()) {
+            onPermissionGranted()
+        } else if (!isPermissionsAdded(activity, listOf(permission))) {
+            onPermissionMissing(permission)
+        } else {
+            RegisterForSinglePermission()
+            LaunchedEffect(Unit) {
+                permissionsCheck()
             }
         }
     }
 
-    // Multiple Permission Request with Rationale
-    fun requestMultiplePermissionsWithRationale(
-        activityResultCaller: ActivityResultCaller,
-        permissions: Array<String>,
-        onPermissionsGranted: () -> Unit,
-        onPermissionsDenied: () -> Unit,
-        onShowRationale: (permissions: List<String>) -> Unit
-    ) {
-        // Check for rationale for each permission
-        val permissionsRequiringRationale = permissions.filter {
-            ActivityCompat.shouldShowRequestPermissionRationale(context as Activity, it)
-        }
-
-        // If any permission requires rationale, show rationale
-        if (permissionsRequiringRationale.isNotEmpty()) {
-            onShowRationale(permissionsRequiringRationale)
-        } else {
-            // If no rationale is required, request permissions directly
-            requestMultiplePermissions(
-                activityResultCaller,
-                permissions,
-                onPermissionsGranted,
-                onPermissionsDenied
-            )
+    fun permissionsCheck() {
+        if (::requestPermissionLauncher.isInitialized) {
+            requestPermissionLauncher.launch(permission)
         }
     }
+}
 
-    // Request multiple permissions without rationale
-    private fun requestMultiplePermissions(
-        activityResultCaller: ActivityResultCaller,
-        permissions: Array<String>,
-        onPermissionsGranted: () -> Unit,
-        onPermissionsDenied: () -> Unit
-    ) {
-        val requestMultiplePermissionsLauncher = activityResultCaller.registerForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions()
-        ) { permissionsMap ->
-            val isAllPermissionsGranted = permissionsMap.all { it.value }
+class MultiplePermissionManager(
+    private val activity: ComponentActivity,
+    private val permissions: List<String>,
+    private val onPermissionsMissing: (permissions: List<String>) -> Unit = { },
+    private val onMultiplePermissionsGranted: () -> Unit = {},
+    private val onMultiplePermissionsDenied: () -> Unit = {},
+    private val onShowMultipleRationale: () -> Unit = { }
+) : PermissionsManager {
+    lateinit var requestMultiplePermissionsLauncher: ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>>
 
-            if (isAllPermissionsGranted) {
-                onPermissionsGranted()
-            } else {
-                onPermissionsDenied()
+    fun getDeniedPermissions(): List<String> =
+        permissions.filter {
+            ContextCompat.checkSelfPermission(
+                activity,
+                it
+            ) != PackageManager.PERMISSION_GRANTED
+        }
+
+    fun getRationalePermissions(): List<String> =
+        permissions.filter {
+            shouldShowRationale(activity, it)
+        }
+
+    fun getMissingPermissions(): List<String> =
+        permissions.filterNot {
+            isPermissionAdded(activity, it)
+        }
+
+    @Composable
+    fun RegisterForMultiplePermissions() {
+        requestMultiplePermissionsLauncher =
+            rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissionsMap ->
+                val isAllPermissionsGranted = permissionsMap.all { it.value }
+                val permissionsRequiringRationale =
+                    permissions.any { shouldShowRationale(activity, it) }
+                if (isAllPermissionsGranted) {
+                    onMultiplePermissionsGranted()
+                } else if (permissionsRequiringRationale) {
+                    onShowMultipleRationale()
+                } else {
+                    onMultiplePermissionsDenied()
+                }
+            }
+    }
+
+    @Composable
+    override fun Check() {
+        if (permissions.isEmpty()) {
+            onMultiplePermissionsGranted()
+        } else if (!isPermissionsAdded(activity, permissions)) {
+            onPermissionsMissing(getMissingPermissions())
+        } else {
+            RegisterForMultiplePermissions()
+            LaunchedEffect(Unit) {
+                permissionsCheck()
             }
         }
-
-        // Check if all permissions are already granted
-        if (permissions.all {
-                ContextCompat.checkSelfPermission(
-                    context,
-                    it
-                ) == PackageManager.PERMISSION_GRANTED
-            }) {
-            onPermissionsGranted()
-        } else {
-            requestMultiplePermissionsLauncher.launch(permissions)
-        }
     }
 
-    // Optional: Show rationale for requesting permission
-    fun shouldShowRationale(permission: String): Boolean {
-        return ActivityCompat.shouldShowRequestPermissionRationale(context as Activity, permission)
+    fun permissionsCheck() {
+        if (::requestMultiplePermissionsLauncher.isInitialized) {
+            requestMultiplePermissionsLauncher.launch(permissions.toTypedArray())
+        }
     }
 }

@@ -2,11 +2,7 @@ import com.diffplug.gradle.spotless.SpotlessExtension
 import com.diffplug.gradle.spotless.SpotlessPlugin
 import io.gitlab.arturbosch.detekt.DetektPlugin
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
-import org.gradle.kotlin.dsl.dependencies
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
@@ -63,9 +59,9 @@ subprojects {
             finalizedBy("spotlessApply")
         }
         
-        tasks.withType<KotlinCompile> {
+        /*tasks.withType<KotlinCompile> {
             finalizedBy("detekt")
-        }
+        }*/
 
     }
 }

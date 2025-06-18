@@ -2,35 +2,21 @@ package com.nareshchocha.filepickerlibrary.utilities.extensions
 
 import android.app.Activity
 import android.content.ClipData
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import com.nareshchocha.filepickerlibrary.utilities.LogPriority
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.log
 import kotlin.text.substring
 
-internal fun Context.getRequestedPermissions(): Array<String>? =
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        packageManager.getPackageInfo(
-            packageName,
-            PackageManager.PackageInfoFlags.of(PackageManager.GET_PERMISSIONS.toLong())
-        )
-    } else {
-        packageManager.getPackageInfo(
-            packageName,
-            PackageManager.GET_PERMISSIONS
-        )
-    }.requestedPermissions
-
-fun List<String>.asString() = this.map {
-    it.split(".").lastOrNull() ?: ""
-}.toString().let { listString ->
-    listString.substring(1, listString.length - 1).replace(",", " and ")
-}
-
+fun List<String>.asString() =
+    this
+        .map {
+            it.split(".").lastOrNull() ?: ""
+        }.toString()
+        .let { listString ->
+            listString.substring(1, listString.length - 1).replace(",", " and ")
+        }
 
 // Helper extension for getting clip data URIs
 internal fun Intent.getClipDataUris(): ArrayList<Uri> {

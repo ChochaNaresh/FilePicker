@@ -13,7 +13,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.Keep
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,13 +28,15 @@ import com.nareshchocha.filepickerlibrary.models.ImageCaptureConfig
 import com.nareshchocha.filepickerlibrary.picker.PickerUtils.createFileGetUri
 import com.nareshchocha.filepickerlibrary.picker.PickerUtils.createMediaFileFolder
 import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppAlertDialog
-import com.nareshchocha.filepickerlibrary.ui.components.dialogs.SettingDialog
-import com.nareshchocha.filepickerlibrary.utilities.PermissionsManager
+import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppRationaleDialog
+import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppSettingDialog
+import com.nareshchocha.filepickerlibrary.utilities.MultiplePermissionManager
+import com.nareshchocha.filepickerlibrary.utilities.PermissionLists
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const.DefaultPaths.defaultFolder
+import com.nareshchocha.filepickerlibrary.utilities.extensions.asString
+import com.nareshchocha.filepickerlibrary.utilities.extensions.getActivityOrNull
 import com.nareshchocha.filepickerlibrary.utilities.extensions.getImageCaptureIntent
-import com.nareshchocha.filepickerlibrary.utilities.extensions.getRequestedPermissions
-import com.nareshchocha.filepickerlibrary.utilities.extensions.getSettingIntent
 import com.nareshchocha.filepickerlibrary.utilities.extensions.setCanceledResult
 import com.nareshchocha.filepickerlibrary.utilities.extensions.setSuccessResult
 import java.io.File
@@ -55,32 +56,77 @@ internal class ImageCaptureActivity : ComponentActivity() {
             intent.getParcelableExtra(Const.BundleInternalExtras.IMAGE_CAPTURE) as ImageCaptureConfig?
         }
     }
-    val mPermissionsManager: PermissionsManager by lazy {
-        PermissionsManager(this)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mPermissionsManager.requestPermission(
-            this,
-            permission = getPermissionsList(this).first(),
-            onPermissionGranted = {
-                // Permissions are already granted, proceed with camera launch
-                checkPermissionsAndLaunchCamera(this, imageCaptureLauncher)
-            },
-            onPermissionDenied = {
-                // Handle permission denial
-                setCanceledResult(getString(R.string.err_permission_result))
-                finish()
-            },
-            onShowRationale = {
-                /*askDialog, settingDialog ->
-  showAskDialog = askDialog
-  showGotoSettingDialog = settingDialog*/
-            }
-        )
         setContent {
-            SetUI()
+            StartImageCapture()
+        }
+    }
+
+    @Composable
+    fun StartImageCapture() {
+        val activity = LocalContext.current.getActivityOrNull() ?: this
+        if (mImageCaptureConfig == null) {
+            setCanceledResult(getString(R.string.image_capture_config_null_error))
+            return
+        }
+        var showRationaleDialog by remember { mutableStateOf(false) }
+        var showSettingDialog by remember { mutableStateOf(false) }
+        val mMultiplePermissionManager =
+            MultiplePermissionManager(
+                this,
+                permissions = PermissionLists.imageCapturePermissions(this),
+                onPermissionsMissing = {
+                    setCanceledResult(
+                        getString(
+                            R.string.err_permission_missing,
+                            it.asString()
+                        )
+                    )
+                },
+                onMultiplePermissionsGranted = {
+                },
+                onMultiplePermissionsDenied = {
+                    showSettingDialog = true
+                },
+                onShowMultipleRationale = {
+                    showRationaleDialog = true
+                }
+            )
+        mMultiplePermissionManager.Check()
+
+        if (showSettingDialog) {
+            ShowSettingDialog(
+                permissions = mMultiplePermissionManager.getDeniedPermissions(),
+                onConfirm = {
+                },
+                onDismiss = {
+                    activity.setCanceledResult(
+                        getString(
+                            R.string.permission_denied,
+                            mMultiplePermissionManager.getDeniedPermissions().asString()
+                        )
+                    )
+                }
+            )
+        }
+
+        if (showRationaleDialog) {
+            ShowRationaleDialog(
+                permissions = mMultiplePermissionManager.getRationalePermissions(),
+                onConfirm = {
+                    mMultiplePermissionManager.permissionsCheck()
+                },
+                onDismiss = {
+                    activity.setCanceledResult(
+                        getString(
+                            R.string.permission_denied,
+                            mMultiplePermissionManager.getDeniedPermissions().asString()
+                        )
+                    )
+                }
+            )
         }
     }
 
@@ -88,7 +134,7 @@ internal class ImageCaptureActivity : ComponentActivity() {
     fun SetUI() {
         val context = LocalContext.current
         var showAskDialog by remember { mutableStateOf(false) }
-        var showGotoSettingDialog by remember { mutableStateOf(false) }
+        var showSettingDialog by remember { mutableStateOf(false) }
         var permissionRequested by remember { mutableStateOf(false) }
 
         val imageCaptureLauncher =
@@ -104,7 +150,7 @@ internal class ImageCaptureActivity : ComponentActivity() {
                     imageCaptureLauncher
                 ) { askDialog, settingDialog ->
                     showAskDialog = askDialog
-                    showGotoSettingDialog = settingDialog
+                    showSettingDialog = settingDialog
                 }
             }
 
@@ -133,28 +179,6 @@ internal class ImageCaptureActivity : ComponentActivity() {
             PermissionDialog(context, onConfirm = {
                 showAskDialog = false
                 permissionLauncher.launch(getPermissionsList(context).toTypedArray())
-            }, onDismiss = {
-                setCanceledResult(getString(R.string.err_permission_result))
-                finish()
-            })
-        }
-
-        // Go to Setting Dialog
-        if (showGotoSettingDialog) {
-            SettingDialog(
-                context,
-                onConfirm = {
-                    showGotoSettingDialog = false
-                    settingLauncher.launch(getSettingIntent())
-                },
-                onDismiss = {
-                    setCanceledResult(getString(R.string.err_permission_result))
-                    finish()
-                }
-            ) { }
-            SettingDialog(context, onConfirm = {
-                showGotoSettingDialog = false
-                settingLauncher.launch(getSettingIntent())
             }, onDismiss = {
                 setCanceledResult(getString(R.string.err_permission_result))
                 finish()
@@ -264,23 +288,35 @@ internal class ImageCaptureActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun SettingDialogssssss(
-        context: Context,
+    private fun ShowSettingDialog(
+        permissions: List<String>,
         onConfirm: () -> Unit,
         onDismiss: () -> Unit
     ) {
-        AppAlertDialog(
-            onDismissRequest = {
-                setCanceledResult(getString(R.string.err_permission_result))
-                finish()
-            },
+        AppSettingDialog(
+            permissions = permissions,
+            title = mImageCaptureConfig?.settingPermissionTitle,
+            message =
+                mImageCaptureConfig?.settingPermissionMessage,
+            onConfirm = onConfirm,
+            onDismiss = onDismiss
+        )
+    }
+
+    @Composable
+    private fun ShowRationaleDialog(
+        permissions: List<String>,
+        onConfirm: () -> Unit,
+        onDismiss: () -> Unit
+    ) {
+        AppRationaleDialog(
             title =
-                mImageCaptureConfig?.settingPermissionTitle
+                mImageCaptureConfig?.askPermissionTitle
                     ?: stringResource(R.string.err_permission_denied),
             message =
-                mImageCaptureConfig?.settingPermissionMessage ?: getString(
-                    R.string.err_write_storage_setting,
-                    getPermissionsListString(context)
+                mImageCaptureConfig?.askPermissionMessage ?: stringResource(
+                    R.string.err_write_storage_permission,
+                    permissions.asString()
                 ),
             onConfirm = onConfirm,
             onDismiss = onDismiss
@@ -296,8 +332,9 @@ internal class ImageCaptureActivity : ComponentActivity() {
                 imageFile =
                     createMediaFileFolder(
                         folderFile = mImageCaptureConfig!!.mFolder ?: context.defaultFolder(),
-                        fileName = mImageCaptureConfig!!.fileName
-                            ?: Const.DefaultPaths.defaultImageFile()
+                        fileName =
+                            mImageCaptureConfig!!.fileName
+                                ?: Const.DefaultPaths.defaultImageFile()
                     )
                 context.createFileGetUri(imageFile!!)
             } else {
@@ -334,7 +371,7 @@ internal class ImageCaptureActivity : ComponentActivity() {
                 if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
                     it.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 }
-                val permissions = context.getRequestedPermissions()
+                val permissions = emptyList<String>()
                 if (permissions?.contains(Manifest.permission.CAMERA) == true) {
                     it.add(Manifest.permission.CAMERA)
                 }
