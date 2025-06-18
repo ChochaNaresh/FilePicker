@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">File Picker</string>
 
+    <!-- File Creation Error -->
+    <string name="err_file_creation_failed">We encountered an issue while creating the file. Please check your storage settings or try again.</string>
+
     <!-- Dialog title permission -->
     <string name="err_permission_denied">Permission Denied</string>
 
@@ -31,7 +34,17 @@
     <string name="err_config_null">%1$s data is set</string>
     <string name="err_capture_error">%1$s capture Error </string>
 
+    <string name="err_permissions_rationale_title">Permissions Required</string>
+
     <!-- Image Capture configuration errors -->
     <string name="image_capture_config_null_error">The image capture configuration is missing.</string>
+    <string name="err_image_capture_permissions_rationale_message">
+        This app requires access to your camera and storage. Please grant these permissions to continue.
+    </string>
+
+    <string name="camera_permission_rationale_title">Camera Permission Required</string>
+    <string name="camera_permission_rationale_message">This app requires access to your camera in order to capture photos. Please grant the permission to continue using this feature.</string>
+
+
 
 </resources>

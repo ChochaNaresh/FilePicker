@@ -26,7 +26,7 @@ internal object PickerUtils {
     fun createMediaFileFolder(
         folderFile: File,
         fileName: String
-    ): File {
+    ): File? =
         if (!folderFile.exists()) {
             try {
                 if (!folderFile.mkdirs()) {
@@ -34,6 +34,9 @@ internal object PickerUtils {
                         "Failed to create directory: ${folderFile.path}",
                         priority = LogPriority.ERROR_LOG
                     )
+                    null
+                } else {
+                    null
                 }
             } catch (e: SecurityException) {
                 log(
@@ -41,10 +44,20 @@ internal object PickerUtils {
                     priority = LogPriority.ERROR_LOG,
                     throwable = e
                 )
+                null
+            }
+        } else {
+            try {
+                File(folderFile.path + File.separator + fileName)
+            } catch (e: SecurityException) {
+                log(
+                    "Security exception creating file: ${folderFile.path + File.separator + fileName}",
+                    priority = LogPriority.ERROR_LOG,
+                    throwable = e
+                )
+                null
             }
         }
-        return File(folderFile.path + File.separator + fileName)
-    }
 
     /**
      * Creates a file if it doesn't exist and returns its content URI.
@@ -54,7 +67,11 @@ internal object PickerUtils {
      * @return A content URI for the file or null if creation or URI generation fails
      */
     @Keep
-    fun Context.createFileGetUri(mFile: File): Uri? {
+    fun Context.createFileGetUri(mFile: File?): Uri? {
+        if (mFile == null) {
+            log("File is null, cannot create or get URI", priority = LogPriority.ERROR_LOG)
+            return null
+        }
         var uri: Uri? = null
         if (!mFile.exists()) {
             try {

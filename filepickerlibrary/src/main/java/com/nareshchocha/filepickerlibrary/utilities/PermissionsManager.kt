@@ -1,16 +1,19 @@
 package com.nareshchocha.filepickerlibrary.utilities
 
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.nareshchocha.filepickerlibrary.utilities.extensions.getRequestedPermissions
+import com.nareshchocha.filepickerlibrary.utilities.extensions.getSettingIntent
 
 interface PermissionsManager {
     fun shouldShowRationale(
@@ -115,6 +118,7 @@ class MultiplePermissionManager(
     private val onShowMultipleRationale: () -> Unit = { }
 ) : PermissionsManager {
     lateinit var requestMultiplePermissionsLauncher: ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>>
+    lateinit var settingLauncherLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>
 
     fun getDeniedPermissions(): List<String> =
         permissions.filter {
@@ -152,6 +156,14 @@ class MultiplePermissionManager(
     }
 
     @Composable
+    fun RegisterForSettingLauncher() {
+        settingLauncherLauncher =
+            rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                permissionsCheck()
+            }
+    }
+
+    @Composable
     override fun Check() {
         if (permissions.isEmpty()) {
             onMultiplePermissionsGranted()
@@ -159,9 +171,16 @@ class MultiplePermissionManager(
             onPermissionsMissing(getMissingPermissions())
         } else {
             RegisterForMultiplePermissions()
+            RegisterForSettingLauncher()
             LaunchedEffect(Unit) {
                 permissionsCheck()
             }
+        }
+    }
+
+    fun openAppSettings() {
+        if (::settingLauncherLauncher.isInitialized) {
+            settingLauncherLauncher.launch(activity.getSettingIntent())
         }
     }
 
