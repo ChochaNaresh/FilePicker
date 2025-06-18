@@ -61,6 +61,7 @@ internal class ImageCaptureActivity : ComponentActivity() {
             if (result.resultCode == RESULT_OK) {
                 setSuccessResult(imageFileUri, imageFile?.absolutePath, true)
             } else {
+                imageFile?.delete()
                 setCanceledResult("File Picker Result Error: ${result.resultCode}")
             }
         }
@@ -68,6 +69,7 @@ internal class ImageCaptureActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (mImageCaptureConfig == null) {
+            imageFile?.delete()
             setCanceledResult(getString(R.string.image_capture_config_null_error))
             return
         } else {
@@ -87,6 +89,7 @@ internal class ImageCaptureActivity : ComponentActivity() {
                 activity = activity,
                 permissions = PermissionLists.imageCapturePermissions(activity),
                 onPermissionsMissing = {
+                    imageFile?.delete()
                     activity.setCanceledResult(
                         getString(
                             R.string.err_permission_missing,
@@ -143,11 +146,13 @@ internal class ImageCaptureActivity : ComponentActivity() {
                 )
             )
         } else {
+            imageFile?.delete()
             setCanceledResult(getString(R.string.err_file_creation_failed))
         }
     }
 
     fun setPermissionDeniedResult(permissions: List<String>) {
+        imageFile?.delete()
         setCanceledResult(
             getString(
                 R.string.permission_denied,
