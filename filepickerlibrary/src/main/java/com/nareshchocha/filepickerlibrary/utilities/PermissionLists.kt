@@ -33,12 +33,15 @@ internal object PermissionLists {
                 when (config.mPickMediaType) {
                     PickMediaType.ImageOnly -> add(Manifest.permission.READ_MEDIA_IMAGES)
                     PickMediaType.VideoOnly -> add(Manifest.permission.READ_MEDIA_VIDEO)
-                    PickMediaType.AudioOnly -> add(Manifest.permission.READ_MEDIA_AUDIO)
                     PickMediaType.ImageAndVideo -> {
                         add(Manifest.permission.READ_MEDIA_IMAGES)
                         add(Manifest.permission.READ_MEDIA_VIDEO)
                     }
+
                     else -> {}
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    add(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
                 }
             } else {
                 add(Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -47,7 +50,7 @@ internal object PermissionLists {
 
     // DocumentFilePicker permissions
     fun documentFilePickerPermissions(): String? =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             null
         } else {
             Manifest.permission.READ_EXTERNAL_STORAGE

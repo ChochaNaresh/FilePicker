@@ -2,8 +2,10 @@ package com.nareshchocha.filepickerlibrary.utilities.extensions
 
 import android.app.Activity
 import android.content.ClipData
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import com.nareshchocha.filepickerlibrary.utilities.FileUtils
 import com.nareshchocha.filepickerlibrary.utilities.LogPriority
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.log
@@ -29,6 +31,16 @@ internal fun Intent.getClipDataUris(): ArrayList<Uri> {
         }
     }
     return ArrayList(uris)
+}
+
+internal fun List<Uri>.getFilePathList(context: Context): ArrayList<String> {
+    val filePathList = ArrayList<String>()
+    forEach { uri ->
+        FileUtils.getRealPath(context, uri)?.also { filePath ->
+            filePathList.add(filePath)
+        }
+    }
+    return filePathList
 }
 
 internal fun Activity.setSuccessResult(

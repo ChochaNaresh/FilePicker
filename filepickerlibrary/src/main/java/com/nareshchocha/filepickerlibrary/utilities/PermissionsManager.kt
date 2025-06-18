@@ -55,6 +55,7 @@ class SinglePermissionManager(
     private val onShowRationale: () -> Unit = { }
 ) : PermissionsManager {
     lateinit var requestPermissionLauncher: ManagedActivityResultLauncher<String, Boolean>
+    lateinit var settingLauncherLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>
 
     fun getDeniedPermissions(): List<String> =
         listOf(permission).filter {
@@ -89,6 +90,14 @@ class SinglePermissionManager(
     }
 
     @Composable
+    fun RegisterForSettingLauncher() {
+        settingLauncherLauncher =
+            rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                permissionsCheck()
+            }
+    }
+
+    @Composable
     override fun Check() {
         if (permission.isBlank()) {
             onPermissionGranted()
@@ -96,9 +105,16 @@ class SinglePermissionManager(
             onPermissionMissing(permission)
         } else {
             RegisterForSinglePermission()
+            RegisterForSettingLauncher()
             LaunchedEffect(Unit) {
                 permissionsCheck()
             }
+        }
+    }
+
+    fun openAppSettings() {
+        if (::settingLauncherLauncher.isInitialized) {
+            settingLauncherLauncher.launch(activity.getSettingIntent())
         }
     }
 
