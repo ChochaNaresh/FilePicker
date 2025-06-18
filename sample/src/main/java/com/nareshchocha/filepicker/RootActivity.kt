@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.nareshchocha.filepicker.components.AllFilePicker
 import com.nareshchocha.filepicker.ui.theme.FilePickerTheme
 import com.nareshchocha.filepickerlibrary.FilePickerResultContracts
@@ -25,6 +26,7 @@ import com.nareshchocha.filepickerlibrary.FilePickerResultContracts
 class RootActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
         enableEdgeToEdge(
             statusBarStyle =
                 SystemBarStyle.dark(

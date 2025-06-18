@@ -31,8 +31,7 @@
         tools:targetApi="33">
         <activity
             android:name=".RootActivity"
-            android:exported="true"
-            android:theme="@android:style/Theme.Material.Light.NoActionBar">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
