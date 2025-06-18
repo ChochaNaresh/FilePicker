@@ -9,7 +9,7 @@ import androidx.compose.ui.res.stringResource
 import com.nareshchocha.filepickerlibrary.R
 
 @Composable
-fun AppAlertDialog(
+internal fun AppAlertDialog(
     title: String,
     message: String,
     confirmText: String = stringResource(R.string.str_ok),

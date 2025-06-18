@@ -8,7 +8,7 @@ import androidx.compose.ui.window.DialogProperties
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppDialog(
+internal fun AppDialog(
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
     properties: DialogProperties = DialogProperties(),

@@ -46,15 +46,15 @@ internal class ImageCaptureActivity : ComponentActivity() {
     }
     private var imageFile: File? = null
     private val imageFileUri: Uri? by lazy {
-        imageFile = createMediaFileFolder(
-            folderFile = mImageCaptureConfig!!.mFolder ?: defaultFolder(),
-            fileName =
-                mImageCaptureConfig!!.fileName
-                    ?: Const.DefaultPaths.defaultImageFile()
-        )
+        imageFile =
+            createMediaFileFolder(
+                folderFile = mImageCaptureConfig!!.mFolder ?: defaultFolder(),
+                fileName =
+                    mImageCaptureConfig!!.fileName
+                        ?: Const.DefaultPaths.defaultImageFile()
+            )
         createFileGetUri(imageFile)
     }
-
 
     val imageCaptureLauncher =
         registerForActivityResult(
@@ -189,7 +189,7 @@ internal class ImageCaptureActivity : ComponentActivity() {
                     ?: stringResource(R.string.err_permissions_rationale_title),
             message =
                 mImageCaptureConfig?.askPermissionMessage ?: stringResource(
-                    R.string.err_image_capture_permissions_rationale_message
+                    R.string.err_capture_permissions_rationale_message
                 ),
             onConfirm = onConfirm,
             onDismiss = onDismiss
@@ -198,14 +198,11 @@ internal class ImageCaptureActivity : ComponentActivity() {
 
     companion object {
         fun getInstance(
-            mContext: Context,
+            context: Context,
             mImageCaptureConfig: ImageCaptureConfig?
-        ): Intent {
-            val filePickerIntent = Intent(mContext, ImageCaptureActivity::class.java)
-            mImageCaptureConfig?.let {
-                filePickerIntent.putExtra(Const.BundleInternalExtras.IMAGE_CAPTURE, it)
+        ): Intent =
+            Intent(context, ImageCaptureActivity::class.java).apply {
+                mImageCaptureConfig?.let { putExtra(Const.BundleInternalExtras.IMAGE_CAPTURE, it) }
             }
-            return filePickerIntent
-        }
     }
 }

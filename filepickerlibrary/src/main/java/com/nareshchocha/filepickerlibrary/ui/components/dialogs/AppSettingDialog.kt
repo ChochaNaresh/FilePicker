@@ -6,7 +6,7 @@ import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.utilities.extensions.asString
 
 @Composable
-fun AppSettingDialog(
+internal fun AppSettingDialog(
     permissions: List<String>,
     title: String? = null,
     message: String? = null,
@@ -22,6 +22,7 @@ fun AppSettingDialog(
                 R.string.err_write_storage_setting,
                 permissions.asString()
             ),
+        confirmText = stringResource(R.string.str_go_to_setting),
         onConfirm = onConfirm,
         onDismiss = onDismiss
     )

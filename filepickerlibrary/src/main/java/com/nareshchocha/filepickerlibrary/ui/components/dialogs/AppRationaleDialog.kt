@@ -3,7 +3,7 @@ package com.nareshchocha.filepickerlibrary.ui.components.dialogs
 import androidx.compose.runtime.Composable
 
 @Composable
-fun AppRationaleDialog(
+internal fun AppRationaleDialog(
     title: String,
     message: String,
     onConfirm: () -> Unit,
