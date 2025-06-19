@@ -27,6 +27,7 @@ import com.nareshchocha.filepickerlibrary.utilities.extensions.getActivityOrNull
 import com.nareshchocha.filepickerlibrary.utilities.extensions.getClipDataUris
 import com.nareshchocha.filepickerlibrary.utilities.extensions.getDocumentFilePick
 import com.nareshchocha.filepickerlibrary.utilities.extensions.getFilePathList
+import com.nareshchocha.filepickerlibrary.utilities.extensions.setActivityResult
 import com.nareshchocha.filepickerlibrary.utilities.extensions.setCanceledResult
 import com.nareshchocha.filepickerlibrary.utilities.extensions.setSuccessResult
 
@@ -47,6 +48,11 @@ internal class DocumentFilePickerActivity : ComponentActivity() {
         registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
+            setActivityResult(
+                resultCode = result.resultCode,
+                resultIntent = result.data,
+                false
+            )
             if (result.resultCode == RESULT_OK && result.data != null) {
                 if (mDocumentFilePickerConfig?.allowMultiple == true && result.data?.clipData != null) {
                     val uris = result.data?.getClipDataUris()

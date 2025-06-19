@@ -3,6 +3,7 @@ package com.nareshchocha.filepickerlibrary
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.activity.result.contract.ActivityResultContract
 import com.nareshchocha.filepickerlibrary.models.BaseConfig
 import com.nareshchocha.filepickerlibrary.models.DocumentFilePickerConfig
@@ -13,11 +14,13 @@ import com.nareshchocha.filepickerlibrary.models.PickerData
 import com.nareshchocha.filepickerlibrary.models.VideoCaptureConfig
 import com.nareshchocha.filepickerlibrary.ui.activitys.DocumentFilePickerActivity
 import com.nareshchocha.filepickerlibrary.ui.activitys.ImageCaptureActivity
+import com.nareshchocha.filepickerlibrary.ui.activitys.MediaFilePickerActivity
 import com.nareshchocha.filepickerlibrary.ui.activitys.PopUpActivity
 import com.nareshchocha.filepickerlibrary.ui.activitys.VideoCaptureActivity
 import com.nareshchocha.filepickerlibrary.utilities.FileUtils
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.extensions.getClipDataUris
+import com.nareshchocha.filepickerlibrary.utilities.extensions.getDocumentFilePick
 import com.nareshchocha.filepickerlibrary.utilities.extensions.getFilePathList
 import com.nareshchocha.filepickerlibrary.utilities.extensions.getMediaIntent
 
@@ -74,9 +77,14 @@ class FilePickerResultContracts private constructor() {
             input: PickMediaConfig?
         ): Intent {
             this.context = context
-            return context.getMediaIntent(input ?: PickMediaConfig())
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                context.getMediaIntent(
+                    input ?: PickMediaConfig()
+                )
+            } else {
+                MediaFilePickerActivity.getInstance(context, input ?: PickMediaConfig())
+            }
         }
-        // MediaFilePickerActivity.getInstance(context, input ?: PickMediaConfig())
 
         override fun parseResult(
             resultCode: Int,
@@ -104,28 +112,23 @@ class FilePickerResultContracts private constructor() {
                 } else {
                     FilePickerResult(errorMessage = "No media selected")
                 }
-
-                /*if (intent.clipData != null) {
-                    FilePickerResult(
-                        selectedFileUris = intent.getClipDataUris(),
-                        selectedFilePaths = intent.getStringArrayListExtra(Const.BundleExtras.FILE_PATH_LIST)
-                    )
-                } else if (intent.data != null) {
-                    FilePickerResult(
-                        selectedFileUri = intent.data,
-                        selectedFilePath = intent.getStringExtra(Const.BundleExtras.FILE_PATH)
-                    )
-                } else {
-                    FilePickerResult(errorMessage = "No media selected")
-                }*/
             }
     }
 
     class PickDocumentFile : ActivityResultContract<DocumentFilePickerConfig?, FilePickerResult>() {
+        var context: Context? = null
+
         override fun createIntent(
             context: Context,
             input: DocumentFilePickerConfig?
-        ): Intent = DocumentFilePickerActivity.getInstance(context, input ?: DocumentFilePickerConfig())
+        ): Intent {
+            this.context = context
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                getDocumentFilePick(input ?: DocumentFilePickerConfig())
+            } else {
+                DocumentFilePickerActivity.getInstance(context, input ?: DocumentFilePickerConfig())
+            }
+        }
 
         override fun parseResult(
             resultCode: Int,
@@ -135,14 +138,20 @@ class FilePickerResultContracts private constructor() {
                 FilePickerResult(errorMessage = "Document selection failed or cancelled")
             } else {
                 if (intent.clipData != null) {
-                    FilePickerResult(
-                        selectedFileUris = intent.getClipDataUris(),
-                        selectedFilePaths = intent.getStringArrayListExtra(Const.BundleExtras.FILE_PATH_LIST)
-                    )
+                    val uris = intent.getClipDataUris()
+                    val filePaths = uris.getFilePathList(context!!)
+                    if (uris.isEmpty()) {
+                        FilePickerResult(errorMessage = "No document selected")
+                    } else {
+                        FilePickerResult(
+                            selectedFileUris = uris,
+                            selectedFilePaths = filePaths
+                        )
+                    }
                 } else if (intent.data != null) {
                     FilePickerResult(
                         selectedFileUri = intent.data,
-                        selectedFilePath = intent.getStringExtra(Const.BundleExtras.FILE_PATH)
+                        selectedFilePath = intent.data?.let { FileUtils.getRealPath(context!!, it) }
                     )
                 } else {
                     FilePickerResult(errorMessage = "No document selected")
@@ -192,22 +201,22 @@ class FilePickerResultContracts private constructor() {
     }
 
     class AnyFilePicker : ActivityResultContract<BaseConfig?, FilePickerResult>() {
+        var baseConfig: BaseConfig? = null
+
         override fun createIntent(
             context: Context,
             input: BaseConfig?
-        ): Intent =
-            when (input) {
-                is ImageCaptureConfig -> ImageCaptureActivity.getInstance(context, input)
-                is VideoCaptureConfig -> VideoCaptureActivity.getInstance(context, input)
+        ): Intent {
+            baseConfig = input ?: ImageCaptureConfig()
+            return when (input) {
+                is ImageCaptureConfig -> ImageCapture().createIntent(context, input)
+                is VideoCaptureConfig -> VideoCapture().createIntent(context, input)
                 is PickMediaConfig -> PickMedia().createIntent(context, input)
-                is DocumentFilePickerConfig ->
-                    DocumentFilePickerActivity.getInstance(
-                        context,
-                        input
-                    )
+                is DocumentFilePickerConfig -> PickDocumentFile().createIntent(context, input)
 
-                else -> ImageCaptureActivity.getInstance(context, ImageCaptureConfig())
+                else -> ImageCapture().createIntent(context, ImageCaptureConfig())
             }
+        }
 
         override fun parseResult(
             resultCode: Int,
@@ -216,18 +225,17 @@ class FilePickerResultContracts private constructor() {
             if (intent == null || resultCode != Activity.RESULT_OK) {
                 FilePickerResult(errorMessage = "File selection failed or cancelled")
             } else {
-                if (intent.clipData != null) {
-                    FilePickerResult(
-                        selectedFileUris = intent.getClipDataUris(),
-                        selectedFilePaths = intent.getStringArrayListExtra(Const.BundleExtras.FILE_PATH_LIST)
-                    )
-                } else if (intent.data != null) {
-                    FilePickerResult(
-                        selectedFileUri = intent.data,
-                        selectedFilePath = intent.getStringExtra(Const.BundleExtras.FILE_PATH)
-                    )
-                } else {
-                    FilePickerResult(errorMessage = "No file selected")
+                when (baseConfig) {
+                    is ImageCaptureConfig -> ImageCapture().parseResult(resultCode, intent)
+                    is VideoCaptureConfig -> VideoCapture().parseResult(resultCode, intent)
+                    is PickMediaConfig -> PickMedia().parseResult(resultCode, intent)
+                    is DocumentFilePickerConfig ->
+                        PickDocumentFile().parseResult(
+                            resultCode,
+                            intent
+                        )
+
+                    else -> FilePickerResult(errorMessage = "Unknown file type")
                 }
             }
     }

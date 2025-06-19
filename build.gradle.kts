@@ -59,9 +59,9 @@ subprojects {
             finalizedBy("spotlessApply")
         }
         
-        /*tasks.withType<KotlinCompile> {
+        tasks.withType<KotlinCompile> {
             finalizedBy("detekt")
-        }*/
+        }
 
     }
 }
