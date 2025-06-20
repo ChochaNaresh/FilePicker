@@ -73,6 +73,24 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // JUnit
+    testImplementation("junit:junit:4.13.2")
+
+    // AndroidX Test
+    testImplementation("androidx.test:core:1.5.0")
+    testImplementation("androidx.test:runner:1.5.2")
+    testImplementation("androidx.test.ext:junit:1.1.5")
+
+    // Robolectric for (Android framework simulation in unit tests)
+    testImplementation("org.robolectric:robolectric:4.10.3")
+
+    // Mockito for mock(ing)
+    testImplementation("org.mockito:mockito-core:5.7.0")
+    testImplementation("org.mockito:mockito-inline:5.2.0")
+    // For mocking final classes)
+    // Optional: If you( need to mock Kotlin classes better)
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
 }
 
 mavenPublishing {

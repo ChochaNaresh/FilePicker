@@ -9,6 +9,7 @@ import android.provider.DocumentsContract
 import android.provider.MediaStore
 import androidx.annotation.Keep
 import androidx.core.net.toUri
+import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.extensions.copyFileToInternalStorage
 import com.nareshchocha.filepickerlibrary.utilities.extensions.getDataColumn
 import com.nareshchocha.filepickerlibrary.utilities.extensions.getDriveFilePath
@@ -26,7 +27,26 @@ internal object FileUtils {
     fun getRealPath(
         context: Context,
         fileUri: Uri
-    ): String? = pathFromURI(context, fileUri)
+    ): String? =
+        try {
+            pathFromURI(context, fileUri)
+        } catch (e: IllegalArgumentException) {
+            log(
+                "IllegalArgumentException: ${e.message}, cannot get real path from URI: $fileUri",
+                priority = LogPriority.ERROR_LOG,
+                customTag = Const.LogTag.FILE_PICKER_ERROR,
+                throwable = e
+            )
+            null
+        } catch (e: SecurityException) {
+            log(
+                "SecurityException: ${e.message}, cannot get real path from URI: $fileUri",
+                priority = LogPriority.ERROR_LOG,
+                customTag = Const.LogTag.FILE_PICKER_ERROR,
+                throwable = e
+            )
+            null
+        }
 
     @Keep
     private fun pathFromURI(
