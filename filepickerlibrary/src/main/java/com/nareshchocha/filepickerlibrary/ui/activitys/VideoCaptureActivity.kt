@@ -51,6 +51,15 @@ internal class VideoCaptureActivity : ComponentActivity() {
                 folderFile = mVideoCaptureConfig?.mFolder ?: defaultFolder(),
                 fileName = mVideoCaptureConfig?.fileName ?: Const.DefaultPaths.defaultVideoFile()
             )
+        if (videoFile == null) {
+            videoFile =
+                createMediaFileFolder(
+                    folderFile = mVideoCaptureConfig?.mFolder ?: defaultFolder(),
+                    fileName =
+                        mVideoCaptureConfig?.fileName
+                            ?: Const.DefaultPaths.defaultVideoFile()
+                )
+        }
         createFileGetUri(videoFile)
     }
 

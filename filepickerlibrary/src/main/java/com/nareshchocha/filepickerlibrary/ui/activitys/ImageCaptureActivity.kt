@@ -53,6 +53,15 @@ internal class ImageCaptureActivity : ComponentActivity() {
                     mImageCaptureConfig!!.fileName
                         ?: Const.DefaultPaths.defaultImageFile()
             )
+        if (imageFile == null) {
+            imageFile =
+                createMediaFileFolder(
+                    folderFile = mImageCaptureConfig!!.mFolder ?: defaultFolder(),
+                    fileName =
+                        mImageCaptureConfig!!.fileName
+                            ?: Const.DefaultPaths.defaultImageFile()
+                )
+        }
         createFileGetUri(imageFile)
     }
 
