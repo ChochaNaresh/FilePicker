@@ -10,23 +10,23 @@ import java.io.File
  * Contains constants and utility objects used throughout the File Picker library.
  */
 @Keep
-object Const {
+internal object Const {
     /** FileProvider authority suffix. */
-    internal const val AUTHORITY = ".library.fileprovider"
+    const val AUTHORITY = ".library.fileprovider"
 
     /** Folder name for copying files to internal storage. */
-    internal const val COPY_FILE_FOLDER = "copyFileToInternalStorage"
+    const val COPY_FILE_FOLDER = "copyFileToInternalStorage"
 
     /** Maximum buffer size for file operations (1 MB). */
-    internal const val MAX_BUFFER_SIZE = 1 * 1024 * 1024
+    const val MAX_BUFFER_SIZE = 1 * 1024 * 1024
 
     /** Default buffer size for file operations (1 KB). */
-    internal const val BUFFER_SIZE = 1024
+    const val BUFFER_SIZE = 1024
 
     /**
      * Logging tags used for debugging and error reporting.
      */
-    internal object LogTag {
+    object LogTag {
         /** Tag for file result logs. */
         const val FILE_PICKER_RESULT = "FILE_PICKER_RESULT :"
 
@@ -37,7 +37,7 @@ object Const {
     /**
      * Provides default file and folder paths for media operations.
      */
-    internal object DefaultPaths {
+    object DefaultPaths {
         /**
          * Generates a default image file name with a timestamp.
          * @return The generated image file name.
@@ -65,7 +65,7 @@ object Const {
     /**
      * Keys for internal bundle extras used within the library.
      */
-    internal object BundleInternalExtras {
+    object BundleInternalExtras {
         /** Key for picker data. */
         const val PICKER_DATA = "PICKER_DATA"
 
@@ -86,7 +86,7 @@ object Const {
      * Keys for bundle extras exposed to external consumers.
      */
     @Keep
-    internal object BundleExtras {
+    object BundleExtras {
         /** Indicates if the file is from capture. */
         const val FROM_CAPTURE = "isFromCapture"
 
