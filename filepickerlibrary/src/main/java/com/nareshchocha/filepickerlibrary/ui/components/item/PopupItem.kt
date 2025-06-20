@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.nareshchocha.filepickerlibrary.models.BaseConfig
 
 @Composable
-fun PopupItem(
+internal fun PopupItem(
     modifier: Modifier = Modifier,
     item: BaseConfig,
     itemView: @Composable ((item: BaseConfig) -> Unit)? = null,

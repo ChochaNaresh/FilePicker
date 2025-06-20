@@ -18,18 +18,14 @@ import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.models.DocumentFilePickerConfig
 import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppRationaleDialog
 import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppSettingDialog
-import com.nareshchocha.filepickerlibrary.utilities.FileUtils
 import com.nareshchocha.filepickerlibrary.utilities.PermissionLists
 import com.nareshchocha.filepickerlibrary.utilities.SinglePermissionManager
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.extensions.asString
 import com.nareshchocha.filepickerlibrary.utilities.extensions.getActivityOrNull
-import com.nareshchocha.filepickerlibrary.utilities.extensions.getClipDataUris
 import com.nareshchocha.filepickerlibrary.utilities.extensions.getDocumentFilePick
-import com.nareshchocha.filepickerlibrary.utilities.extensions.getFilePathList
 import com.nareshchocha.filepickerlibrary.utilities.extensions.setActivityResult
 import com.nareshchocha.filepickerlibrary.utilities.extensions.setCanceledResult
-import com.nareshchocha.filepickerlibrary.utilities.extensions.setSuccessResult
 
 internal class DocumentFilePickerActivity : ComponentActivity() {
     private val mDocumentFilePickerConfig: DocumentFilePickerConfig? by lazy {
@@ -53,19 +49,6 @@ internal class DocumentFilePickerActivity : ComponentActivity() {
                 resultIntent = result.data,
                 false
             )
-            if (result.resultCode == RESULT_OK && result.data != null) {
-                if (mDocumentFilePickerConfig?.allowMultiple == true && result.data?.clipData != null) {
-                    val uris = result.data?.getClipDataUris()
-                    val filePaths = uris?.getFilePathList(this)
-                    setSuccessResult(uris, filePath = filePaths)
-                } else if (result.data?.data != null) {
-                    val data = result.data?.data
-                    val filePath = data?.let { FileUtils.getRealPath(this, it) }
-                    setSuccessResult(data, filePath)
-                }
-            } else {
-                setCanceledResult("File Picker Result Error: ${result.resultCode}")
-            }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,7 +76,7 @@ internal class DocumentFilePickerActivity : ComponentActivity() {
                     activity.setCanceledResult(
                         getString(
                             R.string.err_permission_missing,
-                            listOf(it).asString()
+                            it.asString()
                         )
                     )
                 },

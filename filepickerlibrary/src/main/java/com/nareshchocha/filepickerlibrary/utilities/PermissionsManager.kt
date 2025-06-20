@@ -50,7 +50,7 @@ interface PermissionsManager {
 class SinglePermissionManager(
     private val activity: ComponentActivity,
     private val permission: String,
-    private val onPermissionMissing: (permission: String) -> Unit = { },
+    private val onPermissionMissing: (permission: List<String>) -> Unit = { },
     private val onPermissionGranted: () -> Unit = {},
     private val onPermissionDenied: () -> Unit = { },
     private val onShowRationale: () -> Unit = { }
@@ -103,7 +103,7 @@ class SinglePermissionManager(
         if (permission.isBlank()) {
             onPermissionGranted()
         } else if (!isPermissionsAdded(activity, listOf(permission))) {
-            onPermissionMissing(permission)
+            onPermissionMissing(getMissingPermissions())
         } else {
             RegisterForSinglePermission()
             RegisterForSettingLauncher()

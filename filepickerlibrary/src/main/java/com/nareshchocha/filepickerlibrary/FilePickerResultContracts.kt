@@ -24,11 +24,23 @@ import com.nareshchocha.filepickerlibrary.utilities.extensions.getDocumentFilePi
 import com.nareshchocha.filepickerlibrary.utilities.extensions.getFilePathList
 import com.nareshchocha.filepickerlibrary.utilities.extensions.getMediaIntent
 
+/**
+ * A collection of ActivityResultContracts for different file picking operations.
+ * This class provides various contracts for capturing images, videos, selecting media,
+ * documents, and other file types.
+ */
 class FilePickerResultContracts private constructor() {
     companion object {
+        /**
+         * Flag to enable or disable logging within the file picker contracts.
+         */
         var isLoggingEnabled: Boolean = false
     }
 
+    /**
+     * Contract for capturing images using the device camera.
+     * Returns a FilePickerResult that contains the URI and file path of the captured image.
+     */
     class ImageCapture : ActivityResultContract<ImageCaptureConfig?, FilePickerResult>() {
         override fun createIntent(
             context: Context,
@@ -49,6 +61,10 @@ class FilePickerResultContracts private constructor() {
             }
     }
 
+    /**
+     * Contract for capturing videos using the device camera.
+     * Returns a FilePickerResult that contains the URI and file path of the captured video.
+     */
     class VideoCapture : ActivityResultContract<VideoCaptureConfig?, FilePickerResult>() {
         override fun createIntent(
             context: Context,
@@ -69,8 +85,12 @@ class FilePickerResultContracts private constructor() {
             }
     }
 
+    /**
+     * Contract for picking media files (images, videos, audio) from the device.
+     * Returns a FilePickerResult that contains the URIs and file paths of the selected media.
+     */
     class PickMedia : ActivityResultContract<PickMediaConfig?, FilePickerResult>() {
-        var context: Context? = null
+        private var context: Context? = null
 
         override fun createIntent(
             context: Context,
@@ -115,8 +135,12 @@ class FilePickerResultContracts private constructor() {
             }
     }
 
+    /**
+     * Contract for picking document files from the device.
+     * Returns a FilePickerResult that contains the URIs and file paths of the selected documents.
+     */
     class PickDocumentFile : ActivityResultContract<DocumentFilePickerConfig?, FilePickerResult>() {
-        var context: Context? = null
+        private var context: Context? = null
 
         override fun createIntent(
             context: Context,
@@ -159,6 +183,10 @@ class FilePickerResultContracts private constructor() {
             }
     }
 
+    /**
+     * Contract for displaying a popup with multiple file picker options.
+     * Returns a FilePickerResult based on the selected option and resulting file(s).
+     */
     class AllFilePicker : ActivityResultContract<PickerData?, FilePickerResult>() {
         override fun createIntent(
             context: Context,
@@ -200,8 +228,13 @@ class FilePickerResultContracts private constructor() {
             }
     }
 
+    /**
+     * Contract for picking any file type based on the provided configuration.
+     * Delegates to the appropriate specific contract based on the config type.
+     * Returns a FilePickerResult based on the selected file(s).
+     */
     class AnyFilePicker : ActivityResultContract<BaseConfig?, FilePickerResult>() {
-        var baseConfig: BaseConfig? = null
+        private var baseConfig: BaseConfig? = null
 
         override fun createIntent(
             context: Context,
@@ -213,7 +246,6 @@ class FilePickerResultContracts private constructor() {
                 is VideoCaptureConfig -> VideoCapture().createIntent(context, input)
                 is PickMediaConfig -> PickMedia().createIntent(context, input)
                 is DocumentFilePickerConfig -> PickDocumentFile().createIntent(context, input)
-
                 else -> ImageCapture().createIntent(context, ImageCaptureConfig())
             }
         }
@@ -234,7 +266,6 @@ class FilePickerResultContracts private constructor() {
                             resultCode,
                             intent
                         )
-
                     else -> FilePickerResult(errorMessage = "Unknown file type")
                 }
             }

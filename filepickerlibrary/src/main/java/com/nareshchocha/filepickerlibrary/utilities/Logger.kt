@@ -4,7 +4,7 @@ import android.util.Log
 import com.nareshchocha.filepickerlibrary.FilePickerResultContracts
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 
-fun log(
+internal fun log(
     message: String,
     priority: LogPriority = LogPriority.DEBUG_LOG,
     customTag: String = Const.LogTag.FILE_PICKER_ERROR,
@@ -19,7 +19,7 @@ fun log(
     }
 }
 
-fun Any?.printToLog(
+internal fun Any?.printToLog(
     customTag: String? = null,
     priority: LogPriority = LogPriority.DEBUG_LOG,
     throwable: Throwable? = null
@@ -27,7 +27,7 @@ fun Any?.printToLog(
     printToLog(customTag, priority, throwable) { this?.toString() ?: "null" }
 }
 
-fun printToLog(
+internal fun printToLog(
     customTag: String? = null,
     priority: LogPriority = LogPriority.DEBUG_LOG,
     throwable: Throwable? = null,
@@ -45,7 +45,7 @@ fun printToLog(
     }
 }
 
-enum class LogPriority {
+internal enum class LogPriority {
     DEBUG_LOG,
     ERROR_LOG,
     INFO_LOG,

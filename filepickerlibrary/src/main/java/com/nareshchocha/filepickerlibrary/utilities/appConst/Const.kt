@@ -86,7 +86,7 @@ object Const {
      * Keys for bundle extras exposed to external consumers.
      */
     @Keep
-    object BundleExtras {
+    internal object BundleExtras {
         /** Indicates if the file is from capture. */
         const val FROM_CAPTURE = "isFromCapture"
 
