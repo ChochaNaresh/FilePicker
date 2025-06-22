@@ -1,456 +1,245 @@
+# 📁 File Picker Library for Android
 
-## File Picker Library for Android
-This library is designed to simplify the process of selecting and retrieving media files from an Android device, and supports media capture for images and videos.
+A customizable, modern media/document picker for Android with support for image and video capture, file selection, and Jetpack's ActivityResult API integration.
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.chochanaresh/filepicker.svg)](https://search.maven.org/artifact/io.github.chochanaresh/filepicker)
-![Build Workflow](https://github.com/ChochaNaresh/FilePicker/actions/workflows/ci.yml/badge.svg)
+![Build](https://github.com/ChochaNaresh/FilePicker/actions/workflows/ci.yml/badge.svg)
 [![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
 ![Language](https://img.shields.io/badge/language-Kotlin-orange.svg)
-![Language](https://img.shields.io/badge/Kotlin-2.1.0-blue)
+![Kotlin](https://img.shields.io/badge/Kotlin-2.1.20-blue)
 
-### How to use
-**How to add dependencies**
+---
 
-**Groovy**
+## 🚀 Features
+
+- 📂 Document Picker
+- 📷 Image Capture
+- 🎥 Video Capture
+- 🖼️ Pick Images & Videos from Gallery
+- ⚙️ Fully customizable popups
+- 🧩 Built-in ActivityResultContracts for Kotlin & Java
+
+---
+
+## 📦 Installation
+
+### Gradle (Groovy)
 ```groovy
-allprojects {
-    repositories {
-        mavenCentral() // For FilePicker library, this line is enough.
-    }
+repositories {
+    mavenCentral()
 }
-```
 
-```groovy
 dependencies {
-    // ...
-    implementation 'io.github.chochanaresh:filepicker:$libVersion'
-    // ...
+    implementation 'io.github.chochanaresh:filepicker:<latest-version>'
 }
 ```
 
-**kts**
+### Gradle (Kotlin DSL)
 ```kotlin
-allprojects {
-    repositories {
-        mavenCentral() // For FilePicker library, this line is enough.
-    }
+repositories {
+    mavenCentral()
 }
-```
 
-```kotlin
 dependencies {
-    // ...
-    implementation ("io.github.chochanaresh:filepicker:$libVersion") 
-    // ...
-}
-```
-**libs.versions.toml** 
-```toml
-[versions]
-filepicker = "$libVersion"
-
-[libraries]
-filepicker = { group = "io.github.chochanaresh", name = "filepicker", version.ref = "filepicker" }
-````
-
-```kotlin 
-dependencies {
-    // ...
-    implementation(libs.filepicker)
-    // ...
+    implementation("io.github.chochanaresh:filepicker:<latest-version>")
 }
 ```
 ## Version
-Where `$libVersion` = [![libVersion](https://img.shields.io/maven-central/v/io.github.chochanaresh/filepicker.svg)](https://central.sonatype.com/artifact/io.github.chochanaresh/filepicker/versions)
+`latest-version` = [![libVersion](https://img.shields.io/maven-central/v/io.github.chochanaresh/filepicker.svg)](https://central.sonatype.com/artifact/io.github.chochanaresh/filepicker/versions)
+---
 
-## How to get result
+## 🎯 FilePickerResultContracts (Jetpack ActivityResult APIs)
 
-##### Kotlin
+Use the built-in contracts for simplified integration using Jetpack's `registerForActivityResult`.
+
+### ✅ Setup Example
 ```kotlin
-private val launcher =
-    registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        if (it.resultCode == Activity.RESULT_OK) {
-            // Use the uri to load the image
-            val uri = it.data?.data!!
-            // Use the file path to set image or upload 
-            val filePath= it.data.getStringExtra(Const.BundleExtras.FILE_PATH)
-            //... 
-
-            // for Multiple picks 
-            // first item 
-            val first = it.data?.data!!
-            // other items 
-            val  clipData = it.data?.clipData
-            // Multiple file paths list 
-            val filePaths = result.data?.getStringArrayListExtra(Const.BundleExtras.FILE_PATH_LIST) 
-            //... 
-        }
+private val launcher = registerForActivityResult(FilePickerResultContracts.ImageCapture()) { result ->
+    if (result.errorMessage != null) {
+        Log.e("Picker", result.errorMessage ?: "")
+    } else {
+        val uri = result.selectedFileUri
+        val filePath = result.selectedFilePath
     }
-```
-
-
-##### Java
-```java
-private ActivityResultLauncher launcher =
-        registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        if (result.getResultCode() == Activity.RESULT_OK) {
-                            // Use the uri to load the image
-                            Uri uri = result.getData().getData();
-                            // Use the file path to set image or upload
-                            String filePath = result.getData().getStringExtra(Const.BundleExtras.FILE_PATH);
-                            //...
-
-                            // for Multiple picks
-                            // first item
-                            Uri first = result.getData().getData();
-                            // other items
-                            ClipData clipData = result.getData().getClipData();
-                            // Multiple file paths list
-                            ArrayList<String> filePaths = result.getData().getStringArrayListExtra(Const.BundleExtras.FILE_PATH_LIST);
-                            //...
-                        }
-                    }
-                });
-```
-## Customization
-
-**Multiple option with BottomSheet Or Dialog**
-
-##### Kotlin
-```kotlin
-FilePicker.Builder(this)
-    .setPopUpConfig()
-    .addPickDocumentFile()
-    .addImageCapture()
-    .addVideoCapture()
-    .addPickMedia()
-    .build()
-```
-##### Java
-```java
-new FilePicker.Builder(this)
-    .setPopUpConfig(null)
-    .addPickDocumentFile(null)
-    .addImageCapture(null)
-    .addVideoCapture(null)
-    .addPickMedia(null)
-    .build();
-```
-**Customize popup**
-
-#####  Kotlin
-```kotlin
-//..
-setPopUpConfig(
-    PopUpConfig(
-        chooserTitle = "Choose Profile",
-        // layoutId = 0, custom layout 
-        mPopUpType = PopUpType.BOTTOM_SHEET,// PopUpType.BOTTOM_SHEET Or PopUpType.DIALOG
-        mOrientation = RecyclerView.VERTICAL // RecyclerView.VERTICAL or RecyclerView.HORIZONTAL
-    )
-)
-//..
-.build()
-```
-
-#####  Java
-```java
-//..
-setPopUpConfig(
-    new PopUpConfig(
-        "Choose Profile",
-        null,// custom layout 
-        PopUpType.BOTTOM_SHEET, // PopUpType.BOTTOM_SHEET Or PopUpType.DIALOG
-        RecyclerView.VERTICAL // RecyclerView.VERTICAL or RecyclerView.HORIZONTAL
-    )
-)
-//..
-.build()
-```
-### Pick Document Config
-#####  Kotlin
-```kotlin
-//..
-addPickDocumentFile(
-    DocumentFilePickerConfig(
-        popUpIcon = R.drawable.ic_file,// DrawableRes Id 
-        popUpText = "File Media",
-        allowMultiple = false,// set Multiple pick file 
-        maxFiles = 0,// max files working only in android latest version
-        mMimeTypes = listOf("*/*"),// added Multiple MimeTypes
-        askPermissionTitle = null, // set Permission ask Title
-        askPermissionMessage = null,// set Permission ask Message
-        settingPermissionTitle = null,// set Permission setting Title
-        settingPermissionMessage = null,// set Permission setting Messag
-    ),
-)
-//..
-.build()
-```
-
-#####  Java
-```java
-//..
-addPickDocumentFile(
-    new DocumentFilePickerConfig(
-        null, // DrawableRes Id 
-        null,// Title for pop item 
-        true, // set Multiple pick file 
-        null, // max files working only in android latest version
-        mMimeTypesList, // added Multiple MimeTypes
-        null,  // set Permission ask Title
-        null, // set Permission ask Message
-        null, // set Permission setting Title
-        null // set Permission setting Messag
-    )
-)
-//..
-.build()
-```
-
-### Image Capture Config
-
-##### kotlin
-```kotlin
-//..
-addImageCapture(
-    ImageCaptureConfig(
-        popUpIcon = R.drawable.ic_camera,// DrawableRes Id 
-        popUpText = "Camera",
-        mFolder = File(),// set custom folder with write file permission
-        fileName = "image.jpg",
-        // It is not working correctly. However, it will Work on the same devices.
-        isUseRearCamera = true, // setting camera facing
-        askPermissionTitle = null, // set Permission ask Title
-        askPermissionMessage = null,// set Permission ask Message
-        settingPermissionTitle = null,// set Permission setting Title
-        settingPermissionMessage = null,// set Permission setting Messag
-    ),
-)
-//..
-.build()
-```
-
-##### Java
-```java
-//..
-addImageCapture(
-    new ImageCaptureConfig(
-            R.drawable.ic_camera, // DrawableRes Id 
-            null, // Title for pop item 
-            null, // set custom folder with write file permission
-            null,  // set custom File name
-            // It is not working correctly. However, it will Work on the same devices.
-            isUseRearCamera = true, // setting camera facing
-            askPermissionTitle = null, // set Permission ask Title
-            askPermissionMessage = null,// set Permission ask Message
-            settingPermissionTitle = null,// set Permission setting Title
-            settingPermissionMessage = null,// set Permission setting Messag
-    )
-)
-//..
-.build()
-```
-
-### Video Capture Config
-
-##### kotlin
-```kotlin
-//..
-addVideoCapture(
-    VideoCaptureConfig(
-        popUpIcon = R.drawable.ic_video,// DrawableRes Id 
-        popUpText = "Video",
-        mFolder=File(),// set custom folder with write file permission
-        fileName = "video.mp4",
-        maxSeconds = null,// set video duration in seconds
-        maxSizeLimit = null,// set size limit 
-        isHighQuality = null,// set isHighQuality true/false
-        askPermissionTitle = null, // set Permission ask Title
-        askPermissionMessage = null,// set Permission ask Message
-        settingPermissionTitle = null,// set Permission setting Title
-        settingPermissionMessage = null,// set Permission setting Messag
-    ),
-)
-//..
-.build()
-```
-
-##### Java
-```java
-//..
-addVideoCapture(
-    new VideoCaptureConfig(
-            R.drawable.ic_video,// DrawableRes Id 
-            null, // Title for pop item 
-            null, // set custom folder with write file permission
-            null, // set custom File name
-            null, // set video duration in seconds
-            null, // set size limit 
-            null, // set isHighQuality true/false
-            null, // set Permission ask Title
-            null, // set Permission ask Message
-            null, // set Permission setting Title
-            null, // set Permission setting Messag
-    )
-)
-//..
-.build()
-```
-
-### Pick Media Config
-##### kotlin
-```kotlin
-//..
-addPickMedia(
-    PickMediaConfig(
-        popUpIcon = R.drawable.ic_media,// DrawableRes Id 
-        popUpText = "Video",
-        allowMultiple = false,// set Multiple pick file 
-        maxFiles = 0,// max files working only in android latest version
-        mPickMediaType = ImageAndVideo,
-        askPermissionTitle = null, // set Permission ask Title
-        askPermissionMessage = null,// set Permission ask Message
-        settingPermissionTitle = null,// set Permission setting Title
-        settingPermissionMessage = null,// set Permission setting Messag
-    ),
-)
-//..
-.build()
-```
-
-##### Java
-```java
-//..
-addPickMedia(
-    new PickMediaConfig(
-            R.drawable.ic_media,// DrawableRes Id 
-            null, // Title for pop item 
-            null, // set Multiple pick file 
-            null, // max files working only in android latest version
-            null, // set PickMediaTypes 
-            null, // set Permission ask Title
-            null, // set Permission ask Message
-            null, // set Permission setting Title
-            null, // set Permission setting Messag
-    )
-)
-//..
-.build()
-```
-
-### Pick Media Types
-
-##### kotlin
-```kotlin
-import com.nareshchocha.filepickerlibrary.models.PickMediaType
-```
-
-##### Java
-```java
-import com.nareshchocha.filepickerlibrary.models.PickMediaType;
-```
-
-* PickMediaType.ImageOnly
-* PickMediaType.VideoOnly
-* PickMediaType.ImageAndVideo
-## Use directly
-### Pick Document
-
-##### Kotlin
-```kotlin
-    FilePicker.Builder(this)
-        .pickDocumentFileBuild(DocumentFilePickerConfig())
-```
-Customization
-[**DocumentFilePickerConfig**](#kotlin-3)
-
-##### Java
-```java
-    new FilePicker.Builder(this)
-        .pickDocumentFileBuild(new DocumentFilePickerConfig(null));
-```
-Customization
-[**DocumentFilePickerConfig**](#java-3)
-
-### Image Capture
-
-##### Kotlin
-```kotlin
-    FilePicker.Builder(this)
-        .imageCaptureBuild(ImageCaptureConfig())
-```
-Customization
-[**ImageCaptureConfig**](#kotlin-4)
-
-##### Java
-```java
-    new FilePicker.Builder(this)
-        .imageCaptureBuild(new ImageCaptureConfig(null));
-```
-Customization
-[**ImageCaptureConfig**](#java-4)
-
-### Video Capture
-
-##### Kotlin
-```kotlin
-    FilePicker.Builder(this)
-        .videoCaptureBuild(VideoCaptureConfig())
-```
-Customization
-[**VideoCaptureConfig**](#kotlin-5)
-
-##### Java
-```java
-    new FilePicker.Builder(this)
-        .videoCaptureBuild(new VideoCaptureConfig(null));
-```
-Customization
-[**VideoCaptureConfig**](#java-5)
-
-### Pick Media
-
-##### Kotlin
-```kotlin
-    FilePicker.Builder(this)
-        .pickMediaBuild(PickMediaConfig())
-```
-Customization
-[**PickMediaConfig**](#kotlin-6)
-
-##### Java
-```java
-    new FilePicker.Builder(this)
-        .pickMediaBuild(new PickMediaConfig(null));
-```
-Customization
-[**PickMediaConfig**](#java-6)
-## Proguard rules
-```text
--keepclasseswithmembernames class com.nareshchocha.filepickerlibrary.models.**{
-    *;
-}
--keepclassmembers class * extends androidx.appcompat.app.AppCompatActivity {
-    *;
 }
 ```
-## Compatibility
-* Library - Android Lollipop 5.0+ (API 21)
-* Sample - Android Lollipop 5.0+ (API 21)
-## Contributing
 
-Contributions are always welcome!
-## Support
+---
 
-For support, email  chochanaresh0@gmail.com or join our Slack channel.
+### 📋 Available Contracts
 
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/chochanaresh)
+| Contract | Description |
+|---------|-------------|
+| `ImageCapture()` | Launch camera and capture image |
+| `VideoCapture()` | Record video using camera |
+| `PickMedia()` | Select image/video from gallery |
+| `PickDocumentFile()` | Choose document(s) |
+| `AllFilePicker()` | Show a popup to choose between multiple |
+| `AnyFilePicker()` | Automatically selects contract based on config |
 
-## License
+---
+
+### 🧠 Usage Examples
+
+#### 📷 Image Capture
+```kotlin
+val launcher = registerForActivityResult(FilePickerResultContracts.ImageCapture()) { result -> }
+launcher.launch(ImageCaptureConfig())
+```
+
+#### 🎬 Video Capture
+```kotlin
+val launcher = registerForActivityResult(FilePickerResultContracts.VideoCapture()) { result -> }
+launcher.launch(VideoCaptureConfig())
+```
+
+#### 🖼️ Pick Image/Video
+```kotlin
+val launcher = registerForActivityResult(FilePickerResultContracts.PickMedia()) { result -> }
+launcher.launch(PickMediaConfig(allowMultiple = true))
+```
+
+#### 📄 Pick Documents
+```kotlin
+val launcher = registerForActivityResult(FilePickerResultContracts.PickDocumentFile()) { result -> }
+launcher.launch(DocumentFilePickerConfig(allowMultiple = true))
+```
+
+#### 🔄 Popup UI for All Options
+```kotlin
+val launcher = registerForActivityResult(FilePickerResultContracts.AllFilePicker()) { result -> }
+launcher.launch(PickerData())
+```
+
+#### 🧠 Dynamic Picker (AnyFilePicker)
+```kotlin
+val launcher = registerForActivityResult(FilePickerResultContracts.AnyFilePicker()) { result -> }
+launcher.launch(ImageCaptureConfig()) // Or any config subclass
+```
+
+---
+
+### 📘 FilePickerResult
+
+```kotlin
+data class FilePickerResult(
+    val selectedFileUri: Uri? = null,
+    val selectedFileUris: List<Uri>? = null,
+    val selectedFilePath: String? = null,
+    val selectedFilePaths: List<String>? = null,
+    val errorMessage: String? = null
+)
+```
+
+---
+
+# ⚙️ Config Options
+
+### 📄 DocumentFilePickerConfig
+```kotlin
+DocumentFilePickerConfig(
+    popUpIcon = R.drawable.ic_file,
+    popUpText = "File Media",
+    allowMultiple = true,
+    maxFiles = 10,
+    mMimeTypes = listOf("application/pdf", "image/*")
+)
+```
+
+---
+
+### 📷 ImageCaptureConfig
+```kotlin
+ImageCaptureConfig(
+    popUpIcon = R.drawable.ic_camera,
+    popUpText = "Camera",
+    mFolder = File(cacheDir, "Images"),
+    fileName = "image_${System.currentTimeMillis()}.jpg",
+    isUseRearCamera = true
+)
+```
+
+---
+
+### 🎥 VideoCaptureConfig
+```kotlin
+VideoCaptureConfig(
+    popUpIcon = R.drawable.ic_video,
+    popUpText = "Video",
+    mFolder = File(cacheDir, "Videos"),
+    fileName = "video_${System.currentTimeMillis()}.mp4",
+    maxSeconds = 60,
+    maxSizeLimit = 20L * 1024 * 1024,
+    isHighQuality = true
+)
+```
+
+---
+
+### 🖼️ PickMediaConfig
+```kotlin
+PickMediaConfig(
+    popUpIcon = R.drawable.ic_media,
+    popUpText = "Pick Media",
+    allowMultiple = true,
+    maxFiles = 5,
+    mPickMediaType = PickMediaType.ImageAndVideo
+)
+```
+
+**PickMediaType Options**
+```kotlin
+PickMediaType.ImageOnly
+PickMediaType.VideoOnly
+PickMediaType.ImageAndVideo
+```
+
+---
+
+### 🎛️ PickerData & PopUpConfig
+```kotlin
+val pickerData = PickerData(
+    mPopUpConfig = PopUpConfig(
+        chooserTitle = "Choose Option",
+        mPopUpType = PopUpType.BOTTOM_SHEET,
+        mOrientation = Orientation.VERTICAL,
+        cornerSize = 12f
+    ),
+    listIntents = listOf(
+        ImageCaptureConfig(),
+        VideoCaptureConfig(),
+        PickMediaConfig(),
+        DocumentFilePickerConfig()
+    )
+)
+```
+
+---
+
+## 📱 Compatibility
+
+- Android 5.0 (API 21) and above
+- Supports Kotlin & Java
+
+---
+
+## 🙌 Contributing
+
+Contributions are always welcome!  
+Please fork and submit PRs with clear commit history.
+
+---
+
+## ☕ Support
+
+- 📧 chochanaresh0@gmail.com
+- 💬 Join our Slack
+- [Buy me a Coffee](https://www.buymeacoffee.com/chochanaresh)
+
+---
+
+## 📄 License
+
 ```text
 Copyright 2023 Naresh chocha
 
