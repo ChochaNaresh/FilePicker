@@ -1,319 +1,217 @@
 package com.nareshchocha.filepickerlibrary.ui.activitys
 
-import android.Manifest
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.Keep
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.models.ImageCaptureConfig
-import com.nareshchocha.filepickerlibrary.picker.PickerUtils.createFileGetUri
-import com.nareshchocha.filepickerlibrary.picker.PickerUtils.createMediaFileFolder
-import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppAlertDialog
+import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppRationaleDialog
+import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppSettingDialog
+import com.nareshchocha.filepickerlibrary.utilities.MultiplePermissionManager
+import com.nareshchocha.filepickerlibrary.utilities.PermissionLists
+import com.nareshchocha.filepickerlibrary.utilities.PickerFileUtils.createFileGetUri
+import com.nareshchocha.filepickerlibrary.utilities.PickerFileUtils.createMediaFileFolder
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const.DefaultPaths.defaultFolder
-import com.nareshchocha.filepickerlibrary.utilities.extentions.getImageCaptureIntent
-import com.nareshchocha.filepickerlibrary.utilities.extentions.getRequestedPermissions
-import com.nareshchocha.filepickerlibrary.utilities.extentions.getSettingIntent
-import com.nareshchocha.filepickerlibrary.utilities.extentions.setCanceledResult
-import com.nareshchocha.filepickerlibrary.utilities.extentions.setSuccessResult
-import timber.log.Timber
+import com.nareshchocha.filepickerlibrary.utilities.extensions.asString
+import com.nareshchocha.filepickerlibrary.utilities.extensions.getActivityOrNull
+import com.nareshchocha.filepickerlibrary.utilities.getImageCaptureIntent
+import com.nareshchocha.filepickerlibrary.utilities.setCanceledResult
+import com.nareshchocha.filepickerlibrary.utilities.setSuccessResult
 import java.io.File
 
-@OptIn(ExperimentalMaterial3Api::class)
 internal class ImageCaptureActivity : ComponentActivity() {
-    private var imageFileUri: Uri? = null
-    private var imageFile: File? = null
-
     private val mImageCaptureConfig: ImageCaptureConfig? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(
                 Const.BundleInternalExtras.IMAGE_CAPTURE,
-                ImageCaptureConfig::class.java,
+                ImageCaptureConfig::class.java
             )
         } else {
             @Suppress("DEPRECATION")
             intent.getParcelableExtra(Const.BundleInternalExtras.IMAGE_CAPTURE) as ImageCaptureConfig?
         }
     }
+    private var imageFile: File? = null
+    private val imageFileUri: Uri? by lazy {
+        imageFile =
+            createMediaFileFolder(
+                folderFile = mImageCaptureConfig!!.mFolder ?: defaultFolder(),
+                fileName =
+                    mImageCaptureConfig!!.fileName
+                        ?: Const.DefaultPaths.defaultImageFile()
+            )
+        if (imageFile == null) {
+            imageFile =
+                createMediaFileFolder(
+                    folderFile = mImageCaptureConfig!!.mFolder ?: defaultFolder(),
+                    fileName =
+                        mImageCaptureConfig!!.fileName
+                            ?: Const.DefaultPaths.defaultImageFile()
+                )
+        }
+        createFileGetUri(imageFile)
+    }
+
+    val imageCaptureLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == RESULT_OK) {
+                setSuccessResult(imageFileUri, imageFile?.absolutePath, true)
+            } else {
+                imageFile?.delete()
+                setCanceledResult("File Picker Result Error: ${result.resultCode}")
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            SetUI()
+        if (mImageCaptureConfig == null) {
+            imageFile?.delete()
+            setCanceledResult(getString(R.string.image_capture_config_null_error))
+            return
+        } else {
+            setContent {
+                StartImageCapture()
+            }
         }
     }
 
-
     @Composable
-    fun SetUI() {
-        val context = LocalContext.current
-        var showAskDialog by remember { mutableStateOf(false) }
-        var showGotoSettingDialog by remember { mutableStateOf(false) }
-        var permissionRequested by remember { mutableStateOf(false) }
-
-        val imageCaptureLauncher =
-            rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                handleImageCaptureResult(result.resultCode)
-            }
-
-        val permissionLauncher =
-            rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
-                handlePermissionResult(
-                    result,
-                    context,
-                    imageCaptureLauncher
-                ) { askDialog, settingDialog ->
-                    showAskDialog = askDialog
-                    showGotoSettingDialog = settingDialog
+    fun StartImageCapture() {
+        val activity = LocalContext.current.getActivityOrNull() ?: this
+        var showRationaleDialog by remember { mutableStateOf(false) }
+        var showSettingDialog by remember { mutableStateOf(false) }
+        val mMultiplePermissionManager =
+            MultiplePermissionManager(
+                activity = activity,
+                permissions = PermissionLists.imageCapturePermissions(activity),
+                onPermissionsMissing = {
+                    imageFile?.delete()
+                    activity.setCanceledResult(
+                        getString(
+                            R.string.err_permission_missing,
+                            it.asString()
+                        )
+                    )
+                },
+                onMultiplePermissionsGranted = {
+                    imageCapture()
+                },
+                onMultiplePermissionsDenied = {
+                    showSettingDialog = true
+                },
+                onShowMultipleRationale = {
+                    showRationaleDialog = true
                 }
-            }
+            )
+        mMultiplePermissionManager.Check()
 
-        val settingLauncher =
-            rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                checkPermissionsAndLaunchCamera(context, imageCaptureLauncher)
-            }
-
-        // Initial permission check
-        LaunchedEffect(Unit) {
-            if (!permissionRequested) {
-                permissionRequested = true
-                checkAndRequestPermissions(
-                    context,
-                    permissionLauncher = {
-                        permissionLauncher.launch(getPermissionsList(context).toTypedArray())
-                    },
-                    launchCamera = {
-                        launchCamera(context, imageCaptureLauncher)
-                    },
-                )
-            }
-        }
-        // Ask Permission Dialog
-        if (showAskDialog) {
-            PermissionDialog(context, onConfirm = {
-                showAskDialog = false
-                permissionLauncher.launch(getPermissionsList(context).toTypedArray())
-            }, onDismiss = {
-                setCanceledResult(getString(R.string.err_permission_result))
-                finish()
-            })
-        }
-
-        // Go to Setting Dialog
-        if (showGotoSettingDialog) {
-            SettingDialog(context, onConfirm = {
-                showGotoSettingDialog = false
-                settingLauncher.launch(getSettingIntent())
-            }, onDismiss = {
-                setCanceledResult(getString(R.string.err_permission_result))
-                finish()
-            })
-        }
-
-    }
-
-    private fun checkAndRequestPermissions(
-        context: Context,
-        permissionLauncher: (Array<String>) -> Unit,
-        launchCamera: () -> Unit
-    ) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val permissionsList = getPermissionsList(context)
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q || permissionsList.isNotEmpty()) {
-                permissionLauncher(permissionsList.toTypedArray())
-            } else {
-                launchCamera()
-            }
-        } else {
-            launchCamera()
-        }
-    }
-
-    private fun checkPermissionsAndLaunchCamera(
-        context: Context,
-        imageCaptureLauncher: ActivityResultLauncher<Intent>
-    ) {
-        val allGranted = getPermissionsList(context).all { permission ->
-            ContextCompat.checkSelfPermission(
-                context,
-                permission,
-            ) == PackageManager.PERMISSION_GRANTED
-        }
-
-        if (allGranted) {
-            launchCamera(context, imageCaptureLauncher)
-        } else {
-            setCanceledResult(getString(R.string.err_permission_result))
-            finish()
-        }
-    }
-
-    private fun handlePermissionResult(
-        result: Map<String, Boolean>,
-        context: Context,
-        imageCaptureLauncher: ActivityResultLauncher<Intent>,
-        onShowDialog: (askDialog: Boolean, settingDialog: Boolean) -> Unit
-    ) {
-        val allGranted = result.all { permission ->
-            ContextCompat.checkSelfPermission(
-                context,
-                permission.key,
-            ) == PackageManager.PERMISSION_GRANTED
-        }
-
-        val isShowRationale = result.any { permission ->
-            ActivityCompat.shouldShowRequestPermissionRationale(
-                this,
-                permission.key,
+        if (showSettingDialog) {
+            ShowSettingDialog(
+                permissions = mMultiplePermissionManager.getDeniedPermissions(),
+                onConfirm = {
+                    showSettingDialog = false
+                    mMultiplePermissionManager.openAppSettings()
+                },
+                onDismiss = {
+                    showSettingDialog = false
+                    setPermissionDeniedResult(mMultiplePermissionManager.getDeniedPermissions())
+                }
             )
         }
 
-        if (allGranted) {
-            launchCamera(context, imageCaptureLauncher)
-        } else if (isShowRationale) {
-            onShowDialog(true, false)
-        } else {
-            onShowDialog(false, true)
-        }
-    }
-
-    private fun handleImageCaptureResult(resultCode: Int) {
-        if (resultCode == RESULT_OK) {
-            Timber.tag(Const.LogTag.FILE_RESULT)
-                .v("File Uri ::: ${imageFileUri?.toString()}")
-            Timber.tag(Const.LogTag.FILE_RESULT)
-                .v("filePath ::: ${imageFile?.absoluteFile}")
-            Timber.tag(Const.LogTag.FILE_RESULT)
-                .v("file read:: ${imageFile?.canRead()}")
-            setSuccessResult(imageFileUri, imageFile?.absolutePath, true)
-        } else {
-            Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
-                .v(getString(R.string.err_capture_error, "imageCapture"))
-            setCanceledResult(getString(R.string.err_capture_error, "imageCapture"))
-        }
-        finish()
-    }
-
-    @Composable
-    private fun PermissionDialog(
-        context: Context,
-        onConfirm: () -> Unit,
-        onDismiss: () -> Unit,
-    ) {
-        AppAlertDialog(
-            onDismissRequest = {
-                setCanceledResult(getString(R.string.err_permission_result))
-                finish()
-            },
-            title = mImageCaptureConfig?.askPermissionTitle
-                ?: stringResource(R.string.err_permission_denied),
-            message = mImageCaptureConfig?.askPermissionMessage ?: stringResource(
-                R.string.err_write_storage_permission,
-                getPermissionsListString(context),
-            ),
-            onConfirm = onConfirm,
-            onDismiss = onDismiss
-        )
-    }
-
-    @Composable
-    private fun SettingDialog(
-        context: Context,
-        onConfirm: () -> Unit,
-        onDismiss: () -> Unit,
-    ) {
-        AppAlertDialog(
-            onDismissRequest = {
-                setCanceledResult(getString(R.string.err_permission_result))
-                finish()
-            },
-            title = mImageCaptureConfig?.settingPermissionTitle
-                ?: stringResource(R.string.err_permission_denied),
-            message = mImageCaptureConfig?.settingPermissionMessage ?: getString(
-                R.string.err_write_storage_setting,
-                getPermissionsListString(context),
-            ),
-            onConfirm = onConfirm,
-            onDismiss = onDismiss
-        )
-    }
-
-
-    private fun launchCamera(
-        context: Context,
-        imageCaptureLauncher: ActivityResultLauncher<Intent>
-    ) {
-        imageFileUri = if (mImageCaptureConfig != null) {
-            imageFile = createMediaFileFolder(
-                folderFile = mImageCaptureConfig!!.mFolder ?: context.defaultFolder(),
-                fileName = mImageCaptureConfig!!.fileName ?: Const.DefaultPaths.defaultImageFile(),
+        if (showRationaleDialog) {
+            ShowRationaleDialog(
+                onConfirm = {
+                    showRationaleDialog = false
+                    mMultiplePermissionManager.permissionsCheck()
+                },
+                onDismiss = {
+                    showRationaleDialog = false
+                    setPermissionDeniedResult(mMultiplePermissionManager.getRationalePermissions())
+                }
             )
-            context.createFileGetUri(imageFile!!)
-        } else {
-            imageFile = createMediaFileFolder(
-                folderFile = context.defaultFolder(),
-                fileName = Const.DefaultPaths.defaultImageFile(),
-            )
-            context.createFileGetUri(imageFile!!)
         }
-        imageFileUri?.let {
+    }
+
+    fun imageCapture() {
+        if (imageFileUri != null) {
             imageCaptureLauncher.launch(
-                context.getImageCaptureIntent(
-                    it,
-                    mImageCaptureConfig?.isUseRearCamera ?: true
+                getImageCaptureIntent(
+                    imageFileUri!!,
+                    mImageCaptureConfig?.isUseRearCamera == true
                 )
             )
+        } else {
+            imageFile?.delete()
+            setCanceledResult(getString(R.string.err_file_creation_failed))
         }
     }
 
-    private fun getPermissionsListString(context: Context): String {
-        val listString = getPermissionsList(context).map {
-            it.split(".").lastOrNull() ?: ""
-        }.toString()
-        return listString.substring(1, listString.length - 1).replace(",", " and ")
+    fun setPermissionDeniedResult(permissions: List<String>) {
+        imageFile?.delete()
+        setCanceledResult(
+            getString(
+                R.string.permission_denied,
+                permissions.asString()
+            )
+        )
+    }
+
+    @Composable
+    private fun ShowSettingDialog(
+        permissions: List<String>,
+        onConfirm: () -> Unit,
+        onDismiss: () -> Unit
+    ) {
+        AppSettingDialog(
+            permissions = permissions,
+            title = mImageCaptureConfig?.settingPermissionTitle,
+            message = mImageCaptureConfig?.settingPermissionMessage,
+            onConfirm = onConfirm,
+            onDismiss = onDismiss
+        )
+    }
+
+    @Composable
+    private fun ShowRationaleDialog(
+        onConfirm: () -> Unit,
+        onDismiss: () -> Unit
+    ) {
+        AppRationaleDialog(
+            title =
+                mImageCaptureConfig?.askPermissionTitle
+                    ?: stringResource(R.string.err_permissions_rationale_title),
+            message =
+                mImageCaptureConfig?.askPermissionMessage ?: stringResource(
+                    R.string.err_capture_permissions_rationale_message
+                ),
+            onConfirm = onConfirm,
+            onDismiss = onDismiss
+        )
     }
 
     companion object {
-        @Keep
-        private fun getPermissionsList(context: Context) = ArrayList<String>().also {
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-                it.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        fun getInstance(
+            context: Context,
+            mImageCaptureConfig: ImageCaptureConfig?
+        ): Intent =
+            Intent(context, ImageCaptureActivity::class.java).apply {
+                mImageCaptureConfig?.let { putExtra(Const.BundleInternalExtras.IMAGE_CAPTURE, it) }
             }
-            val permissions = context.getRequestedPermissions()
-            if (permissions?.contains(Manifest.permission.CAMERA) == true) {
-                it.add(Manifest.permission.CAMERA)
-            }
-        }
-
-        @Keep
-        fun getInstance(mContext: Context, mImageCaptureConfig: ImageCaptureConfig?): Intent {
-            val filePickerIntent = Intent(mContext, ImageCaptureActivity::class.java)
-            mImageCaptureConfig?.let {
-                filePickerIntent.putExtra(Const.BundleInternalExtras.IMAGE_CAPTURE, it)
-            }
-            return filePickerIntent
-        }
     }
 }

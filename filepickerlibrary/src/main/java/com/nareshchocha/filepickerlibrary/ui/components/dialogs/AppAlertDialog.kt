@@ -1,4 +1,4 @@
-package  com.nareshchocha.filepickerlibrary.ui.components.dialogs
+package com.nareshchocha.filepickerlibrary.ui.components.dialogs
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
@@ -9,14 +9,14 @@ import androidx.compose.ui.res.stringResource
 import com.nareshchocha.filepickerlibrary.R
 
 @Composable
-fun AppAlertDialog(
+internal fun AppAlertDialog(
     title: String,
     message: String,
     confirmText: String = stringResource(R.string.str_ok),
     dismissText: String = stringResource(R.string.str_cancel),
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
-    onDismissRequest: () -> Unit = onDismiss,
+    onDismissRequest: () -> Unit = onDismiss
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,

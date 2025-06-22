@@ -7,4 +7,5 @@
     <string name="pick_image_or_video">Pick Image Or Video</string>
     <string name="pick_pdf">Pick PDF</string>
     <string name="all_option">All Option</string>
+    <string name="title_activity_root">RootActivity</string>
 </resources>

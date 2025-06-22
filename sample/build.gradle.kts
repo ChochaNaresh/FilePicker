@@ -7,12 +7,21 @@ plugins {
 
 android {
     namespace = "com.nareshchocha.filepicker"
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    compileSdk =
+        libs.versions.compileSdk
+            .get()
+            .toInt()
 
     defaultConfig {
         applicationId = "com.nareshchocha.filepicker"
-        minSdk = libs.versions.minSdk.get().toInt()
-        targetSdk = libs.versions.targetSdk.get().toInt()
+        minSdk =
+            libs.versions.minSdk
+                .get()
+                .toInt()
+        targetSdk =
+            libs.versions.targetSdk
+                .get()
+                .toInt()
         versionCode = 2
         versionName = "1.1"
 
@@ -35,7 +44,6 @@ android {
         renderScript = false
         shaders = false
     }
-
     compileOptions {
         sourceCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
         targetCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
@@ -44,12 +52,11 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.valueOf(libs.versions.jdkVersion.get()).toString()
     }
-
 }
 
 dependencies {
-
-    implementation(libs.androidx.startup.runtime)
+    implementation(libs.core.splashscreen)
+    implementation(libs.androidx.activity.ktx)
     // compose
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -62,10 +69,7 @@ dependencies {
     implementation("io.coil-kt.coil3:coil-compose:3.2.0")
     // File Picker
     implementation(project(":filepickerlibrary"))
-
-    // timber
-    implementation(libs.timber)
-
+    implementation(libs.androidx.lifecycle.runtime.ktx)
 
     // testing
     testImplementation(libs.junit)
@@ -74,11 +78,9 @@ dependencies {
     testImplementation(libs.truth)
     androidTestImplementation(libs.truth)
 
-
     // testing compose
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
 }

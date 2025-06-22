@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.arturbosch.detekt)
     alias(libs.plugins.maven.publish)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.signing)
@@ -13,10 +12,16 @@ plugins {
 val versionName = project.findProperty("VERSION_NAME") as String? ?: "0.0.1"
 android {
     namespace = "com.nareshchocha.filepickerlibrary"
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    compileSdk =
+        libs.versions.compileSdk
+            .get()
+            .toInt()
 
     defaultConfig {
-        minSdk = libs.versions.minSdk.get().toInt()
+        minSdk =
+            libs.versions.minSdk
+                .get()
+                .toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -47,8 +52,6 @@ android {
 }
 
 dependencies {
-
-    implementation(libs.androidx.startup.runtime)
     // compose
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -58,10 +61,6 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended)
 
-    // timber
-    implementation(libs.timber)
-
-
     // testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -69,28 +68,41 @@ dependencies {
     testImplementation(libs.truth)
     androidTestImplementation(libs.truth)
 
-
     // testing compose
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-}
 
-detekt {
-    toolVersion = libs.versions.detekt.get()
-    config.setFrom("$projectDir/config/detekt/detekt.yml")
-    buildUponDefaultConfig = true
+    // JUnit
+    testImplementation("junit:junit:4.13.2")
+
+    // AndroidX Test
+    testImplementation("androidx.test:core:1.5.0")
+    testImplementation("androidx.test:runner:1.5.2")
+    testImplementation("androidx.test.ext:junit:1.1.5")
+
+    // Robolectric for (Android framework simulation in unit tests)
+    testImplementation("org.robolectric:robolectric:4.10.3")
+
+    // Mockito for mock(ing)
+    testImplementation("org.mockito:mockito-core:5.7.0")
+    testImplementation("org.mockito:mockito-inline:5.2.0")
+    // For mocking final classes)
+    // Optional: If you( need to mock Kotlin classes better)
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
 }
 
 mavenPublishing {
-    publishToMavenCentral(SonatypeHost.S01,true)
+    publishToMavenCentral(SonatypeHost.S01, true)
     signAllPublications()
     coordinates("io.github.chochanaresh", "filepicker", versionName)
 
     pom {
         name.set("filepicker")
-        description.set("All file and media picker library for android. This library is designed to simplify the process of selecting and retrieving media files from an Android device, and supports media capture for images and videos.")
+        description.set(
+            "All file and media picker library for android. This library is designed to simplify the process of selecting and retrieving media files from an Android device, and supports media capture for images and videos."
+        )
         inceptionYear.set("2023")
         url.set("https://github.com/ChochaNaresh/FilePicker")
         licenses {

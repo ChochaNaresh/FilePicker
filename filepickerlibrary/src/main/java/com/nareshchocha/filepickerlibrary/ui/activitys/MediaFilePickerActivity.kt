@@ -1,51 +1,38 @@
 package com.nareshchocha.filepickerlibrary.ui.activitys
 
-import android.Manifest
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.core.app.ActivityCompat
 import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.models.PickMediaConfig
-import com.nareshchocha.filepickerlibrary.models.PickMediaType
-import com.nareshchocha.filepickerlibrary.utilities.FileUtils
+import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppRationaleDialog
+import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppSettingDialog
+import com.nareshchocha.filepickerlibrary.utilities.MediaMultiplePermissionManager
+import com.nareshchocha.filepickerlibrary.utilities.PermissionLists
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
-import com.nareshchocha.filepickerlibrary.utilities.extentions.getMediaIntent
-import com.nareshchocha.filepickerlibrary.utilities.extentions.getRequestedPermissions
-import com.nareshchocha.filepickerlibrary.utilities.extentions.getSettingIntent
-import com.nareshchocha.filepickerlibrary.utilities.extentions.setCanceledResult
-import com.nareshchocha.filepickerlibrary.utilities.extentions.setSuccessResult
-import timber.log.Timber
+import com.nareshchocha.filepickerlibrary.utilities.extensions.asString
+import com.nareshchocha.filepickerlibrary.utilities.extensions.getActivityOrNull
+import com.nareshchocha.filepickerlibrary.utilities.getMediaIntent
+import com.nareshchocha.filepickerlibrary.utilities.setActivityResult
+import com.nareshchocha.filepickerlibrary.utilities.setCanceledResult
 
 internal class MediaFilePickerActivity : ComponentActivity() {
-
     private val mPickMediaConfig: PickMediaConfig? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(
                 Const.BundleInternalExtras.PICK_MEDIA,
-                PickMediaConfig::class.java,
+                PickMediaConfig::class.java
             )
         } else {
             @Suppress("DEPRECATION")
@@ -53,343 +40,145 @@ internal class MediaFilePickerActivity : ComponentActivity() {
         }
     }
 
+    val mediaFilePickerLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            setActivityResult(result.resultCode, result.data, false)
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            StartMediaFilePicker()
+        if (mPickMediaConfig == null) {
+            setCanceledResult(getString(R.string.media_file_picker_config_null_error))
+            return
+        } else {
+            setContent {
+                StartMediaFilePicker()
+            }
         }
     }
 
     @Composable
     fun StartMediaFilePicker() {
-        var showAskDialog by remember { mutableStateOf(false) }
-        var showGotoSettingDialog by remember { mutableStateOf(false) }
-        var permissionRequested by remember { mutableStateOf(false) }
-
-        val selectFileLauncher = rememberSelectFileLauncher()
-        val permissionLauncher = rememberPermissionLauncher(
-            onGranted = { launchFilePicker(this@MediaFilePickerActivity, selectFileLauncher) },
-            onShowRationale = { showAskDialog = true },
-            onDenied = { showGotoSettingDialog = true }
-        )
-        val settingLauncher = rememberSettingsLauncher(
-            onGranted = { launchFilePicker(this@MediaFilePickerActivity, selectFileLauncher) },
-            onDenied = {
-                setCanceledResult(getString(R.string.err_permission_result))
-                finish()
-            }
-        )
-
-        // Initial permission check
-        CheckInitialPermissions(
-            permissionRequested = permissionRequested,
-            onPermissionRequested = { permissionRequested = true },
-            onCheckPermission = {
-                checkPermissionFlow(
-                    this@MediaFilePickerActivity,
-                    permissionLauncher
-                )
-            },
-            onLaunchPicker = { launchFilePicker(this@MediaFilePickerActivity, selectFileLauncher) }
-        )
-
-        // Show permission dialogs if needed
-        DisplayPermissionDialogs(
-            showAskDialog = showAskDialog,
-            showGotoSettingDialog = showGotoSettingDialog,
-            onAskConfirm = {
-                showAskDialog = false
-                permissionLauncher.launch(getPermission(mPickMediaConfig!!))
-            },
-            onSettingsConfirm = {
-                showGotoSettingDialog = false
-                settingLauncher.launch(getSettingIntent())
-            }
-        )
-    }
-
-    @Composable
-    private fun rememberSelectFileLauncher(): ActivityResultLauncher<Intent> {
-        return rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            handleFilePickerResult(result, this@MediaFilePickerActivity)
-        }
-    }
-
-    @Composable
-    private fun rememberPermissionLauncher(
-        onGranted: () -> Unit,
-        onShowRationale: () -> Unit,
-        onDenied: () -> Unit
-    ): ActivityResultLauncher<String> {
-        return rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-            if (granted) {
-                onGranted()
-            } else if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this@MediaFilePickerActivity,
-                    getPermission(mPickMediaConfig!!)
-                )
-            ) {
-                onShowRationale()
-            } else {
-                onDenied()
-            }
-        }
-    }
-
-    @Composable
-    private fun rememberSettingsLauncher(
-        onGranted: () -> Unit,
-        onDenied: () -> Unit
-    ): ActivityResultLauncher<Intent> {
-        return rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (mPickMediaConfig != null) {
-                if (ActivityCompat.checkSelfPermission(
-                        this@MediaFilePickerActivity,
-                        getPermission(mPickMediaConfig!!)
-                    ) == PackageManager.PERMISSION_GRANTED
-                ) {
-                    onGranted()
-                } else {
-                    onDenied()
+        val activity = LocalContext.current.getActivityOrNull() ?: this
+        var showRationaleDialog by remember { mutableStateOf(false) }
+        var showSettingDialog by remember { mutableStateOf(false) }
+        val mMediaMultiplePermissionManager =
+            MediaMultiplePermissionManager(
+                activity = activity,
+                permissions = PermissionLists.mediaFilePickerPermissions(),
+                onPermissionsMissing = {
+                    activity.setCanceledResult(
+                        getString(
+                            R.string.err_permission_missing,
+                            it.asString()
+                        )
+                    )
+                },
+                onMultiplePermissionsGranted = {
+                    mediaFilePickerLauncher()
+                },
+                onMultiplePermissionsDenied = {
+                    showSettingDialog = true
+                },
+                onShowMultipleRationale = {
+                    showRationaleDialog = true
                 }
-            } else {
-                setCanceledResult(
-                    getString(
-                        R.string.err_config_null,
-                        this::mPickMediaConfig::class.java.name,
-                    ),
-                )
-                finish()
-            }
-        }
-    }
+            )
+        mMediaMultiplePermissionManager.Check()
 
-    @Composable
-    private fun DisplayPermissionDialogs(
-        showAskDialog: Boolean,
-        showGotoSettingDialog: Boolean,
-        onAskConfirm: () -> Unit,
-        onSettingsConfirm: () -> Unit
-    ) {
-        if (showAskDialog) {
-            ShowAskPermissionDialog(
-                config = mPickMediaConfig,
-                onConfirm = onAskConfirm,
+        if (showSettingDialog) {
+            ShowSettingDialog(
+                permissions = mMediaMultiplePermissionManager.getDeniedPermissions(),
+                onConfirm = {
+                    showSettingDialog = false
+                    mMediaMultiplePermissionManager.openAppSettings()
+                },
                 onDismiss = {
-                    setCanceledResult(getString(R.string.err_permission_result))
-                    finish()
+                    showSettingDialog = false
+                    setPermissionDeniedResult(mMediaMultiplePermissionManager.getDeniedPermissions())
                 }
             )
         }
 
-        if (showGotoSettingDialog) {
-            ShowSettingsDialog(
-                config = mPickMediaConfig,
-                onConfirm = onSettingsConfirm,
+        if (showRationaleDialog) {
+            ShowRationaleDialog(
+                onConfirm = {
+                    showRationaleDialog = false
+                    mMediaMultiplePermissionManager.permissionsCheck()
+                },
                 onDismiss = {
-                    setCanceledResult(getString(R.string.err_permission_result))
-                    finish()
+                    showRationaleDialog = false
+                    setPermissionDeniedResult(mMediaMultiplePermissionManager.getRationalePermissions())
                 }
             )
         }
     }
 
-
-    private fun handleFilePickerResult(result: ActivityResult, context: Context) {
-        if (result.resultCode == Activity.RESULT_OK && result.data != null) {
-            if (mPickMediaConfig?.allowMultiple == true && result.data?.clipData != null) {
-                val uris = result.data?.getClipDataUris()
-                Timber.tag(Const.LogTag.FILE_RESULT).v("File Uri ::: $uris")
-                val filePaths = uris?.getFilePathList(context)
-                Timber.tag(Const.LogTag.FILE_RESULT).v("filePath ::: $filePaths")
-                setSuccessResult(uris, filePath = filePaths)
-            } else if (result.data?.data != null) {
-                val data = result.data?.data
-                Timber.tag(Const.LogTag.FILE_RESULT)
-                    .v("File Uri ::: ${data?.toString()}")
-                val filePath = data?.let { FileUtils.getRealPath(context, it) }
-                Timber.tag(Const.LogTag.FILE_RESULT).v("filePath ::: $filePath")
-                setSuccessResult(data, filePath)
-            }
-        } else {
-            Timber.tag(Const.LogTag.FILE_PICKER_ERROR)
-                .v(getString(R.string.err_media_pick_error))
-            setCanceledResult(getString(R.string.err_media_pick_error))
-        }
-        finish()
-    }
-
-
-    private fun launchFilePicker(
-        context: Context,
-        selectFileLauncher: androidx.activity.result.ActivityResultLauncher<Intent>
-    ) {
+    fun mediaFilePickerLauncher() {
         if (mPickMediaConfig != null) {
-            selectFileLauncher.launch(context.getMediaIntent(mPickMediaConfig!!))
+            mediaFilePickerLauncher.launch(
+                getMediaIntent(mPickMediaConfig!!)
+            )
         } else {
             setCanceledResult(
-                getString(
-                    R.string.err_config_null,
-                    this::mPickMediaConfig::class.java.name,
-                ),
+                getString(R.string.media_file_picker_config_null_error)
             )
-            finish()
         }
     }
 
-    private fun checkPermissionFlow(
-        context: Context,
-        permissionLauncher: androidx.activity.result.ActivityResultLauncher<String>
+    fun setPermissionDeniedResult(permissions: List<String>) {
+        setCanceledResult(
+            getString(
+                R.string.permission_denied,
+                permissions.asString()
+            )
+        )
+    }
+
+    @Composable
+    private fun ShowSettingDialog(
+        permissions: List<String>,
+        onConfirm: () -> Unit,
+        onDismiss: () -> Unit
     ) {
-        if (mPickMediaConfig != null) {
-            val list = getPermissionManifestCheck(mPickMediaConfig!!, context)
-            if (list.isEmpty()) {
-                setCanceledResult(getString(R.string.permission_not_found))
-                finish()
-            } else {
-                permissionLauncher.launch(getPermission(mPickMediaConfig!!))
-            }
-        } else {
-            setCanceledResult(
-                getString(
-                    R.string.err_config_null,
-                    this::mPickMediaConfig::class.java.name,
+        AppSettingDialog(
+            permissions = permissions,
+            title = mPickMediaConfig?.settingPermissionTitle,
+            message = mPickMediaConfig?.settingPermissionMessage,
+            onConfirm = onConfirm,
+            onDismiss = onDismiss
+        )
+    }
+
+    @Composable
+    private fun ShowRationaleDialog(
+        onConfirm: () -> Unit,
+        onDismiss: () -> Unit
+    ) {
+        AppRationaleDialog(
+            title =
+                mPickMediaConfig?.askPermissionTitle
+                    ?: stringResource(R.string.err_permissions_rationale_title),
+            message =
+                mPickMediaConfig?.askPermissionMessage ?: stringResource(
+                    R.string.media_file_picker_permission_rationale
                 ),
-            )
-            finish()
-        }
+            onConfirm = onConfirm,
+            onDismiss = onDismiss
+        )
     }
-
-    private fun Intent.getClipDataUris(): ArrayList<Uri> {
-        val resultSet = LinkedHashSet<Uri>()
-        data?.let { data ->
-            resultSet.add(data)
-        }
-        val clipData = clipData
-        if (clipData == null && resultSet.isEmpty()) {
-            return ArrayList()
-        } else if (clipData != null) {
-            for (i in 0 until clipData.itemCount) {
-                val uri = clipData.getItemAt(i).uri
-                if (uri != null) {
-                    resultSet.add(uri)
-                }
-            }
-        }
-        return ArrayList(resultSet)
-    }
-
 
     companion object {
-
-        private fun getPermissionManifestCheck(
-            mPickMediaConfig: PickMediaConfig,
-            context: Context
-        ) = ArrayList<String>().also {
-            val permissions = context.getRequestedPermissions()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                if (mPickMediaConfig.mPickMediaType == PickMediaType.ImageOnly) {
-                    if (permissions?.contains(Manifest.permission.READ_MEDIA_IMAGES) == true) {
-                        it.add(Manifest.permission.READ_MEDIA_IMAGES)
-                    }
-                } else {
-                    if (permissions?.contains(Manifest.permission.READ_MEDIA_VIDEO) == true) {
-                        it.add(Manifest.permission.READ_MEDIA_VIDEO)
-                    }
-                }
-            } else {
-                if (permissions?.contains(Manifest.permission.READ_EXTERNAL_STORAGE) == true) {
-                    it.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+        fun getInstance(
+            mContext: Context,
+            mPickMediaConfig: PickMediaConfig?
+        ): Intent =
+            Intent(mContext, MediaFilePickerActivity::class.java).apply {
+                mPickMediaConfig?.let {
+                    putExtra(Const.BundleInternalExtras.PICK_MEDIA, it)
                 }
             }
-        }
-
-
-        fun getInstance(mContext: Context, mPickMediaConfig: PickMediaConfig?): Intent {
-            val filePickerIntent = Intent(mContext, MediaFilePickerActivity::class.java)
-            mPickMediaConfig?.let {
-                filePickerIntent.putExtra(Const.BundleInternalExtras.PICK_MEDIA, it)
-            }
-            return filePickerIntent
-        }
-    }
-}
-
-private fun List<Uri>.getFilePathList(context: Context): ArrayList<String> {
-    val filePathList = ArrayList<String>()
-    forEach { uri ->
-        FileUtils.getRealPath(context, uri)?.also { filePath ->
-            filePathList.add(filePath)
-        }
-    }
-    return filePathList
-}
-
-@Composable
-private fun CheckInitialPermissions(
-    permissionRequested: Boolean,
-    onPermissionRequested: () -> Unit,
-    onCheckPermission: () -> Unit,
-    onLaunchPicker: () -> Unit
-) {
-    LaunchedEffect(Unit) {
-        if (!permissionRequested) {
-            onPermissionRequested()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                onCheckPermission()
-            } else {
-                onLaunchPicker()
-            }
-        }
-    }
-}
-
-@Composable
-private fun ShowAskPermissionDialog(
-    config: PickMediaConfig?,
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
-) {
-    com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppAlertDialog(
-        title = config?.askPermissionTitle ?: stringResource(R.string.err_permission_denied),
-        message = config?.askPermissionMessage ?: stringResource(
-            R.string.err_write_storage_permission,
-            getPermission(config ?: PickMediaConfig()).split(".").lastOrNull() ?: ""
-        ),
-        confirmText = stringResource(android.R.string.ok),
-        dismissText = stringResource(android.R.string.cancel),
-        onConfirm = onConfirm,
-        onDismiss = onDismiss
-    )
-}
-
-@Composable
-private fun ShowSettingsDialog(
-    config: PickMediaConfig?,
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
-) {
-    com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppAlertDialog(
-        title = config?.settingPermissionTitle ?: stringResource(R.string.err_permission_denied),
-        message = config?.settingPermissionMessage ?: stringResource(
-            R.string.err_write_storage_setting,
-            getPermission(config ?: PickMediaConfig()).split(".").lastOrNull() ?: ""
-        ),
-        confirmText = stringResource(R.string.str_go_to_setting),
-        dismissText = stringResource(android.R.string.cancel),
-        onConfirm = onConfirm,
-        onDismiss = onDismiss
-    )
-}
-
-private fun getPermission(mPickMediaConfig: PickMediaConfig): String {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        if (mPickMediaConfig.mPickMediaType == PickMediaType.ImageOnly) {
-            Manifest.permission.READ_MEDIA_IMAGES
-        } else {
-            Manifest.permission.READ_MEDIA_VIDEO
-        }
-    } else {
-        Manifest.permission.READ_EXTERNAL_STORAGE
     }
 }
