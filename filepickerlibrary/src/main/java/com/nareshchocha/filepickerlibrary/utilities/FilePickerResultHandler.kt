@@ -1,24 +1,11 @@
-package com.nareshchocha.filepickerlibrary.utilities.extensions
+package com.nareshchocha.filepickerlibrary.utilities
 
 import android.app.Activity
 import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import com.nareshchocha.filepickerlibrary.utilities.FileUtils
-import com.nareshchocha.filepickerlibrary.utilities.LogPriority
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
-import com.nareshchocha.filepickerlibrary.utilities.log
-import kotlin.text.substring
-
-fun List<String>.asString() =
-    this
-        .map {
-            it.split(".").lastOrNull() ?: ""
-        }.toString()
-        .let { listString ->
-            listString.substring(1, listString.length - 1).replace(",", " and ")
-        }
 
 // Helper extension for getting clip data URIs
 internal fun Intent.getClipDataUris(): ArrayList<Uri> {
@@ -125,4 +112,4 @@ internal fun Activity.setCanceledResult(error: String? = null) {
     finish()
 }
 
-fun <T> List<T>.toArrayList(): ArrayList<T>? = ArrayList(this)
+internal fun <T> List<T>.toArrayList(): ArrayList<T>? = ArrayList(this)

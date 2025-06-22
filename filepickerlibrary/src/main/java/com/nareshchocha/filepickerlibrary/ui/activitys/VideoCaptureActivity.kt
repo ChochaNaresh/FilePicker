@@ -17,19 +17,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.models.VideoCaptureConfig
-import com.nareshchocha.filepickerlibrary.picker.PickerUtils.createFileGetUri
-import com.nareshchocha.filepickerlibrary.picker.PickerUtils.createMediaFileFolder
 import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppRationaleDialog
 import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppSettingDialog
 import com.nareshchocha.filepickerlibrary.utilities.MultiplePermissionManager
 import com.nareshchocha.filepickerlibrary.utilities.PermissionLists
+import com.nareshchocha.filepickerlibrary.utilities.PickerFileUtils.createFileGetUri
+import com.nareshchocha.filepickerlibrary.utilities.PickerFileUtils.createMediaFileFolder
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const.DefaultPaths.defaultFolder
 import com.nareshchocha.filepickerlibrary.utilities.extensions.asString
 import com.nareshchocha.filepickerlibrary.utilities.extensions.getActivityOrNull
-import com.nareshchocha.filepickerlibrary.utilities.extensions.getVideoCaptureIntent
-import com.nareshchocha.filepickerlibrary.utilities.extensions.setCanceledResult
-import com.nareshchocha.filepickerlibrary.utilities.extensions.setSuccessResult
+import com.nareshchocha.filepickerlibrary.utilities.getVideoCaptureIntent
+import com.nareshchocha.filepickerlibrary.utilities.setCanceledResult
+import com.nareshchocha.filepickerlibrary.utilities.setSuccessResult
 import java.io.File
 
 internal class VideoCaptureActivity : ComponentActivity() {

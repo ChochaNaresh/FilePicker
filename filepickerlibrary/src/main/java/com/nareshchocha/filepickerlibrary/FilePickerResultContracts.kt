@@ -19,10 +19,10 @@ import com.nareshchocha.filepickerlibrary.ui.activitys.PopUpActivity
 import com.nareshchocha.filepickerlibrary.ui.activitys.VideoCaptureActivity
 import com.nareshchocha.filepickerlibrary.utilities.FileUtils
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
-import com.nareshchocha.filepickerlibrary.utilities.extensions.getClipDataUris
-import com.nareshchocha.filepickerlibrary.utilities.extensions.getDocumentFilePick
-import com.nareshchocha.filepickerlibrary.utilities.extensions.getFilePathList
-import com.nareshchocha.filepickerlibrary.utilities.extensions.getMediaIntent
+import com.nareshchocha.filepickerlibrary.utilities.getClipDataUris
+import com.nareshchocha.filepickerlibrary.utilities.getDocumentFilePick
+import com.nareshchocha.filepickerlibrary.utilities.getFilePathList
+import com.nareshchocha.filepickerlibrary.utilities.getMediaIntent
 
 /**
  * A collection of ActivityResultContracts for different file picking operations.

@@ -23,9 +23,9 @@ import com.nareshchocha.filepickerlibrary.utilities.SinglePermissionManager
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.extensions.asString
 import com.nareshchocha.filepickerlibrary.utilities.extensions.getActivityOrNull
-import com.nareshchocha.filepickerlibrary.utilities.extensions.getDocumentFilePick
-import com.nareshchocha.filepickerlibrary.utilities.extensions.setActivityResult
-import com.nareshchocha.filepickerlibrary.utilities.extensions.setCanceledResult
+import com.nareshchocha.filepickerlibrary.utilities.getDocumentFilePick
+import com.nareshchocha.filepickerlibrary.utilities.setActivityResult
+import com.nareshchocha.filepickerlibrary.utilities.setCanceledResult
 
 internal class DocumentFilePickerActivity : ComponentActivity() {
     private val mDocumentFilePickerConfig: DocumentFilePickerConfig? by lazy {

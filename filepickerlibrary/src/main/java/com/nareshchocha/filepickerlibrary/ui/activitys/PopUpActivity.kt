@@ -32,9 +32,9 @@ import com.nareshchocha.filepickerlibrary.models.PopUpConfig
 import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppDialog
 import com.nareshchocha.filepickerlibrary.ui.components.item.PopupItem
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
-import com.nareshchocha.filepickerlibrary.utilities.extensions.setCanceledResult
-import com.nareshchocha.filepickerlibrary.utilities.extensions.setSuccessResult
-import com.nareshchocha.filepickerlibrary.utilities.extensions.toArrayList
+import com.nareshchocha.filepickerlibrary.utilities.setCanceledResult
+import com.nareshchocha.filepickerlibrary.utilities.setSuccessResult
+import com.nareshchocha.filepickerlibrary.utilities.toArrayList
 
 internal class PopUpActivity : ComponentActivity() {
     private val mPickerData: PickerData? by lazy {

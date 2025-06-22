@@ -1,4 +1,4 @@
-package com.nareshchocha.filepickerlibrary.utilities.extensions
+package com.nareshchocha.filepickerlibrary.utilities
 
 import android.content.Context
 import android.content.Intent

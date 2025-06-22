@@ -14,9 +14,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.nareshchocha.filepickerlibrary.utilities.extensions.getRequestedPermissions
-import com.nareshchocha.filepickerlibrary.utilities.extensions.getSettingIntent
 
-interface PermissionsManager {
+internal interface PermissionsManager {
     fun shouldShowRationale(
         context: ComponentActivity,
         permission: String
@@ -47,7 +46,7 @@ interface PermissionsManager {
     fun Check()
 }
 
-class SinglePermissionManager(
+internal class SinglePermissionManager(
     private val activity: ComponentActivity,
     private val permission: String,
     private val onPermissionMissing: (permission: List<String>) -> Unit = { },
@@ -126,7 +125,7 @@ class SinglePermissionManager(
     }
 }
 
-class MultiplePermissionManager(
+internal class MultiplePermissionManager(
     private val activity: ComponentActivity,
     private val permissions: List<String>,
     private val onPermissionsMissing: (permissions: List<String>) -> Unit = { },
@@ -208,7 +207,7 @@ class MultiplePermissionManager(
     }
 }
 
-class MediaMultiplePermissionManager(
+internal class MediaMultiplePermissionManager(
     private val activity: ComponentActivity,
     private val permissions: List<String>,
     private val onPermissionsMissing: (permissions: List<String>) -> Unit = { },

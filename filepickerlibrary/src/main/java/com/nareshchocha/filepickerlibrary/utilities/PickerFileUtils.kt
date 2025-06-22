@@ -1,12 +1,10 @@
-package com.nareshchocha.filepickerlibrary.picker
+package com.nareshchocha.filepickerlibrary.utilities
 
 import android.content.Context
 import android.net.Uri
 import androidx.annotation.Keep
 import androidx.core.content.FileProvider
-import com.nareshchocha.filepickerlibrary.utilities.LogPriority
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
-import com.nareshchocha.filepickerlibrary.utilities.log
 import java.io.File
 import java.io.IOException
 
@@ -14,7 +12,7 @@ import java.io.IOException
  * Utility object that provides helper functions for file operations in the FilePicker library.
  * Contains methods for creating file directories, generating files, and obtaining content URIs.
  */
-internal object PickerUtils {
+internal object PickerFileUtils {
     /**
      * Creates a file within the specified folder directory.
      *
