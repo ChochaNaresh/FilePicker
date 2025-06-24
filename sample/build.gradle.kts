@@ -22,15 +22,18 @@ android {
             libs.versions.targetSdk
                 .get()
                 .toInt()
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 1
+        versionName = "0.4.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            isJniDebuggable = false
+            isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -66,7 +69,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended)
 
-    implementation("io.coil-kt.coil3:coil-compose:3.2.0")
+    // implementation("io.coil-kt.coil3:coil-compose:3.2.0")
+
     // File Picker
     implementation(project(":filepickerlibrary"))
     implementation(libs.androidx.lifecycle.runtime.ktx)

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FilePicker</string>
+    <string name="app_name">File Picker</string>
     <string name="capture_image">Capture Image</string>
     <string name="capture_video">Capture Video</string>
     <string name="pick_images">Pick Images</string>
