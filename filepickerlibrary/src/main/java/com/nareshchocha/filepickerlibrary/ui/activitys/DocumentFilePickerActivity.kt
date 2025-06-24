@@ -18,14 +18,17 @@ import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.models.DocumentFilePickerConfig
 import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppRationaleDialog
 import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppSettingDialog
+import com.nareshchocha.filepickerlibrary.utilities.FileUtils
 import com.nareshchocha.filepickerlibrary.utilities.PermissionLists
 import com.nareshchocha.filepickerlibrary.utilities.SinglePermissionManager
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.extensions.asString
 import com.nareshchocha.filepickerlibrary.utilities.extensions.getActivityOrNull
+import com.nareshchocha.filepickerlibrary.utilities.getClipDataUris
 import com.nareshchocha.filepickerlibrary.utilities.getDocumentFilePick
-import com.nareshchocha.filepickerlibrary.utilities.setActivityResult
+import com.nareshchocha.filepickerlibrary.utilities.getFilePathList
 import com.nareshchocha.filepickerlibrary.utilities.setCanceledResult
+import com.nareshchocha.filepickerlibrary.utilities.setSuccessResult
 
 internal class DocumentFilePickerActivity : ComponentActivity() {
     private val mDocumentFilePickerConfig: DocumentFilePickerConfig? by lazy {
@@ -44,11 +47,19 @@ internal class DocumentFilePickerActivity : ComponentActivity() {
         registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
-            setActivityResult(
-                resultCode = result.resultCode,
-                resultIntent = result.data,
-                false
-            )
+            if (result.resultCode == RESULT_OK && result.data != null) {
+                if (mDocumentFilePickerConfig?.allowMultiple == true && result.data?.clipData != null) {
+                    val uris = result.data?.getClipDataUris()
+                    val filePaths = uris?.getFilePathList(this)
+                    setSuccessResult(uris, filePath = filePaths)
+                } else if (result.data?.data != null) {
+                    val data = result.data?.data
+                    val filePath = data?.let { FileUtils.getRealPath(this, it) }
+                    setSuccessResult(data, filePath)
+                }
+            } else {
+                setCanceledResult("File Picker Result Error: ${result.resultCode}")
+            }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {

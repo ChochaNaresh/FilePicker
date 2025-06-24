@@ -3,7 +3,6 @@ package com.nareshchocha.filepickerlibrary
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.activity.result.contract.ActivityResultContract
 import com.nareshchocha.filepickerlibrary.models.BaseConfig
 import com.nareshchocha.filepickerlibrary.models.DocumentFilePickerConfig
@@ -17,12 +16,8 @@ import com.nareshchocha.filepickerlibrary.ui.activitys.ImageCaptureActivity
 import com.nareshchocha.filepickerlibrary.ui.activitys.MediaFilePickerActivity
 import com.nareshchocha.filepickerlibrary.ui.activitys.PopUpActivity
 import com.nareshchocha.filepickerlibrary.ui.activitys.VideoCaptureActivity
-import com.nareshchocha.filepickerlibrary.utilities.FileUtils
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.getClipDataUris
-import com.nareshchocha.filepickerlibrary.utilities.getDocumentFilePick
-import com.nareshchocha.filepickerlibrary.utilities.getFilePathList
-import com.nareshchocha.filepickerlibrary.utilities.getMediaIntent
 
 /**
  * A collection of ActivityResultContracts for different file picking operations.
@@ -90,21 +85,10 @@ class FilePickerResultContracts private constructor() {
      * Returns a FilePickerResult that contains the URIs and file paths of the selected media.
      */
     class PickMedia : ActivityResultContract<PickMediaConfig?, FilePickerResult>() {
-        private var context: Context? = null
-
         override fun createIntent(
             context: Context,
             input: PickMediaConfig?
-        ): Intent {
-            this.context = context
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                context.getMediaIntent(
-                    input ?: PickMediaConfig()
-                )
-            } else {
-                MediaFilePickerActivity.getInstance(context, input ?: PickMediaConfig())
-            }
-        }
+        ): Intent = MediaFilePickerActivity.getInstance(context, input ?: PickMediaConfig())
 
         override fun parseResult(
             resultCode: Int,
@@ -114,23 +98,17 @@ class FilePickerResultContracts private constructor() {
                 FilePickerResult(errorMessage = "Media selection failed or cancelled")
             } else {
                 if (intent.clipData != null) {
-                    val uris = intent.getClipDataUris()
-                    val filePaths = uris.getFilePathList(context!!)
-                    if (uris.isEmpty()) {
-                        FilePickerResult(errorMessage = "No media selected")
-                    } else {
-                        FilePickerResult(
-                            selectedFileUris = uris,
-                            selectedFilePaths = filePaths
-                        )
-                    }
+                    FilePickerResult(
+                        selectedFileUris = intent.getClipDataUris(),
+                        selectedFilePaths = intent.getStringArrayListExtra(Const.BundleExtras.FILE_PATH_LIST)
+                    )
                 } else if (intent.data != null) {
                     FilePickerResult(
                         selectedFileUri = intent.data,
-                        selectedFilePath = intent.data?.let { FileUtils.getRealPath(context!!, it) }
+                        selectedFilePath = intent.getStringExtra(Const.BundleExtras.FILE_PATH)
                     )
                 } else {
-                    FilePickerResult(errorMessage = "No media selected")
+                    FilePickerResult(errorMessage = "No file selected")
                 }
             }
     }
@@ -140,19 +118,10 @@ class FilePickerResultContracts private constructor() {
      * Returns a FilePickerResult that contains the URIs and file paths of the selected documents.
      */
     class PickDocumentFile : ActivityResultContract<DocumentFilePickerConfig?, FilePickerResult>() {
-        private var context: Context? = null
-
         override fun createIntent(
             context: Context,
             input: DocumentFilePickerConfig?
-        ): Intent {
-            this.context = context
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                getDocumentFilePick(input ?: DocumentFilePickerConfig())
-            } else {
-                DocumentFilePickerActivity.getInstance(context, input ?: DocumentFilePickerConfig())
-            }
-        }
+        ): Intent = DocumentFilePickerActivity.getInstance(context, input ?: DocumentFilePickerConfig())
 
         override fun parseResult(
             resultCode: Int,
@@ -162,23 +131,17 @@ class FilePickerResultContracts private constructor() {
                 FilePickerResult(errorMessage = "Document selection failed or cancelled")
             } else {
                 if (intent.clipData != null) {
-                    val uris = intent.getClipDataUris()
-                    val filePaths = uris.getFilePathList(context!!)
-                    if (uris.isEmpty()) {
-                        FilePickerResult(errorMessage = "No document selected")
-                    } else {
-                        FilePickerResult(
-                            selectedFileUris = uris,
-                            selectedFilePaths = filePaths
-                        )
-                    }
+                    FilePickerResult(
+                        selectedFileUris = intent.getClipDataUris(),
+                        selectedFilePaths = intent.getStringArrayListExtra(Const.BundleExtras.FILE_PATH_LIST)
+                    )
                 } else if (intent.data != null) {
                     FilePickerResult(
                         selectedFileUri = intent.data,
-                        selectedFilePath = intent.data?.let { FileUtils.getRealPath(context!!, it) }
+                        selectedFilePath = intent.getStringExtra(Const.BundleExtras.FILE_PATH)
                     )
                 } else {
-                    FilePickerResult(errorMessage = "No document selected")
+                    FilePickerResult(errorMessage = "No file selected")
                 }
             }
     }
@@ -266,6 +229,7 @@ class FilePickerResultContracts private constructor() {
                             resultCode,
                             intent
                         )
+
                     else -> FilePickerResult(errorMessage = "Unknown file type")
                 }
             }
