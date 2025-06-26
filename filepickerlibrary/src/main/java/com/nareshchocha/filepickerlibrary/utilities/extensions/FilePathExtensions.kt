@@ -6,7 +6,6 @@ import android.net.Uri
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
-import androidx.annotation.Keep
 import com.nareshchocha.filepickerlibrary.utilities.LogPriority
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.log
@@ -39,7 +38,6 @@ internal fun Uri.isGoogleDriveUri(): Boolean =
     "com.google.android.apps.docs.storage" == authority ||
         "com.google.android.apps.docs.storage.legacy" == authority
 
-@Keep
 internal fun getDataColumn(
     context: Context,
     uri: Uri?,
@@ -71,7 +69,6 @@ internal fun getDataColumn(
     return null
 }
 
-@Keep
 internal fun Context.getMediaDocumentPath(uri: Uri): String? {
     val docId = DocumentsContract.getDocumentId(uri)
     val split =

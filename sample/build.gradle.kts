@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -22,12 +24,19 @@ android {
             libs.versions.targetSdk
                 .get()
                 .toInt()
-        versionCode = 2
-        versionName = "0.5.0"
+        versionCode = 4
+        versionName = "0.7.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    packaging {
+        jniLibs {
+            excludes.add("lib/arm64-v8a/libandroidx.graphics.path.so")
+            excludes.add("lib/armeabi-v7a/libandroidx.graphics.path.so")
+            excludes.add("lib/x86/libandroidx.graphics.path.so")
+            excludes.add("lib/x86_64/libandroidx.graphics.path.so")
+        }
+    }
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -40,6 +49,7 @@ android {
             )
         }
     }
+
     buildFeatures {
         compose = true
         aidl = false
@@ -50,6 +60,11 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
         targetCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
+    }
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_21)
+        }
     }
 }
 
@@ -69,18 +84,10 @@ dependencies {
 
     // File Picker
     implementation(project(":filepickerlibrary"))
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-
-    // testing
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    testImplementation(libs.truth)
-    androidTestImplementation(libs.truth)
+    // implementation(libs.androidx.lifecycle.runtime.ktx)
 
     // testing compose
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
