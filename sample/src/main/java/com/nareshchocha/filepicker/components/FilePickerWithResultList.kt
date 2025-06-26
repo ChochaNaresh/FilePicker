@@ -20,7 +20,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,17 +45,17 @@ fun FilePickerWithResultList(pickedFiles: List<PickedFile>) {
 
                 "video" -> {
                     Row(
-                        modifier = Modifier
-                            .background(
-                                color = MaterialTheme.colorScheme.secondaryContainer,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .padding(12.dp)
+                        modifier =
+                            Modifier
+                                .background(
+                                    color = MaterialTheme.colorScheme.secondaryContainer,
+                                    shape = RoundedCornerShape(8.dp)
+                                ).padding(12.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Videocam,
                             contentDescription = "Video",
-                            tint = Color(0xFF1976D2),
+                            tint = MaterialTheme.colorScheme.outline,
                             modifier = Modifier.padding(end = 8.dp)
                         )
                         Text(
@@ -73,8 +72,7 @@ fun FilePickerWithResultList(pickedFiles: List<PickedFile>) {
                                 .background(
                                     color = MaterialTheme.colorScheme.outline,
                                     shape = RoundedCornerShape(8.dp)
-                                )
-                                .padding(12.dp)
+                                ).padding(12.dp)
                     ) {
                         Text(
                             text = "URI: ${file.uri}",
