@@ -51,10 +51,6 @@ android {
         sourceCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
         targetCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
     }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.valueOf(libs.versions.jdkVersion.get()).toString()
-    }
 }
 
 dependencies {
@@ -69,7 +65,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended)
 
-    // implementation("io.coil-kt.coil3:coil-compose:3.2.0")
+    implementation("io.coil-kt.coil3:coil-compose:3.2.0")
 
     // File Picker
     implementation(project(":filepickerlibrary"))

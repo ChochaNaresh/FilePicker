@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.nareshchocha.filepicker.components.AllFilePicker
+import com.nareshchocha.filepicker.components.AllFilePickers
 import com.nareshchocha.filepicker.ui.theme.FilePickerTheme
 import com.nareshchocha.filepickerlibrary.FilePickerResultContracts
 
@@ -73,7 +73,7 @@ fun RootUI() {
                     .fillMaxSize()
                     .padding(innerPadding)
         ) {
-            AllFilePicker()
+            AllFilePickers()
         }
     }
 }
