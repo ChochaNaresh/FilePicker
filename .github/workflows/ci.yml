@@ -42,9 +42,16 @@ jobs:
           GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
         shell: bash
         run: |
-          # Print the entire GRADLE_PROPERTIES value in logs
-          echo "GRADLE_PROPERTIES: $GRADLE_PROPERTIES"
+          mkdir -p ~/.gradle/
+          echo "GRADLE_USER_HOME=${HOME}/.gradle" >> $GITHUB_ENV
+          echo "${GRADLE_PROPERTIES}" > ~/.gradle/gradle.properties
 
+      - name: Upload gradle properties report
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-properties
+          path: |
+            **/.gradle/gradle.properties
       - name: Run checks
         run: ./gradlew filepickerlibrary:spotlessCheck detekt
 
