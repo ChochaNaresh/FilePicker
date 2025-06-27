@@ -67,9 +67,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
-
+val automaticRelease: Boolean = true
 mavenPublishing {
-    publishToMavenCentral( true)
+    publishToMavenCentral(automaticRelease)
     signAllPublications()
     coordinates("io.github.chochanaresh", "filepicker", versionName)
 
