@@ -37,6 +37,13 @@ jobs:
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
+      - name: Restore gradle.properties
+        env:
+          GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
+        shell: bash
+        run: |
+          # Print the entire GRADLE_PROPERTIES value in logs
+          echo "GRADLE_PROPERTIES: $GRADLE_PROPERTIES"
 
       - name: Run checks
         run: ./gradlew filepickerlibrary:spotlessCheck detekt
