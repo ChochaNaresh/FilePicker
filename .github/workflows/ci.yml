@@ -51,7 +51,7 @@ jobs:
         with:
           name: gradle-properties
           path: |
-            **/.gradle/gradle.properties
+            **/gradle.properties
       - name: Run checks
         run: ./gradlew filepickerlibrary:spotlessCheck detekt
 
