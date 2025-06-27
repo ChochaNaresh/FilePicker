@@ -1,4 +1,3 @@
-import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -70,7 +69,7 @@ dependencies {
 }
 
 mavenPublishing {
-    publishToMavenCentral(SonatypeHost.S01, true)
+    publishToMavenCentral( true)
     signAllPublications()
     coordinates("io.github.chochanaresh", "filepicker", versionName)
 
