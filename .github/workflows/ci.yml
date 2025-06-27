@@ -37,21 +37,7 @@ jobs:
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
-      - name: Restore gradle.properties
-        env:
-          GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
-        shell: bash
-        run: |
-          mkdir -p ~/.gradle/
-          echo "GRADLE_USER_HOME=${HOME}/.gradle" >> $GITHUB_ENV
-          echo "${GRADLE_PROPERTIES}" > ~/.gradle/gradle.properties
 
-      - name: Upload gradle properties report
-        uses: actions/upload-artifact@v4
-        with:
-          name: gradle-properties
-          path: |
-            **/gradle.properties
       - name: Run checks
         run: ./gradlew filepickerlibrary:spotlessCheck detekt
 
