@@ -57,6 +57,12 @@ internal class DocumentFilePickerActivity : ComponentActivity() {
                     val data = result.data?.data
                     val filePath = data?.let { FileUtils.getRealPath(this, it) }
                     setSuccessResult(data, filePath)
+                } else if (result.data?.clipData != null) {
+                    val uri = result.data?.getClipDataUris()?.firstOrNull()
+                    val filePath = uri?.let { FileUtils.getRealPath(this, it) }
+                    setSuccessResult(uri, filePath)
+                } else {
+                    setCanceledResult(getString(R.string.document_file_picker_no_data_error))
                 }
             } else {
                 setCanceledResult("File Picker Result Error: ${result.resultCode}")
