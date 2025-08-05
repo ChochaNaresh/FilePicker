@@ -3,7 +3,6 @@ package com.nareshchocha.filepickerlibrary.ui.activitys
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.core.os.BundleCompat
 import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.models.PickMediaConfig
 import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppRationaleDialog
@@ -34,15 +34,11 @@ import com.nareshchocha.filepickerlibrary.utilities.setSuccessResult
 
 internal class MediaFilePickerActivity : ComponentActivity() {
     private val mPickMediaConfig: PickMediaConfig? by lazy {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(
-                Const.BundleInternalExtras.PICK_MEDIA,
-                PickMediaConfig::class.java
-            )
-        } else {
-            @Suppress("DEPRECATION")
-            intent.getParcelableExtra(Const.BundleInternalExtras.PICK_MEDIA) as PickMediaConfig?
-        }
+        BundleCompat.getParcelable(
+            intent.extras ?: Bundle.EMPTY,
+            Const.BundleInternalExtras.PICK_MEDIA,
+            PickMediaConfig::class.java
+        )
     }
 
     val mediaFilePickerLauncher =

@@ -2,7 +2,6 @@ package com.nareshchocha.filepickerlibrary.ui.activitys
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.core.os.BundleCompat
 import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.models.DocumentFilePickerConfig
 import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppRationaleDialog
@@ -33,15 +33,11 @@ import com.nareshchocha.filepickerlibrary.utilities.setSuccessResult
 
 internal class DocumentFilePickerActivity : ComponentActivity() {
     private val mDocumentFilePickerConfig: DocumentFilePickerConfig? by lazy {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(
-                Const.BundleInternalExtras.PICK_DOCUMENT,
-                DocumentFilePickerConfig::class.java
-            )
-        } else {
-            @Suppress("DEPRECATION")
-            intent.getParcelableExtra(Const.BundleInternalExtras.PICK_DOCUMENT) as DocumentFilePickerConfig?
-        }
+        BundleCompat.getParcelable(
+            intent.extras ?: Bundle.EMPTY,
+            Const.BundleInternalExtras.PICK_DOCUMENT,
+            DocumentFilePickerConfig::class.java
+        )
     }
 
     val documentFilePickerLauncher =

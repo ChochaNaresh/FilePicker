@@ -82,27 +82,6 @@ internal fun Activity.setSuccessResult(
     finish()
 }
 
-internal fun Activity.setActivityResult(
-    resultCode: Int? = null,
-    resultIntent: Intent? = null,
-    isFromCapture: Boolean = false
-) {
-    log("ResultIntent : $resultIntent", LogPriority.INFO_LOG, Const.LogTag.FILE_PICKER_RESULT)
-    setResult(
-        if (resultIntent == null || resultCode == null) Activity.RESULT_CANCELED else resultCode,
-        resultIntent?.apply {
-            flags =
-                if (isFromCapture) {
-                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
-                } else {
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION
-                }
-            if (isFromCapture) putExtra(Const.BundleExtras.FROM_CAPTURE, true)
-        }
-    )
-    finish()
-}
-
 internal fun Activity.setCanceledResult(error: String? = null) {
     log("Error: $error", LogPriority.ERROR_LOG, Const.LogTag.FILE_PICKER_RESULT)
     setResult(
