@@ -1,6 +1,6 @@
 [versions]
-agp = "8.11.0"
-mavenPublish = "0.33.0"
+agp = "8.12.0"
+mavenPublish = "0.34.0"
 kotlin = "2.2.0"
 detekt = "1.23.8"
 
@@ -15,7 +15,7 @@ core-splashscreen="1.0.1"
 
 # compose
 activityCompose = "1.10.1"
-composeBom = "2025.06.01"
+composeBom = "2025.07.00"
 
 [libraries]
 # core
@@ -44,7 +44,7 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 # code style review
 arturbosch-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-spotless = { id = "com.diffplug.spotless", version = "7.0.4" }
+spotless = { id = "com.diffplug.spotless", version = "7.2.1" }
 # maven publish
 maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish" }
 # signing
