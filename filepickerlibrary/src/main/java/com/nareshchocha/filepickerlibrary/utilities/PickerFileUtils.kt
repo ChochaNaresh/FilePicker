@@ -2,7 +2,6 @@ package com.nareshchocha.filepickerlibrary.utilities
 
 import android.content.Context
 import android.net.Uri
-import androidx.annotation.Keep
 import androidx.core.content.FileProvider
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import java.io.File
@@ -20,7 +19,6 @@ internal object PickerFileUtils {
      * @param fileName The name of the file to be created
      * @return A File object representing the newly created file path
      */
-    @Keep
     fun createMediaFileFolder(
         folderFile: File,
         fileName: String
@@ -64,7 +62,6 @@ internal object PickerFileUtils {
      * @param mFile The File object to create and get URI for
      * @return A content URI for the file or null if creation or URI generation fails
      */
-    @Keep
     fun Context.createFileGetUri(mFile: File?): Uri? {
         if (mFile == null) {
             log("File is null, cannot create or get URI", priority = LogPriority.ERROR_LOG)

@@ -2,10 +2,10 @@ package com.nareshchocha.filepickerlibrary.ui.activitys
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.os.BundleCompat
 import com.nareshchocha.filepickerlibrary.FilePickerResultContracts
 import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.models.BaseConfig
@@ -38,15 +39,11 @@ import com.nareshchocha.filepickerlibrary.utilities.toArrayList
 
 internal class PopUpActivity : ComponentActivity() {
     private val mPickerData: PickerData? by lazy {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(
-                Const.BundleInternalExtras.PICKER_DATA,
-                PickerData::class.java
-            )
-        } else {
-            @Suppress("DEPRECATION")
-            intent.getParcelableExtra(Const.BundleInternalExtras.PICKER_DATA) as PickerData?
-        }
+        BundleCompat.getParcelable(
+            intent.extras ?: Bundle.EMPTY,
+            Const.BundleInternalExtras.PICKER_DATA,
+            PickerData::class.java
+        )
     }
 
     private val intentResultLauncher =
@@ -68,6 +65,7 @@ internal class PopUpActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContent {
             val pickerData = mPickerData
             if (pickerData == null) {

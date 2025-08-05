@@ -1,11 +1,12 @@
 package com.nareshchocha.filepickerlibrary.ui.activitys
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,41 +15,60 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.core.os.BundleCompat
 import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.models.PickMediaConfig
 import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppRationaleDialog
 import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppSettingDialog
+import com.nareshchocha.filepickerlibrary.utilities.FileUtils
 import com.nareshchocha.filepickerlibrary.utilities.MediaMultiplePermissionManager
 import com.nareshchocha.filepickerlibrary.utilities.PermissionLists
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.extensions.asString
 import com.nareshchocha.filepickerlibrary.utilities.extensions.getActivityOrNull
+import com.nareshchocha.filepickerlibrary.utilities.getClipDataUris
+import com.nareshchocha.filepickerlibrary.utilities.getFilePathList
 import com.nareshchocha.filepickerlibrary.utilities.getMediaIntent
-import com.nareshchocha.filepickerlibrary.utilities.setActivityResult
 import com.nareshchocha.filepickerlibrary.utilities.setCanceledResult
+import com.nareshchocha.filepickerlibrary.utilities.setSuccessResult
 
 internal class MediaFilePickerActivity : ComponentActivity() {
     private val mPickMediaConfig: PickMediaConfig? by lazy {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(
-                Const.BundleInternalExtras.PICK_MEDIA,
-                PickMediaConfig::class.java
-            )
-        } else {
-            @Suppress("DEPRECATION")
-            intent.getParcelableExtra(Const.BundleInternalExtras.PICK_MEDIA) as PickMediaConfig?
-        }
+        BundleCompat.getParcelable(
+            intent.extras ?: Bundle.EMPTY,
+            Const.BundleInternalExtras.PICK_MEDIA,
+            PickMediaConfig::class.java
+        )
     }
 
     val mediaFilePickerLauncher =
         registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
-            setActivityResult(result.resultCode, result.data, false)
+            if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+                if (mPickMediaConfig?.allowMultiple == true && result.data?.clipData != null) {
+                    val uris = result.data?.getClipDataUris()
+                    val filePaths = uris?.getFilePathList(this)
+                    setSuccessResult(uris, filePath = filePaths)
+                } else if (result.data?.data != null) {
+                    val data = result.data?.data
+                    val filePath = data?.let { FileUtils.getRealPath(this, it) }
+                    setSuccessResult(data, filePath)
+                } else if (result.data?.clipData != null) {
+                    val uri = result.data?.getClipDataUris()?.firstOrNull()
+                    val filePath = uri?.let { FileUtils.getRealPath(this, it) }
+                    setSuccessResult(uri, filePath)
+                } else {
+                    setCanceledResult(getString(R.string.media_file_picker_no_data_error))
+                }
+            } else {
+                setCanceledResult("File Picker Result Error: ${result.resultCode}")
+            }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         if (mPickMediaConfig == null) {
             setCanceledResult(getString(R.string.media_file_picker_config_null_error))
             return

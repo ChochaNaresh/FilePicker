@@ -1,10 +1,8 @@
 package com.nareshchocha.filepickerlibrary.models
 
 import android.os.Parcelable
-import androidx.annotation.Keep
 import kotlinx.parcelize.Parcelize
 
-@Keep()
 @Parcelize
 sealed class BaseConfig(
     open val popUpIcon: Int?,

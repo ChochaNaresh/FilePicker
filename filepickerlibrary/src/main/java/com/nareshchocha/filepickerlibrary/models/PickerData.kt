@@ -4,21 +4,18 @@ import android.os.Build
 import android.os.Parcelable
 import android.provider.MediaStore
 import androidx.annotation.DrawableRes
-import androidx.annotation.Keep
 import androidx.compose.runtime.Composable
 import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import kotlinx.parcelize.Parcelize
 import java.io.File
 
-@Keep
 @Parcelize
 data class PickerData(
     val mPopUpConfig: PopUpConfig? = null,
     val listIntents: List<BaseConfig> = emptyList()
 ) : Parcelable
 
-@Keep
 @Parcelize
 data class PopUpConfig(
     val chooserTitle: String? = "Choose Option",
@@ -40,7 +37,7 @@ enum class Orientation {
 
 @Parcelize
 data class ImageCaptureConfig(
-    @DrawableRes override val popUpIcon: Int? = R.drawable.ic_camera,
+    @param:DrawableRes override val popUpIcon: Int? = R.drawable.ic_camera,
     override val popUpText: String? = "Camera",
     val mFolder: File? = null,
     val fileName: String? = Const.DefaultPaths.defaultImageFile(),
@@ -64,7 +61,7 @@ data class ImageCaptureConfig(
 
 @Parcelize
 data class VideoCaptureConfig(
-    @DrawableRes override val popUpIcon: Int? = R.drawable.ic_video,
+    @param:DrawableRes override val popUpIcon: Int? = R.drawable.ic_video,
     override val popUpText: String? = "Video",
     val mFolder: File? = null,
     val fileName: String? = Const.DefaultPaths.defaultVideoFile(),
@@ -87,7 +84,7 @@ data class VideoCaptureConfig(
 
 @Parcelize
 data class PickMediaConfig(
-    @DrawableRes override val popUpIcon: Int? = R.drawable.ic_media,
+    @param:DrawableRes override val popUpIcon: Int? = R.drawable.ic_media,
     override val popUpText: String? = "Pick Media",
     val allowMultiple: Boolean? = false,
     /**
@@ -124,7 +121,7 @@ data class PickMediaConfig(
 
 @Parcelize
 data class DocumentFilePickerConfig(
-    @DrawableRes override val popUpIcon: Int? = R.drawable.ic_file,
+    @param:DrawableRes override val popUpIcon: Int? = R.drawable.ic_file,
     override val popUpText: String? = "File Media",
     val allowMultiple: Boolean? = false,
     /**
@@ -151,7 +148,6 @@ data class DocumentFilePickerConfig(
     ),
     Parcelable
 
-@Keep
 @Parcelize
 enum class PopUpType : Parcelable {
     BOTTOM_SHEET,

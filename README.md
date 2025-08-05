@@ -213,6 +213,47 @@ val pickerData = PickerData(
     )
 )
 ```
+# Migration Guide: FilePicker Library
+
+## Overview
+
+This guide outlines the changes from the old code to the new `FilePicker` implementation, focusing on the transition from the Builder pattern to `ActivityResultContract`.
+
+## Key Changes
+
+1. **Package and Class Changes**:  
+   The package has changed from `com.nareshchocha.filepickerlibrary.ui` to `com.nareshchocha.filepickerlibrary`.
+
+2. **Removal of `Builder` Class**:  
+   The `Builder` class is no longer needed. The new code utilizes `ActivityResultContract` for handling file picker actions.
+
+3. **Introduction of `ActivityResultContracts`**:  
+   File picker operations are now handled by specific `ActivityResultContract` classes, such as `ImageCapture`, `VideoCapture`, and `PickMedia`.
+
+4. **Logging Support**:  
+   A new `isLoggingEnabled` flag allows enabling logging in the contracts for debugging.
+
+## Migration Steps
+
+### 1. **Remove Builder Pattern**
+
+The `Builder` class is no longer needed. You should transition to using `ActivityResultContracts` instead.
+
+### 2. **Use `ActivityResultContracts`**
+
+You can now handle file picker actions with specific contracts. For example:
+
+- **Old Code**:
+   ```kotlin
+   fun imageCaptureBuild(mImageCaptureConfig: ImageCaptureConfig?): Intent =
+       ImageCaptureActivity.getInstance(context, mImageCaptureConfig)
+    ```
+- **New Code**:
+    ```kotlin
+    val imageCaptureResult = registerForActivityResult(FilePickerResultContracts.ImageCapture()) { result ->
+    // Handle result
+    }
+    ```
 
 ---
 

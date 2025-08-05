@@ -3,10 +3,10 @@ package com.nareshchocha.filepickerlibrary.ui.activitys
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.core.os.BundleCompat
 import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.models.ImageCaptureConfig
 import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppRationaleDialog
@@ -34,15 +35,11 @@ import java.io.File
 
 internal class ImageCaptureActivity : ComponentActivity() {
     private val mImageCaptureConfig: ImageCaptureConfig? by lazy {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(
-                Const.BundleInternalExtras.IMAGE_CAPTURE,
-                ImageCaptureConfig::class.java
-            )
-        } else {
-            @Suppress("DEPRECATION")
-            intent.getParcelableExtra(Const.BundleInternalExtras.IMAGE_CAPTURE) as ImageCaptureConfig?
-        }
+        BundleCompat.getParcelable(
+            intent.extras ?: Bundle.EMPTY,
+            Const.BundleInternalExtras.IMAGE_CAPTURE,
+            ImageCaptureConfig::class.java
+        )
     }
     private var imageFile: File? = null
     private val imageFileUri: Uri? by lazy {
@@ -79,6 +76,7 @@ internal class ImageCaptureActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         if (mImageCaptureConfig == null) {
             imageFile?.delete()
             setCanceledResult(getString(R.string.image_capture_config_null_error))

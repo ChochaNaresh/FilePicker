@@ -2,10 +2,10 @@ package com.nareshchocha.filepickerlibrary.ui.activitys
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,45 +14,60 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.core.os.BundleCompat
 import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.models.DocumentFilePickerConfig
 import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppRationaleDialog
 import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppSettingDialog
+import com.nareshchocha.filepickerlibrary.utilities.FileUtils
 import com.nareshchocha.filepickerlibrary.utilities.PermissionLists
 import com.nareshchocha.filepickerlibrary.utilities.SinglePermissionManager
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.extensions.asString
 import com.nareshchocha.filepickerlibrary.utilities.extensions.getActivityOrNull
+import com.nareshchocha.filepickerlibrary.utilities.getClipDataUris
 import com.nareshchocha.filepickerlibrary.utilities.getDocumentFilePick
-import com.nareshchocha.filepickerlibrary.utilities.setActivityResult
+import com.nareshchocha.filepickerlibrary.utilities.getFilePathList
 import com.nareshchocha.filepickerlibrary.utilities.setCanceledResult
+import com.nareshchocha.filepickerlibrary.utilities.setSuccessResult
 
 internal class DocumentFilePickerActivity : ComponentActivity() {
     private val mDocumentFilePickerConfig: DocumentFilePickerConfig? by lazy {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(
-                Const.BundleInternalExtras.PICK_DOCUMENT,
-                DocumentFilePickerConfig::class.java
-            )
-        } else {
-            @Suppress("DEPRECATION")
-            intent.getParcelableExtra(Const.BundleInternalExtras.PICK_DOCUMENT) as DocumentFilePickerConfig?
-        }
+        BundleCompat.getParcelable(
+            intent.extras ?: Bundle.EMPTY,
+            Const.BundleInternalExtras.PICK_DOCUMENT,
+            DocumentFilePickerConfig::class.java
+        )
     }
 
     val documentFilePickerLauncher =
         registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
-            setActivityResult(
-                resultCode = result.resultCode,
-                resultIntent = result.data,
-                false
-            )
+            if (result.resultCode == RESULT_OK && result.data != null) {
+                if (mDocumentFilePickerConfig?.allowMultiple == true && result.data?.clipData != null) {
+                    val uris = result.data?.getClipDataUris()
+                    val filePaths = uris?.getFilePathList(this)
+                    setSuccessResult(uris, filePath = filePaths)
+                } else if (result.data?.data != null) {
+                    val data = result.data?.data
+                    val filePath = data?.let { FileUtils.getRealPath(this, it) }
+                    setSuccessResult(data, filePath)
+                } else if (result.data?.clipData != null) {
+                    val uri = result.data?.getClipDataUris()?.firstOrNull()
+                    val filePath = uri?.let { FileUtils.getRealPath(this, it) }
+                    setSuccessResult(uri, filePath)
+                } else {
+                    setCanceledResult(getString(R.string.document_file_picker_no_data_error))
+                }
+            } else {
+                setCanceledResult("File Picker Result Error: ${result.resultCode}")
+            }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         if (mDocumentFilePickerConfig == null) {
             setCanceledResult(getString(R.string.document_file_picker_config_null_error))
             return

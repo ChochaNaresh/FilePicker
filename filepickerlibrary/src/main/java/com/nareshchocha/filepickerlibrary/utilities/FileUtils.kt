@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
-import androidx.annotation.Keep
 import androidx.core.net.toUri
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
 import com.nareshchocha.filepickerlibrary.utilities.extensions.copyFileToInternalStorage
@@ -21,9 +20,7 @@ import com.nareshchocha.filepickerlibrary.utilities.extensions.isGooglePhotosUri
 import com.nareshchocha.filepickerlibrary.utilities.extensions.isMediaDocument
 import java.io.File
 
-@Keep
 internal object FileUtils {
-    @Keep
     fun getRealPath(
         context: Context,
         fileUri: Uri
@@ -48,7 +45,6 @@ internal object FileUtils {
             null
         }
 
-    @Keep
     private fun pathFromURI(
         context: Context,
         uri: Uri
@@ -126,7 +122,6 @@ internal object FileUtils {
         }
     }
 
-    @Keep
     private fun Context.getDownloadsDocumentPath(uri: Uri): String? {
         /*val fileName = getFileName(this, uri)
         if (fileName != null) {
@@ -164,7 +159,6 @@ internal object FileUtils {
         return filePath ?: uri.path?.replaceFirst("^/document/raw:", "")?.replaceFirst("^raw:", "")
     }
 
-    @Keep
     private fun getExternalDocumentPath(uri: Uri): String {
         val docId = DocumentsContract.getDocumentId(uri)
         val split =
@@ -186,7 +180,6 @@ internal object FileUtils {
         }
     }
 
-    @Keep
     private fun getFileName(
         context: Context,
         uri: Uri?

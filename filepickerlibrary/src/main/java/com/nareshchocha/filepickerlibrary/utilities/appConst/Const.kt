@@ -2,14 +2,12 @@ package com.nareshchocha.filepickerlibrary.utilities.appConst
 
 import android.content.Context
 import android.os.Environment
-import androidx.annotation.Keep
 import com.nareshchocha.filepickerlibrary.R
 import java.io.File
 
 /**
  * Contains constants and utility objects used throughout the File Picker library.
  */
-@Keep
 internal object Const {
     /** FileProvider authority suffix. */
     const val AUTHORITY = ".library.fileprovider"
@@ -85,7 +83,6 @@ internal object Const {
     /**
      * Keys for bundle extras exposed to external consumers.
      */
-    @Keep
     object BundleExtras {
         /** Indicates if the file is from capture. */
         const val FROM_CAPTURE = "isFromCapture"

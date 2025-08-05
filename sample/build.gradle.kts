@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -22,21 +24,32 @@ android {
             libs.versions.targetSdk
                 .get()
                 .toInt()
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 4
+        versionName = "0.7.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    packaging {
+        jniLibs {
+            excludes.add("lib/arm64-v8a/libandroidx.graphics.path.so")
+            excludes.add("lib/armeabi-v7a/libandroidx.graphics.path.so")
+            excludes.add("lib/x86/libandroidx.graphics.path.so")
+            excludes.add("lib/x86_64/libandroidx.graphics.path.so")
+        }
+    }
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            isJniDebuggable = false
+            isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
     }
+
     buildFeatures {
         compose = true
         aidl = false
@@ -48,9 +61,10 @@ android {
         sourceCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
         targetCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
     }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.valueOf(libs.versions.jdkVersion.get()).toString()
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_21)
+        }
     }
 }
 
@@ -67,20 +81,13 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
 
     implementation("io.coil-kt.coil3:coil-compose:3.2.0")
+
     // File Picker
     implementation(project(":filepickerlibrary"))
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-
-    // testing
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    testImplementation(libs.truth)
-    androidTestImplementation(libs.truth)
+    // implementation(libs.androidx.lifecycle.runtime.ktx)
 
     // testing compose
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
