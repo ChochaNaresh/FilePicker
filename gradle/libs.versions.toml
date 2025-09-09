@@ -1,21 +1,21 @@
 [versions]
-agp = "8.12.0"
+agp = "8.13.0"
 mavenPublish = "0.34.0"
-kotlin = "2.2.0"
+kotlin = "2.2.10"
 detekt = "1.23.8"
 
 # build config
 compileSdk = "36"
 targetSdk = "36"
 minSdk = "21"
-jdkVersion = "VERSION_21"
+jdkVersion = "VERSION_24"
 
 # core
 core-splashscreen="1.0.1"
 
 # compose
 activityCompose = "1.10.1"
-composeBom = "2025.07.00"
+composeBom = "2025.08.01"
 
 [libraries]
 # core
