@@ -7,14 +7,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -48,17 +47,15 @@ internal class PopUpActivity : ComponentActivity() {
 
     private val intentResultLauncher =
         registerForActivityResult(FilePickerResultContracts.AnyFilePicker()) { result ->
-            when {
-                !result.selectedFileUris.isNullOrEmpty() && !result.selectedFilePaths.isNullOrEmpty() ->
-                    setSuccessResult(
-                        result.selectedFileUris,
-                        result.selectedFilePaths.toArrayList()
-                    )
-
-                result.selectedFileUri != null && result.selectedFilePath != null ->
-                    setSuccessResult(result.selectedFileUri, result.selectedFilePath)
-
-                else -> setCanceledResult(result.errorMessage)
+            if (!result.selectedFileUris.isNullOrEmpty()) {
+                setSuccessResult(
+                    result.selectedFileUris,
+                    result?.selectedFilePaths?.toArrayList()
+                )
+            } else if (result.selectedFileUri != null) {
+                setSuccessResult(result.selectedFileUri, result.selectedFilePath)
+            } else {
+                setCanceledResult(result.errorMessage)
             }
             finish()
         }
@@ -89,7 +86,6 @@ internal class PopUpActivity : ComponentActivity() {
         items: List<BaseConfig>,
         onItemClick: (BaseConfig) -> Unit
     ) {
-        val title = config.chooserTitle ?: stringResource(R.string.str_choose_option)
         AppDialog(
             modifier =
                 Modifier.background(
@@ -97,23 +93,11 @@ internal class PopUpActivity : ComponentActivity() {
                     shape = RoundedCornerShape(config.cornerSize.dp)
                 ),
             onDismissRequest = {
-                setCanceledResult()
+                setCanceledResult("User dismissed the popup")
                 finish()
             }
         ) {
-            Column {
-                config.title?.invoke(title) ?: Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(16.dp)
-                )
-                ItemList(
-                    orientation = config.mOrientation ?: Orientation.VERTICAL,
-                    items = items,
-                    itemView = config.item,
-                    onItemClick = onItemClick
-                )
-            }
+            PopupContent(config, items, onItemClick)
         }
     }
 
@@ -125,10 +109,9 @@ internal class PopUpActivity : ComponentActivity() {
         onItemClick: (BaseConfig) -> Unit
     ) {
         val sheetState = androidx.compose.material3.rememberModalBottomSheetState()
-        val title = config.chooserTitle ?: stringResource(R.string.str_choose_option)
         ModalBottomSheet(
             onDismissRequest = {
-                setCanceledResult()
+                setCanceledResult("User dismissed the popup")
                 finish()
             },
             dragHandle = null,
@@ -139,19 +122,7 @@ internal class PopUpActivity : ComponentActivity() {
                     topEnd = config.cornerSize.dp
                 )
         ) {
-            Column {
-                config.title?.invoke(title) ?: Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(16.dp)
-                )
-                ItemList(
-                    orientation = config.mOrientation ?: Orientation.VERTICAL,
-                    items = items,
-                    itemView = config.item,
-                    onItemClick = onItemClick
-                )
-            }
+            PopupContent(config, items, onItemClick)
         }
     }
 
@@ -168,22 +139,42 @@ internal class PopUpActivity : ComponentActivity() {
 }
 
 @Composable
+private fun PopupContent(
+    config: PopUpConfig,
+    items: List<BaseConfig>,
+    onItemClick: (BaseConfig) -> Unit
+) {
+    val title = config.chooserTitle ?: stringResource(R.string.str_choose_option)
+    Column {
+        config.title?.invoke(title) ?: Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(16.dp)
+        )
+        ItemList(
+            orientation = config.mOrientation ?: Orientation.VERTICAL,
+            items = items,
+            itemView = config.item,
+            onItemClick = onItemClick
+        )
+    }
+}
+
+@Composable
 private fun ItemList(
     orientation: Orientation,
     items: List<BaseConfig>,
     itemView: @Composable ((BaseConfig) -> Unit)? = null,
     onItemClick: (BaseConfig) -> Unit
 ) {
-    val scrollState = rememberScrollState()
     if (orientation.isHorizontal()) {
-        Row(
+        LazyRow(
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .padding(bottom = 6.dp)
-                    .horizontalScroll(scrollState)
         ) {
-            items.forEach {
+            items(items) {
                 PopupItem(
                     item = it,
                     itemView = itemView,
@@ -192,14 +183,13 @@ private fun ItemList(
             }
         }
     } else {
-        Column(
+        LazyColumn(
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 6.dp)
-                    .verticalScroll(scrollState)
         ) {
-            items.forEach {
+            items(items) {
                 PopupItem(
                     item = it,
                     itemView = itemView,

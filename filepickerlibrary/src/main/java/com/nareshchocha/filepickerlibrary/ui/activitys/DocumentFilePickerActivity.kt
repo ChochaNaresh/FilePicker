@@ -48,15 +48,27 @@ internal class DocumentFilePickerActivity : ComponentActivity() {
                 if (mDocumentFilePickerConfig?.allowMultiple == true && result.data?.clipData != null) {
                     val uris = result.data?.getClipDataUris()
                     val filePaths = uris?.getFilePathList(this)
-                    setSuccessResult(uris, filePath = filePaths)
+                    setSuccessResult(
+                        fileUri = uris,
+                        filePath = filePaths,
+                        configType = DocumentFilePickerConfig::class.java.name
+                    )
                 } else if (result.data?.data != null) {
                     val data = result.data?.data
                     val filePath = data?.let { FileUtils.getRealPath(this, it) }
-                    setSuccessResult(data, filePath)
+                    setSuccessResult(
+                        fileUri = data,
+                        filePath = filePath,
+                        configType = DocumentFilePickerConfig::class.java.name
+                    )
                 } else if (result.data?.clipData != null) {
                     val uri = result.data?.getClipDataUris()?.firstOrNull()
                     val filePath = uri?.let { FileUtils.getRealPath(this, it) }
-                    setSuccessResult(uri, filePath)
+                    setSuccessResult(
+                        fileUri = uri,
+                        filePath = filePath,
+                        configType = DocumentFilePickerConfig::class.java.name
+                    )
                 } else {
                     setCanceledResult(getString(R.string.document_file_picker_no_data_error))
                 }

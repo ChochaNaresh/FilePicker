@@ -65,7 +65,12 @@ internal class VideoCaptureActivity : ComponentActivity() {
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == RESULT_OK) {
-                setSuccessResult(videoFileUri, videoFile?.absolutePath, true)
+                setSuccessResult(
+                    fileUri = videoFileUri,
+                    filePath = videoFile?.absolutePath,
+                    isFromCapture = true,
+                    configType = VideoCaptureConfig::class.java.name
+                )
             } else {
                 videoFile?.delete()
                 setCanceledResult("File Picker Result Error: ${result.resultCode}")

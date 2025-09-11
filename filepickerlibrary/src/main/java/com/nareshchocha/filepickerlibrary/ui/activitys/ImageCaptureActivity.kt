@@ -67,7 +67,12 @@ internal class ImageCaptureActivity : ComponentActivity() {
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == RESULT_OK) {
-                setSuccessResult(imageFileUri, imageFile?.absolutePath, true)
+                setSuccessResult(
+                    fileUri = imageFileUri,
+                    filePath = imageFile?.absolutePath,
+                    isFromCapture = true,
+                    configType = ImageCaptureConfig::class.java.name
+                )
             } else {
                 imageFile?.delete()
                 setCanceledResult("File Picker Result Error: ${result.resultCode}")
