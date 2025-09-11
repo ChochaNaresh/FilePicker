@@ -95,5 +95,8 @@ internal object Const {
 
         /** Key for error messages. */
         const val ERROR = "ERROR"
+
+        /** Key for the configuration type. */
+        const val CONFIG_TYPE = "CONFIG_TYPE"
     }
 }

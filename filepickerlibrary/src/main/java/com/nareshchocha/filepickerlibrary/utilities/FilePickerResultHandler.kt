@@ -33,7 +33,8 @@ internal fun List<Uri>.getFilePathList(context: Context): ArrayList<String> {
 internal fun Activity.setSuccessResult(
     fileUri: Uri?,
     filePath: String? = null,
-    isFromCapture: Boolean = false
+    isFromCapture: Boolean = false,
+    configType: String? = null
 ) {
     log("File Uri : $fileUri", LogPriority.INFO_LOG, Const.LogTag.FILE_PICKER_RESULT)
     log("filePath : $filePath", LogPriority.INFO_LOG, Const.LogTag.FILE_PICKER_RESULT)
@@ -49,6 +50,7 @@ internal fun Activity.setSuccessResult(
             fileUri?.let { data = it }
             if (isFromCapture) putExtra(Const.BundleExtras.FROM_CAPTURE, true)
             filePath?.let { putExtra(Const.BundleExtras.FILE_PATH, it) }
+            configType?.let { putExtra(Const.BundleExtras.CONFIG_TYPE, it) }
         }
     )
     finish()
@@ -57,7 +59,8 @@ internal fun Activity.setSuccessResult(
 internal fun Activity.setSuccessResult(
     fileUri: List<Uri>?,
     filePath: ArrayList<String>? = null,
-    isFromCapture: Boolean = false
+    isFromCapture: Boolean = false,
+    configType: String? = null
 ) {
     log("File Uri : $fileUri", LogPriority.INFO_LOG, Const.LogTag.FILE_PICKER_RESULT)
     log("filePath : $filePath", LogPriority.INFO_LOG, Const.LogTag.FILE_PICKER_RESULT)
@@ -77,6 +80,7 @@ internal fun Activity.setSuccessResult(
                 clipData = mClipData
                 filePath?.let { putStringArrayListExtra(Const.BundleExtras.FILE_PATH_LIST, it) }
             }
+            configType?.let { putExtra(Const.BundleExtras.CONFIG_TYPE, it) }
         }
     )
     finish()
