@@ -1,7 +1,7 @@
 [versions]
 agp = "8.13.0"
 mavenPublish = "0.34.0"
-kotlin = "2.2.10"
+kotlin = "2.2.20"
 detekt = "1.23.8"
 
 # build config
