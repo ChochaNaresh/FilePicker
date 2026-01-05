@@ -36,7 +36,9 @@ internal fun Context.getVideoCaptureIntent(
 ): Intent =
     Intent(MediaStore.ACTION_VIDEO_CAPTURE).apply {
         maxSeconds?.let { putExtra(MediaStore.EXTRA_DURATION_LIMIT, it) }
-        isHighQuality?.let { putExtra(MediaStore.EXTRA_VIDEO_QUALITY, if (it) 1 else 0) }
+        if (isHighQuality == true) {
+            putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1)
+        }
         maxSizeLimit?.let { putExtra(MediaStore.EXTRA_SIZE_LIMIT, it) }
         flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
         putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri)

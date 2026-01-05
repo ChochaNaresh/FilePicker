@@ -4,7 +4,7 @@ A customizable, modern media/document picker for Android with support for image 
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.chochanaresh/filepicker.svg)](https://search.maven.org/artifact/io.github.chochanaresh/filepicker)
 ![Build](https://github.com/ChochaNaresh/FilePicker/actions/workflows/ci.yml/badge.svg)
-[![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
+[![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=23)
 ![Language](https://img.shields.io/badge/language-Kotlin-orange.svg)
 ![Kotlin](https://img.shields.io/badge/Kotlin-2.1.20-blue)
 
@@ -259,7 +259,7 @@ You can now handle file picker actions with specific contracts. For example:
 
 ## 📱 Compatibility
 
-- Android 5.0 (API 21) and above
+- Android 6.0 (API 23) and above
 - Supports Kotlin & Java
 
 ---
