@@ -1,8 +1,5 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.parcelize)
 }
@@ -54,17 +51,11 @@ android {
         compose = true
         aidl = false
         buildConfig = false
-        renderScript = false
         shaders = false
     }
     compileOptions {
         sourceCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
         targetCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
-    }
-    kotlin {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_24)
-        }
     }
 }
 

@@ -44,27 +44,27 @@ fun AllFilePickers() {
 
     val captureImageResultLauncher =
         rememberLauncherForActivityResult(FilePickerResultContracts.ImageCapture()) { result ->
-            addPickedFile(result?.selectedFileUri, result?.selectedFilePath)
+            addPickedFile(result.selectedFileUri, result.selectedFilePath)
         }
     val captureVideoResultLauncher =
         rememberLauncherForActivityResult(FilePickerResultContracts.VideoCapture()) { result ->
-            addPickedFile(result?.selectedFileUri, result?.selectedFilePath)
+            addPickedFile(result.selectedFileUri, result.selectedFilePath)
         }
     val pickImageResultLauncher =
         rememberLauncherForActivityResult(FilePickerResultContracts.PickMedia()) { result ->
-            addPickedFile(result?.selectedFileUri, result?.selectedFilePath)
+            addPickedFile(result.selectedFileUri, result.selectedFilePath)
         }
     val pickDocumentResultLauncher =
         rememberLauncherForActivityResult(FilePickerResultContracts.PickDocumentFile()) { result ->
-            addPickedFile(result?.selectedFileUri, result?.selectedFilePath)
+            addPickedFile(result.selectedFileUri, result.selectedFilePath)
         }
     val pickAllFilesResultLauncher =
         rememberLauncherForActivityResult(FilePickerResultContracts.AllFilePicker()) { result ->
-            addPickedFile(result?.selectedFileUri, result?.selectedFilePath)
+            addPickedFile(result.selectedFileUri, result.selectedFilePath)
         }
     val pickAnyFileResultLauncher =
         rememberLauncherForActivityResult(FilePickerResultContracts.AnyFilePicker()) { result ->
-            addPickedFile(result?.selectedFileUri, result?.selectedFilePath)
+            addPickedFile(result.selectedFileUri, result.selectedFilePath)
         }
 
     Column(
