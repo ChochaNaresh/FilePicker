@@ -6,7 +6,7 @@ A customizable, modern media/document picker for Android with support for image 
 ![Build](https://github.com/ChochaNaresh/FilePicker/actions/workflows/ci.yml/badge.svg)
 [![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=23)
 ![Language](https://img.shields.io/badge/language-Kotlin-orange.svg)
-![Kotlin](https://img.shields.io/badge/Kotlin-2.1.20-blue)
+![Kotlin](https://img.shields.io/badge/Kotlin-2.3.0-blue)
 
 ---
 
