@@ -1,9 +1,11 @@
 [versions]
 agp = "9.0.0"
-mavenPublish = "0.35.0"
+mavenPublish = "0.36.0"
 kotlin = "2.3.0"
 detekt = "1.23.8"
-spotless = "8.1.0"
+spotless = "8.2.1"
+
+
 
 # build config
 compileSdk = "36"
@@ -15,8 +17,11 @@ jdkVersion = "VERSION_24"
 core-splashscreen = "1.2.0"
 
 # compose
-activityCompose = "1.12.2"
-composeBom = "2026.01.00"
+activityCompose = "1.12.3"
+composeBom = "2026.01.01"
+
+# landscapist
+landscapistBom = "2.9.3"
 
 [libraries]
 # core
@@ -30,6 +35,9 @@ androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
+# landscapist
+skydoves-landscapist-bom = { group = "com.github.skydoves", name = "landscapist-bom", version.ref = "landscapistBom" }
+skydoves-landscapist-coil = { group = "com.github.skydoves", name = "landscapist-coil" }
 
 # testing compose
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }

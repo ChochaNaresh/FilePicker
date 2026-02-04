@@ -191,16 +191,28 @@ class FilePickerResultContracts private constructor() {
 
             val configType = intent.getStringExtra(Const.BundleExtras.CONFIG_TYPE)
             return when (configType) {
-                ImageCaptureConfig::class.java.name -> ImageCapture().parseResult(resultCode, intent)
-                VideoCaptureConfig::class.java.name -> VideoCapture().parseResult(resultCode, intent)
-                PickMediaConfig::class.java.name -> PickMedia().parseResult(resultCode, intent)
-                DocumentFilePickerConfig::class.java.name ->
+                ImageCaptureConfig::class.java.name -> {
+                    ImageCapture().parseResult(resultCode, intent)
+                }
+
+                VideoCaptureConfig::class.java.name -> {
+                    VideoCapture().parseResult(resultCode, intent)
+                }
+
+                PickMediaConfig::class.java.name -> {
+                    PickMedia().parseResult(resultCode, intent)
+                }
+
+                DocumentFilePickerConfig::class.java.name -> {
                     PickDocumentFile().parseResult(
                         resultCode,
                         intent
                     )
+                }
 
-                else -> FilePickerResult(errorMessage = "Unknown file type")
+                else -> {
+                    FilePickerResult(errorMessage = "Unknown file type")
+                }
             }
         }
     }

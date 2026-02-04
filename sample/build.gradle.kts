@@ -71,11 +71,12 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended)
 
-    implementation("io.coil-kt.coil3:coil-compose:3.2.0")
+    // landscapist
+    implementation(libs.skydoves.landscapist.bom)
+    implementation(libs.skydoves.landscapist.coil)
 
     // File Picker
     implementation(project(":filepickerlibrary"))
-    // implementation(libs.androidx.lifecycle.runtime.ktx)
 
     // testing compose
     androidTestImplementation(platform(libs.androidx.compose.bom))

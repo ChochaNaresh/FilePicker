@@ -50,7 +50,7 @@ internal class PopUpActivity : ComponentActivity() {
             if (!result.selectedFileUris.isNullOrEmpty()) {
                 setSuccessResult(
                     result.selectedFileUris,
-                    result?.selectedFilePaths?.toArrayList()
+                    result.selectedFilePaths?.toArrayList()
                 )
             } else if (result.selectedFileUri != null) {
                 setSuccessResult(result.selectedFileUri, result.selectedFilePath)
