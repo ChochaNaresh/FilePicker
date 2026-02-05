@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil.CoilImage
+import java.util.UUID
 
 @Composable
 fun FilePickerWithResultList(pickedFiles: List<PickedFile>) {
@@ -35,7 +36,7 @@ fun FilePickerWithResultList(pickedFiles: List<PickedFile>) {
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.fillMaxHeight()
     ) {
-        items(items = pickedFiles, key = { it.uri.toString() }) { file ->
+        items(items = pickedFiles, key = { it.uuid }) { file ->
             FileItem(file = file)
         }
     }
@@ -111,7 +112,8 @@ private fun OtherFileItem(file: PickedFile) {
 data class PickedFile(
     val uri: Uri,
     val type: String, // "image", "video", "other"
-    val filePath: String? = null
+    val filePath: String? = null,
+    val uuid: String = UUID.randomUUID().toString()
 )
 
 @Preview
