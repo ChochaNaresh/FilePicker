@@ -1,9 +1,9 @@
 [versions]
-agp = "9.0.0"
+agp = "9.1.0"
 mavenPublish = "0.36.0"
-kotlin = "2.3.0"
+kotlin = "2.3.20"
 detekt = "1.23.8"
-spotless = "8.2.1"
+spotless = "8.4.0"
 
 
 
@@ -17,11 +17,11 @@ jdkVersion = "VERSION_24"
 core-splashscreen = "1.2.0"
 
 # compose
-activityCompose = "1.12.3"
-composeBom = "2026.01.01"
+activityCompose = "1.13.0"
+composeBom = "2026.03.01"
 
 # landscapist
-landscapistBom = "2.9.3"
+landscapistBom = "2.9.6"
 
 [libraries]
 # core
