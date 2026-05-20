@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -169,10 +170,8 @@ private fun ItemList(
 ) {
     if (orientation.isHorizontal()) {
         LazyRow(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 6.dp)
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(bottom = 6.dp)
         ) {
             items(items) {
                 PopupItem(
@@ -184,10 +183,8 @@ private fun ItemList(
         }
     } else {
         LazyColumn(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 6.dp)
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(horizontal = 6.dp)
         ) {
             items(items) {
                 PopupItem(
