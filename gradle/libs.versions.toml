@@ -1,27 +1,18 @@
 [versions]
 agp = "9.2.1"
 mavenPublish = "0.36.0"
-kotlin = "2.3.20"
+kotlin = "2.3.21"
 detekt = "1.23.8"
-spotless = "8.4.0"
-
-
-
-# build config
-compileSdk = "37"
-targetSdk = "37"
-minSdk = "23"
-jdkVersion = "VERSION_24"
-
+spotless = "8.5.1"
 # core
 core-splashscreen = "1.2.0"
 
 # compose
 activityCompose = "1.13.0"
-composeBom = "2026.03.01"
+composeBom = "2026.05.01"
 
 # landscapist
-landscapistBom = "2.9.6"
+landscapistBom = "2.9.7"
 
 [libraries]
 # core
@@ -36,8 +27,7 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 # landscapist
-skydoves-landscapist-bom = { group = "com.github.skydoves", name = "landscapist-bom", version.ref = "landscapistBom" }
-skydoves-landscapist-coil = { group = "com.github.skydoves", name = "landscapist-coil" }
+skydoves-landscapist-coil3 = { group = "com.github.skydoves", name = "landscapist-coil3", version.ref = "landscapistBom" }
 
 # testing compose
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
@@ -57,6 +47,3 @@ spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish" }
 # signing
 signing = { id = "signing" }
-
-
-

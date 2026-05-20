@@ -4,16 +4,11 @@ import io.gitlab.arturbosch.detekt.DetektPlugin
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
-    // alias(libs.plugins.kotlin.android) apply false
-    // compose
     alias(libs.plugins.kotlin.compose) apply false
-    // parcelize
     alias(libs.plugins.kotlin.parcelize) apply false
-    // code analyzer for Kotlin
     alias(libs.plugins.arturbosch.detekt) apply false
     alias(libs.plugins.maven.publish) apply false
     alias(libs.plugins.spotless) apply false
@@ -22,26 +17,22 @@ plugins {
 tasks.register("clean", Delete::class) {
     delete(rootProject.layout.buildDirectory)
 }
+
 val detektVersion = libs.versions.detekt.get()
 
 subprojects {
-
     configureDetektAndSpotless()
 
     afterEvaluate {
         tasks.withType<KotlinCompile> {
             finalizedBy("spotlessApply")
         }
-
         tasks.withType<KotlinCompile> {
             finalizedBy("detekt")
         }
-
     }
 }
 
-
-// Function to configure Detekt and Spotless
 fun Project.configureDetektAndSpotless() {
     apply<SpotlessPlugin>()
     configure<SpotlessExtension> {

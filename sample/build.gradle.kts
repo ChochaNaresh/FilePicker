@@ -5,27 +5,18 @@ plugins {
 }
 
 android {
-    namespace = "com.nareshchocha.filepicker"
-    compileSdk =
-        libs.versions.compileSdk
-            .get()
-            .toInt()
+    namespace = AppConfig.Sample.NAMESPACE
+    compileSdk = Versions.COMPILE_SDK
 
     defaultConfig {
-        applicationId = "com.nareshchocha.filepicker"
-        minSdk =
-            libs.versions.minSdk
-                .get()
-                .toInt()
-        targetSdk =
-            libs.versions.targetSdk
-                .get()
-                .toInt()
-        versionCode = 4
-        versionName = "0.7.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        applicationId = AppConfig.Sample.APPLICATION_ID
+        minSdk = Versions.MIN_SDK
+        targetSdk = Versions.TARGET_SDK
+        versionCode = AppConfig.Sample.VERSION_CODE
+        versionName = AppConfig.Sample.VERSION_NAME
+        testInstrumentationRunner = AppConfig.TEST_INSTRUMENTATION_RUNNER
     }
+
     packaging {
         jniLibs {
             excludes.add("lib/arm64-v8a/libandroidx.graphics.path.so")
@@ -34,6 +25,7 @@ android {
             excludes.add("lib/x86_64/libandroidx.graphics.path.so")
         }
     }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -53,15 +45,17 @@ android {
         buildConfig = false
         shaders = false
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
-        targetCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
+        sourceCompatibility = CompileOptions.SOURCE_COMPATIBILITY
+        targetCompatibility = CompileOptions.TARGET_COMPATIBILITY
     }
 }
 
 dependencies {
     implementation(libs.core.splashscreen)
     implementation(libs.androidx.activity.ktx)
+
     // compose
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -72,10 +66,9 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
 
     // landscapist
-    implementation(libs.skydoves.landscapist.bom)
-    implementation(libs.skydoves.landscapist.coil)
+    implementation(libs.skydoves.landscapist.coil3)
 
-    // File Picker
+    // FilePicker library
     implementation(project(":filepickerlibrary"))
 
     // testing compose

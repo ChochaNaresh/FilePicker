@@ -1,27 +1,23 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.maven.publish)
     alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.maven.publish)
     alias(libs.plugins.signing)
 }
 
 val versionName = project.findProperty("VERSION_NAME") as String? ?: "0.0.1"
+
 android {
-    namespace = "com.nareshchocha.filepickerlibrary"
-    compileSdk =
-        libs.versions.compileSdk
-            .get()
-            .toInt()
+    namespace = AppConfig.Library.NAMESPACE
+    compileSdk = Versions.COMPILE_SDK
 
     defaultConfig {
-        minSdk =
-            libs.versions.minSdk
-                .get()
-                .toInt()
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        minSdk = Versions.MIN_SDK
+        testInstrumentationRunner = AppConfig.TEST_INSTRUMENTATION_RUNNER
         consumerProguardFiles("proguard-rules.pro")
     }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -34,9 +30,10 @@ android {
         buildConfig = false
         shaders = false
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
-        targetCompatibility = JavaVersion.valueOf(libs.versions.jdkVersion.get())
+        sourceCompatibility = CompileOptions.SOURCE_COMPATIBILITY
+        targetCompatibility = CompileOptions.TARGET_COMPATIBILITY
     }
 }
 
@@ -55,6 +52,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
+
 val automaticRelease: Boolean = true
 mavenPublishing {
     publishToMavenCentral(automaticRelease)
