@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
+import androidx.annotation.RequiresApi
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
@@ -141,6 +142,7 @@ internal object FileUtils {
         return rawPath ?: mediaStorePath ?: legacyPath
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     private fun Context.queryMediaStoreDownloads(longId: Long): String? =
         contentResolver
             .query(
