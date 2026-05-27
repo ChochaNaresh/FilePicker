@@ -20,14 +20,17 @@ internal fun Intent.getClipDataUris(): ArrayList<Uri> {
     return ArrayList(uris)
 }
 
-internal fun List<Uri>.getFilePathList(context: Context): ArrayList<String> {
+internal fun List<Uri>.getFilePathList(
+    context: Context,
+    resolveRealPath: Boolean = true
+): ArrayList<String>? {
     val filePathList = ArrayList<String>()
     forEach { uri ->
-        FileUtils.getRealPath(context, uri)?.also { filePath ->
+        FileUtils.getRealPath(context, uri, resolveRealPath)?.also { filePath ->
             filePathList.add(filePath)
         }
     }
-    return filePathList
+    return filePathList.takeIf { it.isNotEmpty() }
 }
 
 internal fun Activity.setSuccessResult(

@@ -54,14 +54,7 @@ internal class MediaFilePickerActivity : ComponentActivity() {
                     val resolveRealPath = mPickMediaConfig?.resolveRealPath != false
                     if (mPickMediaConfig?.allowMultiple == true && result.data?.clipData != null) {
                         val uris = result.data?.getClipDataUris()
-                        val filePaths =
-                            if (resolveRealPath) {
-                                uris?.getFilePathList(
-                                    this@MediaFilePickerActivity
-                                )
-                            } else {
-                                null
-                            }
+                        val filePaths = uris?.getFilePathList(this@MediaFilePickerActivity, resolveRealPath)
                         withContext(Dispatchers.Main) {
                             setSuccessResult(
                                 fileUri = uris,
@@ -72,15 +65,12 @@ internal class MediaFilePickerActivity : ComponentActivity() {
                     } else if (result.data?.data != null) {
                         val data = result.data?.data
                         val filePath =
-                            if (resolveRealPath) {
-                                data?.let {
-                                    FileUtils.getRealPath(
-                                        this@MediaFilePickerActivity,
-                                        it
-                                    )
-                                }
-                            } else {
-                                null
+                            data?.let {
+                                FileUtils.getRealPath(
+                                    this@MediaFilePickerActivity,
+                                    it,
+                                    resolveRealPath
+                                )
                             }
                         withContext(Dispatchers.Main) {
                             setSuccessResult(
@@ -92,15 +82,12 @@ internal class MediaFilePickerActivity : ComponentActivity() {
                     } else if (result.data?.clipData != null) {
                         val uri = result.data?.getClipDataUris()?.firstOrNull()
                         val filePath =
-                            if (resolveRealPath) {
-                                uri?.let {
-                                    FileUtils.getRealPath(
-                                        this@MediaFilePickerActivity,
-                                        it
-                                    )
-                                }
-                            } else {
-                                null
+                            uri?.let {
+                                FileUtils.getRealPath(
+                                    this@MediaFilePickerActivity,
+                                    it,
+                                    resolveRealPath
+                                )
                             }
                         withContext(Dispatchers.Main) {
                             setSuccessResult(

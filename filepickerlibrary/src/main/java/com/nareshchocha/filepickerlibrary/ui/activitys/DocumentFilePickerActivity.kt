@@ -53,14 +53,7 @@ internal class DocumentFilePickerActivity : ComponentActivity() {
                     val resolveRealPath = mDocumentFilePickerConfig?.resolveRealPath != false
                     if (mDocumentFilePickerConfig?.allowMultiple == true && result.data?.clipData != null) {
                         val uris = result.data?.getClipDataUris()
-                        val filePaths =
-                            if (resolveRealPath) {
-                                uris?.getFilePathList(
-                                    this@DocumentFilePickerActivity
-                                )
-                            } else {
-                                null
-                            }
+                        val filePaths = uris?.getFilePathList(this@DocumentFilePickerActivity, resolveRealPath)
                         withContext(Dispatchers.Main) {
                             setSuccessResult(
                                 fileUri = uris,
@@ -71,15 +64,12 @@ internal class DocumentFilePickerActivity : ComponentActivity() {
                     } else if (result.data?.data != null) {
                         val data = result.data?.data
                         val filePath =
-                            if (resolveRealPath) {
-                                data?.let {
-                                    FileUtils.getRealPath(
-                                        this@DocumentFilePickerActivity,
-                                        it
-                                    )
-                                }
-                            } else {
-                                null
+                            data?.let {
+                                FileUtils.getRealPath(
+                                    this@DocumentFilePickerActivity,
+                                    it,
+                                    resolveRealPath
+                                )
                             }
                         withContext(Dispatchers.Main) {
                             setSuccessResult(
@@ -91,15 +81,12 @@ internal class DocumentFilePickerActivity : ComponentActivity() {
                     } else if (result.data?.clipData != null) {
                         val uri = result.data?.getClipDataUris()?.firstOrNull()
                         val filePath =
-                            if (resolveRealPath) {
-                                uri?.let {
-                                    FileUtils.getRealPath(
-                                        this@DocumentFilePickerActivity,
-                                        it
-                                    )
-                                }
-                            } else {
-                                null
+                            uri?.let {
+                                FileUtils.getRealPath(
+                                    this@DocumentFilePickerActivity,
+                                    it,
+                                    resolveRealPath
+                                )
                             }
                         withContext(Dispatchers.Main) {
                             setSuccessResult(

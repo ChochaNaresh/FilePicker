@@ -3,6 +3,8 @@ package com.nareshchocha.filepickerlibrary.utilities.extensions
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
+import android.os.Build
+import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
@@ -12,7 +14,6 @@ import com.nareshchocha.filepickerlibrary.utilities.log
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.io.InputStream
 
 /**
  * @return Whether the Uri authority is ExternalStorageProvider.
@@ -73,33 +74,50 @@ internal fun getDataColumn(
 
 internal fun Context.getMediaDocumentPath(uri: Uri): String? {
     val docId = DocumentsContract.getDocumentId(uri)
-    val split =
-        docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+    val split = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }
+    if (split.size < 2) return null
     val type = split[0]
-    val contentUri: Uri?
-    when (type) {
-        "image" -> {
-            contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+    val id = split[1]
+    val contentUri =
+        when (type) {
+            "image" -> MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            "video" -> MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+            "audio" -> MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+            else -> null
         }
-
-        "video" -> {
-            contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-        }
-
-        "audio" -> {
-            contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-        }
-
-        else -> {
-            contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-        }
+    return contentUri?.let { cu ->
+        getDataColumn(this, cu, "_id=?", arrayOf(id))
+            ?: queryMediaPathByRelativePath(cu, id)
     }
-    val selection = "_id=?"
-    val selectionArgs =
-        arrayOf(
-            split[1]
-        )
-    return getDataColumn(this, contentUri, selection, selectionArgs)
+}
+
+private fun Context.queryMediaPathByRelativePath(
+    contentUri: Uri,
+    id: String
+): String? {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return null
+    val projection = arrayOf(MediaStore.MediaColumns.RELATIVE_PATH, MediaStore.MediaColumns.DISPLAY_NAME)
+    return contentResolver
+        .query(contentUri, projection, "_id=?", arrayOf(id), null)
+        ?.use { cursor ->
+            cursor.takeIf { it.moveToFirst() }?.let { c ->
+                val relPath =
+                    c
+                        .getColumnIndex(MediaStore.MediaColumns.RELATIVE_PATH)
+                        .takeIf { it != -1 }
+                        ?.let { c.getString(it) }
+                val name =
+                    c
+                        .getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
+                        .takeIf { it != -1 }
+                        ?.let { c.getString(it) }
+                if (relPath != null && name != null) {
+                    "${Environment.getExternalStorageDirectory()}/$relPath$name"
+                } else {
+                    null
+                }
+            }
+        }
 }
 
 internal fun Context.getDriveFilePath(uri: Uri): String? {

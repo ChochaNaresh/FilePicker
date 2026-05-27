@@ -4,6 +4,7 @@ import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
@@ -21,12 +22,21 @@ import com.nareshchocha.filepickerlibrary.utilities.extensions.isMediaDocument
 import java.io.File
 
 internal object FileUtils {
+    /**
+     * Resolves a [Uri] to a file-system path.
+     *
+     * @param resolveRealPath When `true` (default), the file is copied to internal storage as a
+     *   last resort if no on-device path can be found. When `false`, copying is skipped — but any
+     *   path that can be obtained **without** copying (e.g. a local Downloads file resolved via
+     *   MediaStore) is still returned.
+     */
     fun getRealPath(
         context: Context,
-        fileUri: Uri
+        fileUri: Uri,
+        resolveRealPath: Boolean = true
     ): String? =
         try {
-            pathFromURI(context, fileUri)
+            pathFromURI(context, fileUri, resolveRealPath)
         } catch (e: IllegalArgumentException) {
             log(
                 "IllegalArgumentException: ${e.message}, cannot get real path from URI: $fileUri",
@@ -47,57 +57,55 @@ internal object FileUtils {
 
     private fun pathFromURI(
         context: Context,
-        uri: Uri
+        uri: Uri,
+        resolveRealPath: Boolean
     ): String? {
         val filePath =
             when {
-                DocumentsContract.isDocumentUri(context, uri) -> {
-                    getDocumentUri(context, uri)
-                }
-
-                uri.isGoogleDriveUri() -> {
-                    context.getDriveFilePath(uri)
-                }
-
-                "content".equals(uri.scheme, ignoreCase = true) -> {
-                    // Return the remote address
-                    if (uri.isGooglePhotosUri()) {
-                        uri.lastPathSegment
-                    } else if (uri.isGoogleDriveUri()) {
-                        return context.getDriveFilePath(uri)
-                    } else {
-                        getDataColumn(
-                            context,
-                            uri,
-                            null,
-                            null
-                        ) ?: context.copyFileToInternalStorage(uri)
-                    }
-                }
-
-                "file".equals(uri.scheme, ignoreCase = true) -> {
-                    uri.path
-                }
-
-                else -> {
-                    context.copyFileToInternalStorage(uri)
-                }
+                DocumentsContract.isDocumentUri(context, uri) -> getDocumentUri(context, uri, resolveRealPath)
+                uri.isGoogleDriveUri() -> if (resolveRealPath) context.getDriveFilePath(uri) else null
+                "content".equals(uri.scheme, ignoreCase = true) -> resolveContentUri(context, uri, resolveRealPath)
+                "file".equals(uri.scheme, ignoreCase = true) -> uri.path
+                else -> if (resolveRealPath) context.copyFileToInternalStorage(uri) else null
             }
-        return if (filePath != null) {
-            val file = File(filePath)
-            if (file.canRead()) {
-                file.absolutePath
-            } else {
-                context.copyFileToInternalStorage(uri)
+        return verifyOrCopy(context, uri, filePath, resolveRealPath)
+    }
+
+    private fun resolveContentUri(
+        context: Context,
+        uri: Uri,
+        resolveRealPath: Boolean
+    ): String? =
+        when {
+            uri.isGooglePhotosUri() -> {
+                uri.lastPathSegment
             }
-        } else {
-            null
+
+            uri.isGoogleDriveUri() -> {
+                if (resolveRealPath) context.getDriveFilePath(uri) else null
+            }
+
+            else -> {
+                getDataColumn(context, uri, null, null)
+                    ?: if (resolveRealPath) context.copyFileToInternalStorage(uri) else null
+            }
         }
+
+    private fun verifyOrCopy(
+        context: Context,
+        uri: Uri,
+        filePath: String?,
+        resolveRealPath: Boolean
+    ): String? {
+        if (filePath == null) return if (resolveRealPath) context.copyFileToInternalStorage(uri) else null
+        val file = File(filePath)
+        return if (file.canRead()) file.absolutePath else filePath
     }
 
     private fun getDocumentUri(
         context: Context,
-        uri: Uri
+        uri: Uri,
+        resolveRealPath: Boolean
     ) = when {
         uri.isExternalStorageDocument() -> {
             getExternalDocumentPath(uri)
@@ -105,59 +113,62 @@ internal object FileUtils {
 
         uri.isDownloadsDocument() -> {
             getFileName(context, uri)?.let {
-                Environment
-                    .getExternalStorageDirectory()
-                    .toString() + "/Download/" + it
-            } ?: context.getDownloadsDocumentPath(uri) ?: context.copyFileToInternalStorage(
-                uri
-            )
+                Environment.getExternalStorageDirectory().toString() + "/Download/" + it
+            } ?: context.getDownloadsDocumentPath(uri)
+                ?: if (resolveRealPath) context.copyFileToInternalStorage(uri) else null
         }
 
         uri.isMediaDocument() -> {
-            context.getMediaDocumentPath(uri) ?: context.copyFileToInternalStorage(uri)
+            context.getMediaDocumentPath(uri)
+                ?: if (resolveRealPath) context.copyFileToInternalStorage(uri) else null
         }
 
         else -> {
-            context.copyFileToInternalStorage(uri)
+            if (resolveRealPath) context.copyFileToInternalStorage(uri) else null
         }
     }
 
     private fun Context.getDownloadsDocumentPath(uri: Uri): String? {
-        /*val fileName = getFileName(this, uri)
-        if (fileName != null) {
-            return Environment.getExternalStorageDirectory()
-                .toString() + "/Download/" + fileName
-        }*/
+        val id = DocumentsContract.getDocumentId(uri)
+        val rawPath = id.removePrefix("raw:").takeIf { id.startsWith("raw:") && File(it).exists() }
+        val mediaStorePath =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                id.toLongOrNull()?.let { queryMediaStoreDownloads(it) }
+            } else {
+                null
+            }
+        val legacyPath = queryLegacyDownloads(id)
+        return rawPath ?: mediaStorePath ?: legacyPath
+    }
 
-        var id = DocumentsContract.getDocumentId(uri)
-        if (id.startsWith("raw:")) {
-            id = id.replaceFirst("raw:".toRegex(), "")
-            val file = File(id)
-            if (file.exists()) return id
-        }
-        val contentUriPrefixesToTry =
-            arrayOf(
-                "content://downloads/public_downloads",
-                "content://downloads/my_downloads"
-            )
-        var filePath: String? = null
-        for (contentUriPrefix in contentUriPrefixesToTry) {
+    private fun Context.queryMediaStoreDownloads(longId: Long): String? =
+        contentResolver
+            .query(
+                MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+                arrayOf(MediaStore.MediaColumns.DATA),
+                "${MediaStore.MediaColumns._ID}=?",
+                arrayOf(longId.toString()),
+                null
+            )?.use { cursor ->
+                cursor
+                    .takeIf { it.moveToFirst() }
+                    ?.getColumnIndex(MediaStore.MediaColumns.DATA)
+                    ?.takeIf { it != -1 }
+                    ?.let { cursor.getString(it) }
+                    ?.takeIf { it.isNotEmpty() }
+            }
+
+    private fun Context.queryLegacyDownloads(id: String): String? =
+        arrayOf(
+            "content://downloads/public_downloads",
+            "content://downloads/my_downloads"
+        ).firstNotNullOfOrNull { prefix ->
             try {
-                val contentUri =
-                    ContentUris.withAppendedId(
-                        contentUriPrefix.toUri(),
-                        java.lang.Long.valueOf(id)
-                    )
-                filePath = getDataColumn(this, contentUri, null, null)
-                if (filePath != null) {
-                    break
-                }
+                getDataColumn(this, ContentUris.withAppendedId(prefix.toUri(), java.lang.Long.valueOf(id)), null, null)
             } catch (e: NumberFormatException) {
-                filePath = null
+                null
             }
         }
-        return filePath ?: uri.path?.replaceFirst("^/document/raw:", "")?.replaceFirst("^raw:", "")
-    }
 
     private fun getExternalDocumentPath(uri: Uri): String {
         val docId = DocumentsContract.getDocumentId(uri)
@@ -165,16 +176,12 @@ internal object FileUtils {
             docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val type = split[0]
 
-        // This is for checking Main Memory
         return if ("primary".equals(type, ignoreCase = true)) {
             if (split.size > 1) {
-                Environment
-                    .getExternalStorageDirectory()
-                    .toString() + "/" + split[1]
+                Environment.getExternalStorageDirectory().toString() + "/" + split[1]
             } else {
                 Environment.getExternalStorageDirectory().toString() + "/"
             }
-            // This is for checking SD Card
         } else {
             "storage" + "/" + docId.replace(":", "/")
         }
@@ -184,19 +191,11 @@ internal object FileUtils {
         context: Context,
         uri: Uri?
     ): String? {
-        val projection =
-            arrayOf(
-                MediaStore.MediaColumns.DISPLAY_NAME
-            )
+        val projection = arrayOf(MediaStore.MediaColumns.DISPLAY_NAME)
         return try {
             context.contentResolver
-                .query(
-                    uri!!,
-                    projection,
-                    null,
-                    null,
-                    null
-                )?.use { cursor ->
+                .query(uri!!, projection, null, null, null)
+                ?.use { cursor ->
                     if (cursor.moveToFirst()) {
                         val index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
                         cursor.getString(index)
