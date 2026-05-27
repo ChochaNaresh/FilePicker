@@ -31,9 +31,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.nareshchocha.filepicker.R
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
 import java.util.UUID
@@ -86,7 +88,7 @@ private fun ImageItem(
         val label =
             file.filePath?.substringAfterLast("/")
                 ?: file.uri.lastPathSegment
-                ?: "Image"
+                ?: stringResource(R.string.label_image)
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall,
@@ -122,7 +124,7 @@ private fun VideoItem(
     ) {
         Icon(
             imageVector = Icons.Default.Videocam,
-            contentDescription = "Video",
+            contentDescription = stringResource(R.string.cd_video),
             tint = MaterialTheme.colorScheme.onSecondaryContainer,
             modifier = Modifier.padding(end = 8.dp)
         )
@@ -131,7 +133,7 @@ private fun VideoItem(
                 text =
                     file.filePath?.substringAfterLast("/")
                         ?: file.uri.lastPathSegment
-                        ?: "Video",
+                        ?: stringResource(R.string.label_video),
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                 maxLines = 1,
@@ -165,7 +167,7 @@ private fun OtherFileItem(
     ) {
         Icon(
             imageVector = Icons.Default.AttachFile,
-            contentDescription = "File",
+            contentDescription = stringResource(R.string.cd_file),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(end = 8.dp)
         )
@@ -174,7 +176,7 @@ private fun OtherFileItem(
                 text =
                     file.filePath?.substringAfterLast("/")
                         ?: file.uri.lastPathSegment
-                        ?: "File",
+                        ?: stringResource(R.string.label_file),
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
@@ -209,7 +211,7 @@ fun openFile(
     try {
         context.startActivity(chooser)
     } catch (_: ActivityNotFoundException) {
-        Toast.makeText(context, "No app found to open this file", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.no_app_to_open_file), Toast.LENGTH_SHORT).show()
     }
 }
 

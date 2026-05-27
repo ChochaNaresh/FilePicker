@@ -21,8 +21,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.nareshchocha.filepicker.R
 import com.nareshchocha.filepickerlibrary.FilePickerResultContracts
 import com.nareshchocha.filepickerlibrary.models.BaseConfig
 import com.nareshchocha.filepickerlibrary.models.DocumentFilePickerConfig
@@ -60,7 +62,7 @@ fun AllFilePickers() {
             }
             item(key = "tap_hint") {
                 Text(
-                    text = "Tap a file to open it",
+                    text = stringResource(R.string.tap_to_open_hint),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -105,6 +107,7 @@ private fun String?.toFileType() =
 
 @Composable
 private fun rememberPickerSections(onResult: (FilePickerResult) -> Unit): List<PickerSection> {
+    val context = LocalContext.current
     val imgLauncher =
         rememberLauncherForActivityResult(
             FilePickerResultContracts.ImageCapture()
@@ -130,136 +133,151 @@ private fun rememberPickerSections(onResult: (FilePickerResult) -> Unit): List<P
             FilePickerResultContracts.AnyFilePicker()
         ) { onResult(it) }
     return listOf(
-        cameraSection(imgLauncher, vidLauncher),
-        mediaSection(mediaLauncher),
-        documentsSection(docLauncher),
-        popupSection(allLauncher),
-        anyPickerSection(anyLauncher)
+        cameraSection(context, imgLauncher, vidLauncher),
+        mediaSection(context, mediaLauncher),
+        documentsSection(context, docLauncher),
+        popupSection(context, allLauncher),
+        anyPickerSection(context, anyLauncher)
     )
 }
 
 private fun cameraSection(
+    context: Context,
     imgLauncher: ActivityResultLauncher<ImageCaptureConfig?>,
     vidLauncher: ActivityResultLauncher<VideoCaptureConfig?>
 ) = PickerSection(
-    "Camera",
+    context.getString(R.string.section_camera),
     listOf(
-        PickerButton("Capture Image (Rear Camera)") {
+        PickerButton(context.getString(R.string.btn_capture_image_rear)) {
             imgLauncher.launch(ImageCaptureConfig(isUseRearCamera = true))
         },
-        PickerButton("Capture Image (Front Camera)") {
+        PickerButton(context.getString(R.string.btn_capture_image_front)) {
             imgLauncher.launch(ImageCaptureConfig(isUseRearCamera = false))
         },
-        PickerButton("Capture Video") {
+        PickerButton(context.getString(R.string.btn_capture_video)) {
             vidLauncher.launch(VideoCaptureConfig())
         },
-        PickerButton("Capture Video (Max 30s, High Quality)") {
+        PickerButton(context.getString(R.string.btn_capture_video_hq)) {
             vidLauncher.launch(VideoCaptureConfig(maxSeconds = 30, isHighQuality = true))
         }
     )
 )
 
-private fun mediaSection(mediaLauncher: ActivityResultLauncher<PickMediaConfig?>) =
-    PickerSection(
-        "Media Gallery",
-        listOf(
-            PickerButton("Pick Single Image") {
-                mediaLauncher.launch(PickMediaConfig(mPickMediaType = PickMediaType.ImageOnly))
-            },
-            PickerButton("Pick Single Video") {
-                mediaLauncher.launch(PickMediaConfig(mPickMediaType = PickMediaType.VideoOnly))
-            },
-            PickerButton("Pick Multiple Images & Videos") {
-                mediaLauncher.launch(
-                    PickMediaConfig(mPickMediaType = PickMediaType.ImageAndVideo, allowMultiple = true)
-                )
-            }
-        )
+private fun mediaSection(
+    context: Context,
+    mediaLauncher: ActivityResultLauncher<PickMediaConfig?>
+) = PickerSection(
+    context.getString(R.string.section_media_gallery),
+    listOf(
+        PickerButton(context.getString(R.string.btn_pick_single_image)) {
+            mediaLauncher.launch(PickMediaConfig(mPickMediaType = PickMediaType.ImageOnly))
+        },
+        PickerButton(context.getString(R.string.btn_pick_single_video)) {
+            mediaLauncher.launch(PickMediaConfig(mPickMediaType = PickMediaType.VideoOnly))
+        },
+        PickerButton(context.getString(R.string.btn_pick_multiple_media)) {
+            mediaLauncher.launch(
+                PickMediaConfig(mPickMediaType = PickMediaType.ImageAndVideo, allowMultiple = true)
+            )
+        }
     )
+)
 
-private fun documentsSection(docLauncher: ActivityResultLauncher<DocumentFilePickerConfig?>) =
-    PickerSection(
-        "Documents",
-        listOf(
-            PickerButton("Pick Any Document") { docLauncher.launch(DocumentFilePickerConfig()) },
-            PickerButton("Pick PDF Only") {
-                docLauncher.launch(DocumentFilePickerConfig(mMimeTypes = listOf("application/pdf")))
-            },
-            PickerButton("Pick Multiple Documents") {
-                docLauncher.launch(DocumentFilePickerConfig(allowMultiple = true))
-            }
-        )
+private fun documentsSection(
+    context: Context,
+    docLauncher: ActivityResultLauncher<DocumentFilePickerConfig?>
+) = PickerSection(
+    context.getString(R.string.section_documents),
+    listOf(
+        PickerButton(context.getString(R.string.btn_pick_any_document)) {
+            docLauncher.launch(DocumentFilePickerConfig())
+        },
+        PickerButton(context.getString(R.string.btn_pick_pdf_only)) {
+            docLauncher.launch(DocumentFilePickerConfig(mMimeTypes = listOf("application/pdf")))
+        },
+        PickerButton(context.getString(R.string.btn_pick_multiple_documents)) {
+            docLauncher.launch(DocumentFilePickerConfig(allowMultiple = true))
+        }
     )
+)
 
-private fun popupSection(allLauncher: ActivityResultLauncher<PickerData?>) =
-    PickerSection(
-        "Popup Pickers",
-        listOf(
-            PickerButton("All Pickers — Bottom Sheet (Vertical)") {
-                allLauncher.launch(
-                    PickerData(
-                        mPopUpConfig =
-                            PopUpConfig(
-                                mPopUpType = PopUpType.BOTTOM_SHEET,
-                                mOrientation = Orientation.VERTICAL
-                            ),
-                        listIntents =
-                            listOf(
-                                ImageCaptureConfig(),
-                                VideoCaptureConfig(),
-                                PickMediaConfig(),
-                                DocumentFilePickerConfig()
-                            )
-                    )
+private fun popupSection(
+    context: Context,
+    allLauncher: ActivityResultLauncher<PickerData?>
+) = PickerSection(
+    context.getString(R.string.section_popup_pickers),
+    listOf(
+        PickerButton(context.getString(R.string.btn_all_bottom_sheet_vertical)) {
+            allLauncher.launch(
+                PickerData(
+                    mPopUpConfig =
+                        PopUpConfig(
+                            mPopUpType = PopUpType.BOTTOM_SHEET,
+                            mOrientation = Orientation.VERTICAL
+                        ),
+                    listIntents =
+                        listOf(
+                            ImageCaptureConfig(),
+                            VideoCaptureConfig(),
+                            PickMediaConfig(),
+                            DocumentFilePickerConfig()
+                        )
                 )
-            },
-            PickerButton("All Pickers — Bottom Sheet (Horizontal)") {
-                allLauncher.launch(
-                    PickerData(
-                        mPopUpConfig =
-                            PopUpConfig(
-                                mPopUpType = PopUpType.BOTTOM_SHEET,
-                                mOrientation = Orientation.HORIZONTAL
-                            ),
-                        listIntents =
-                            listOf(
-                                ImageCaptureConfig(),
-                                VideoCaptureConfig(),
-                                PickMediaConfig(),
-                                DocumentFilePickerConfig()
-                            )
-                    )
+            )
+        },
+        PickerButton(context.getString(R.string.btn_all_bottom_sheet_horizontal)) {
+            allLauncher.launch(
+                PickerData(
+                    mPopUpConfig =
+                        PopUpConfig(
+                            mPopUpType = PopUpType.BOTTOM_SHEET,
+                            mOrientation = Orientation.HORIZONTAL
+                        ),
+                    listIntents =
+                        listOf(
+                            ImageCaptureConfig(),
+                            VideoCaptureConfig(),
+                            PickMediaConfig(),
+                            DocumentFilePickerConfig()
+                        )
                 )
-            },
-            PickerButton("All Pickers — Dialog") {
-                allLauncher.launch(
-                    PickerData(
-                        mPopUpConfig =
-                            PopUpConfig(
-                                mPopUpType = PopUpType.DIALOG,
-                                mOrientation = Orientation.VERTICAL
-                            ),
-                        listIntents =
-                            listOf(
-                                ImageCaptureConfig(),
-                                VideoCaptureConfig(),
-                                PickMediaConfig(),
-                                DocumentFilePickerConfig()
-                            )
-                    )
+            )
+        },
+        PickerButton(context.getString(R.string.btn_all_dialog)) {
+            allLauncher.launch(
+                PickerData(
+                    mPopUpConfig =
+                        PopUpConfig(
+                            mPopUpType = PopUpType.DIALOG,
+                            mOrientation = Orientation.VERTICAL
+                        ),
+                    listIntents =
+                        listOf(
+                            ImageCaptureConfig(),
+                            VideoCaptureConfig(),
+                            PickMediaConfig(),
+                            DocumentFilePickerConfig()
+                        )
                 )
-            }
-        )
+            )
+        }
     )
+)
 
-private fun anyPickerSection(anyLauncher: ActivityResultLauncher<BaseConfig?>) =
-    PickerSection(
-        "Any File Picker",
-        listOf(
-            PickerButton("Any Picker → Capture Image") { anyLauncher.launch(ImageCaptureConfig()) },
-            PickerButton("Any Picker → Pick Document") { anyLauncher.launch(DocumentFilePickerConfig()) }
-        )
+private fun anyPickerSection(
+    context: Context,
+    anyLauncher: ActivityResultLauncher<BaseConfig?>
+) = PickerSection(
+    context.getString(R.string.section_any_file_picker),
+    listOf(
+        PickerButton(context.getString(R.string.btn_any_capture_image)) {
+            anyLauncher.launch(ImageCaptureConfig())
+        },
+        PickerButton(context.getString(R.string.btn_any_pick_document)) {
+            anyLauncher.launch(DocumentFilePickerConfig())
+        }
     )
+)
 
 @Composable
 private fun PickedFilesHeader(
@@ -275,10 +293,10 @@ private fun PickedFilesHeader(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Selected Files ($count)",
+            text = stringResource(R.string.selected_files_count, count),
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
         )
-        TextButton(onClick = onClear) { Text("Clear All") }
+        TextButton(onClick = onClear) { Text(stringResource(R.string.clear_all)) }
     }
 }
 

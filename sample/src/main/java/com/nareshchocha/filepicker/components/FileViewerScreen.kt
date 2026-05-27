@@ -30,10 +30,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.nareshchocha.filepicker.R
 import com.nareshchocha.filepicker.components.FileType
 import java.io.File
 import java.io.IOException
@@ -57,7 +59,7 @@ fun FileViewerDialog(
     val title =
         file.filePath?.substringAfterLast("/")
             ?: file.uri.lastPathSegment
-            ?: "File"
+            ?: stringResource(R.string.label_file)
     var isLoading by remember { mutableStateOf(true) }
 
     Dialog(
@@ -107,7 +109,7 @@ private fun ViewerTopBar(
             IconButton(onClick = onBack) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
+                    contentDescription = stringResource(R.string.cd_back),
                     tint = Color.White
                 )
             }

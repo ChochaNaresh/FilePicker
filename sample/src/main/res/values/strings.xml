@@ -1,11 +1,50 @@
 <resources>
     <string name="app_name">File Picker</string>
-    <string name="capture_image">Capture Image</string>
-    <string name="capture_video">Capture Video</string>
-    <string name="pick_images">Pick Images</string>
-    <string name="pick_video">Pick Video</string>
-    <string name="pick_image_or_video">Pick Image Or Video</string>
-    <string name="pick_pdf">Pick PDF</string>
-    <string name="all_option">All Option</string>
-    <string name="title_activity_root">RootActivity</string>
+
+    <!-- Top bar -->
+    <string name="title_sample">File Picker Sample</string>
+
+    <!-- Section: Camera -->
+    <string name="section_camera">Camera</string>
+    <string name="btn_capture_image_rear">Capture Image (Rear Camera)</string>
+    <string name="btn_capture_image_front">Capture Image (Front Camera)</string>
+    <string name="btn_capture_video">Capture Video</string>
+    <string name="btn_capture_video_hq">Capture Video (Max 30s, High Quality)</string>
+
+    <!-- Section: Media Gallery -->
+    <string name="section_media_gallery">Media Gallery</string>
+    <string name="btn_pick_single_image">Pick Single Image</string>
+    <string name="btn_pick_single_video">Pick Single Video</string>
+    <string name="btn_pick_multiple_media">Pick Multiple Images &amp; Videos</string>
+
+    <!-- Section: Documents -->
+    <string name="section_documents">Documents</string>
+    <string name="btn_pick_any_document">Pick Any Document</string>
+    <string name="btn_pick_pdf_only">Pick PDF Only</string>
+    <string name="btn_pick_multiple_documents">Pick Multiple Documents</string>
+
+    <!-- Section: Popup Pickers -->
+    <string name="section_popup_pickers">Popup Pickers</string>
+    <string name="btn_all_bottom_sheet_vertical">All Pickers — Bottom Sheet (Vertical)</string>
+    <string name="btn_all_bottom_sheet_horizontal">All Pickers — Bottom Sheet (Horizontal)</string>
+    <string name="btn_all_dialog">All Pickers — Dialog</string>
+
+    <!-- Section: Any File Picker -->
+    <string name="section_any_file_picker">Any File Picker</string>
+    <string name="btn_any_capture_image">Any Picker → Capture Image</string>
+    <string name="btn_any_pick_document">Any Picker → Pick Document</string>
+
+    <!-- Results -->
+    <string name="tap_to_open_hint">Tap a file to open it</string>
+    <string name="selected_files_count">Selected Files (%1$d)</string>
+    <string name="clear_all">Clear All</string>
+
+    <!-- File item / viewer -->
+    <string name="label_image">Image</string>
+    <string name="label_video">Video</string>
+    <string name="label_file">File</string>
+    <string name="cd_video">Video</string>
+    <string name="cd_file">File</string>
+    <string name="cd_back">Back</string>
+    <string name="no_app_to_open_file">No app found to open this file</string>
 </resources>

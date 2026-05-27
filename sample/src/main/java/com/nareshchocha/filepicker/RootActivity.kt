@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.res.stringResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.nareshchocha.filepicker.components.AllFilePickers
 import com.nareshchocha.filepicker.ui.theme.FilePickerTheme
@@ -56,7 +57,7 @@ fun RootUI() {
             TopAppBar(
                 title = {
                     Text(
-                        text = "File Picker Sample",
+                        text = stringResource(R.string.title_sample),
                         style = MaterialTheme.typography.headlineMedium.copy(color = Color.White)
                     )
                 },
