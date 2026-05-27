@@ -6,18 +6,30 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.ComponentActivity
 
-internal fun Context.getRequestedPermissions(): Array<String>? =
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        packageManager.getPackageInfo(
-            packageName,
-            PackageManager.PackageInfoFlags.of(PackageManager.GET_PERMISSIONS.toLong())
-        )
-    } else {
-        packageManager.getPackageInfo(
-            packageName,
-            PackageManager.GET_PERMISSIONS
-        )
-    }.requestedPermissions
+private var cachedRequestedPermissions: Array<String>? = null
+
+internal fun Context.getRequestedPermissions(): Array<String>? {
+    if (cachedRequestedPermissions == null) {
+        cachedRequestedPermissions =
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    packageManager.getPackageInfo(
+                        packageName,
+                        PackageManager.PackageInfoFlags.of(PackageManager.GET_PERMISSIONS.toLong())
+                    )
+                } else {
+                    packageManager.getPackageInfo(
+                        packageName,
+                        PackageManager.GET_PERMISSIONS
+                    )
+                }.requestedPermissions
+            } catch (e: PackageManager.NameNotFoundException) {
+                android.util.Log.e("UiExtension", "Package name not found", e)
+                null
+            }
+    }
+    return cachedRequestedPermissions
+}
 
 internal fun List<String>.asString() =
     this

@@ -184,27 +184,32 @@ internal object FileUtils {
         context: Context,
         uri: Uri?
     ): String? {
-        var cursor: Cursor? = null
         val projection =
             arrayOf(
                 MediaStore.MediaColumns.DISPLAY_NAME
             )
-        try {
-            cursor =
-                context.contentResolver.query(
+        return try {
+            context.contentResolver
+                .query(
                     uri!!,
                     projection,
                     null,
                     null,
                     null
-                )
-            if (cursor != null && cursor.moveToFirst()) {
-                val index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
-                return cursor.getString(index)
-            }
-        } finally {
-            cursor?.close()
+                )?.use { cursor ->
+                    if (cursor.moveToFirst()) {
+                        val index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
+                        cursor.getString(index)
+                    } else {
+                        null
+                    }
+                }
+        } catch (e: SecurityException) {
+            log("SecurityException in getFileName", priority = LogPriority.ERROR_LOG, throwable = e)
+            null
+        } catch (e: IllegalArgumentException) {
+            log("IllegalArgumentException in getFileName", priority = LogPriority.ERROR_LOG, throwable = e)
+            null
         }
-        return null
     }
 }

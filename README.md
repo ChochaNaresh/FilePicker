@@ -142,7 +142,8 @@ DocumentFilePickerConfig(
     popUpText = "File Media",
     allowMultiple = true,
     maxFiles = 10,
-    mMimeTypes = listOf("application/pdf", "image/*")
+    mMimeTypes = listOf("application/pdf", "image/*"),
+    resolveRealPath = true // set false to skip path resolution and receive only Uri
 )
 ```
 
@@ -155,7 +156,8 @@ ImageCaptureConfig(
     popUpText = "Camera",
     mFolder = File(cacheDir, "Images"),
     fileName = "image_${System.currentTimeMillis()}.jpg",
-    isUseRearCamera = true
+    isUseRearCamera = true,
+    resolveRealPath = true // set false to skip path resolution and receive only Uri
 )
 ```
 
@@ -170,7 +172,8 @@ VideoCaptureConfig(
     fileName = "video_${System.currentTimeMillis()}.mp4",
     maxSeconds = 60,
     maxSizeLimit = 20L * 1024 * 1024,
-    isHighQuality = true
+    isHighQuality = true,
+    resolveRealPath = true // set false to skip path resolution and receive only Uri
 )
 ```
 
@@ -183,7 +186,8 @@ PickMediaConfig(
     popUpText = "Pick Media",
     allowMultiple = true,
     maxFiles = 5,
-    mPickMediaType = PickMediaType.ImageAndVideo
+    mPickMediaType = PickMediaType.ImageAndVideo,
+    resolveRealPath = true // set false to skip path resolution and receive only Uri
 )
 ```
 
@@ -192,6 +196,44 @@ PickMediaConfig(
 PickMediaType.ImageOnly
 PickMediaType.VideoOnly
 PickMediaType.ImageAndVideo
+```
+
+---
+
+### 🔗 resolveRealPath
+
+Each picker config has its own `resolveRealPath: Boolean` property (default `true`). It is **not** on the base class — set it directly on whichever config you use.
+
+| Value | Behaviour |
+|---|---|
+| `true` *(default)* | The library copies/queries the file and populates `selectedFilePath`/`selectedFilePaths` in the result. |
+| `false` | Path resolution is skipped. Only `selectedFileUri`/`selectedFileUris` are returned. Use this when you only need the `Uri` and want to avoid the extra I/O cost. |
+
+**Supported on all four configs:**
+```kotlin
+ImageCaptureConfig(resolveRealPath = false)
+VideoCaptureConfig(resolveRealPath = false)
+PickMediaConfig(resolveRealPath = false)
+DocumentFilePickerConfig(resolveRealPath = false)
+```
+
+**Example — Uri-only with `PickDocumentFile`:**
+```kotlin
+val launcher = registerForActivityResult(FilePickerResultContracts.PickDocumentFile()) { result ->
+    val uri = result.selectedFileUri   // always available
+    val path = result.selectedFilePath // null when resolveRealPath = false
+}
+launcher.launch(DocumentFilePickerConfig(resolveRealPath = false))
+```
+
+**Example — Uri-only with `AnyFilePicker`:**
+```kotlin
+val launcher = registerForActivityResult(FilePickerResultContracts.AnyFilePicker()) { result ->
+    val uri = result.selectedFileUri   // always available
+    val path = result.selectedFilePath // null when resolveRealPath = false
+}
+launcher.launch(DocumentFilePickerConfig(resolveRealPath = false))
+// or: launcher.launch(PickMediaConfig(resolveRealPath = false))
 ```
 
 ---

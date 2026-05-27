@@ -15,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.os.BundleCompat
+import androidx.lifecycle.lifecycleScope
 import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.models.DocumentFilePickerConfig
 import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppRationaleDialog
@@ -30,6 +31,9 @@ import com.nareshchocha.filepickerlibrary.utilities.getDocumentFilePick
 import com.nareshchocha.filepickerlibrary.utilities.getFilePathList
 import com.nareshchocha.filepickerlibrary.utilities.setCanceledResult
 import com.nareshchocha.filepickerlibrary.utilities.setSuccessResult
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 internal class DocumentFilePickerActivity : ComponentActivity() {
     private val mDocumentFilePickerConfig: DocumentFilePickerConfig? by lazy {
@@ -45,32 +49,70 @@ internal class DocumentFilePickerActivity : ComponentActivity() {
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == RESULT_OK && result.data != null) {
-                if (mDocumentFilePickerConfig?.allowMultiple == true && result.data?.clipData != null) {
-                    val uris = result.data?.getClipDataUris()
-                    val filePaths = uris?.getFilePathList(this)
-                    setSuccessResult(
-                        fileUri = uris,
-                        filePath = filePaths,
-                        configType = DocumentFilePickerConfig::class.java.name
-                    )
-                } else if (result.data?.data != null) {
-                    val data = result.data?.data
-                    val filePath = data?.let { FileUtils.getRealPath(this, it) }
-                    setSuccessResult(
-                        fileUri = data,
-                        filePath = filePath,
-                        configType = DocumentFilePickerConfig::class.java.name
-                    )
-                } else if (result.data?.clipData != null) {
-                    val uri = result.data?.getClipDataUris()?.firstOrNull()
-                    val filePath = uri?.let { FileUtils.getRealPath(this, it) }
-                    setSuccessResult(
-                        fileUri = uri,
-                        filePath = filePath,
-                        configType = DocumentFilePickerConfig::class.java.name
-                    )
-                } else {
-                    setCanceledResult(getString(R.string.document_file_picker_no_data_error))
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val resolveRealPath = mDocumentFilePickerConfig?.resolveRealPath != false
+                    if (mDocumentFilePickerConfig?.allowMultiple == true && result.data?.clipData != null) {
+                        val uris = result.data?.getClipDataUris()
+                        val filePaths =
+                            if (resolveRealPath) {
+                                uris?.getFilePathList(
+                                    this@DocumentFilePickerActivity
+                                )
+                            } else {
+                                null
+                            }
+                        withContext(Dispatchers.Main) {
+                            setSuccessResult(
+                                fileUri = uris,
+                                filePath = filePaths,
+                                configType = DocumentFilePickerConfig::class.java.name
+                            )
+                        }
+                    } else if (result.data?.data != null) {
+                        val data = result.data?.data
+                        val filePath =
+                            if (resolveRealPath) {
+                                data?.let {
+                                    FileUtils.getRealPath(
+                                        this@DocumentFilePickerActivity,
+                                        it
+                                    )
+                                }
+                            } else {
+                                null
+                            }
+                        withContext(Dispatchers.Main) {
+                            setSuccessResult(
+                                fileUri = data,
+                                filePath = filePath,
+                                configType = DocumentFilePickerConfig::class.java.name
+                            )
+                        }
+                    } else if (result.data?.clipData != null) {
+                        val uri = result.data?.getClipDataUris()?.firstOrNull()
+                        val filePath =
+                            if (resolveRealPath) {
+                                uri?.let {
+                                    FileUtils.getRealPath(
+                                        this@DocumentFilePickerActivity,
+                                        it
+                                    )
+                                }
+                            } else {
+                                null
+                            }
+                        withContext(Dispatchers.Main) {
+                            setSuccessResult(
+                                fileUri = uri,
+                                filePath = filePath,
+                                configType = DocumentFilePickerConfig::class.java.name
+                            )
+                        }
+                    } else {
+                        withContext(Dispatchers.Main) {
+                            setCanceledResult(getString(R.string.document_file_picker_no_data_error))
+                        }
+                    }
                 }
             } else {
                 setCanceledResult("File Picker Result Error: ${result.resultCode}")
@@ -96,27 +138,29 @@ internal class DocumentFilePickerActivity : ComponentActivity() {
         var showRationaleDialog by remember { mutableStateOf(false) }
         var showSettingDialog by remember { mutableStateOf(false) }
         val mSinglePermissionManager =
-            SinglePermissionManager(
-                activity = activity,
-                permission = PermissionLists.documentFilePickerPermissions() ?: "",
-                onPermissionMissing = {
-                    activity.setCanceledResult(
-                        getString(
-                            R.string.err_permission_missing,
-                            it.asString()
+            remember {
+                SinglePermissionManager(
+                    activity = activity,
+                    permission = PermissionLists.documentFilePickerPermissions() ?: "",
+                    onPermissionMissing = {
+                        activity.setCanceledResult(
+                            getString(
+                                R.string.err_permission_missing,
+                                it.asString()
+                            )
                         )
-                    )
-                },
-                onPermissionGranted = {
-                    documentFilePickerLauncher()
-                },
-                onPermissionDenied = {
-                    showSettingDialog = true
-                },
-                onShowRationale = {
-                    showRationaleDialog = true
-                }
-            )
+                    },
+                    onPermissionGranted = {
+                        documentFilePickerLauncher()
+                    },
+                    onPermissionDenied = {
+                        showSettingDialog = true
+                    },
+                    onShowRationale = {
+                        showRationaleDialog = true
+                    }
+                )
+            }
         mSinglePermissionManager.Check()
 
         if (showSettingDialog) {

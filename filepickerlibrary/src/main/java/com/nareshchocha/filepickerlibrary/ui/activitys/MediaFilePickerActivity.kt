@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.os.BundleCompat
+import androidx.lifecycle.lifecycleScope
 import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.models.PickMediaConfig
 import com.nareshchocha.filepickerlibrary.ui.components.dialogs.AppRationaleDialog
@@ -31,6 +32,9 @@ import com.nareshchocha.filepickerlibrary.utilities.getFilePathList
 import com.nareshchocha.filepickerlibrary.utilities.getMediaIntent
 import com.nareshchocha.filepickerlibrary.utilities.setCanceledResult
 import com.nareshchocha.filepickerlibrary.utilities.setSuccessResult
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 internal class MediaFilePickerActivity : ComponentActivity() {
     private val mPickMediaConfig: PickMediaConfig? by lazy {
@@ -46,32 +50,70 @@ internal class MediaFilePickerActivity : ComponentActivity() {
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK && result.data != null) {
-                if (mPickMediaConfig?.allowMultiple == true && result.data?.clipData != null) {
-                    val uris = result.data?.getClipDataUris()
-                    val filePaths = uris?.getFilePathList(this)
-                    setSuccessResult(
-                        fileUri = uris,
-                        filePath = filePaths,
-                        configType = PickMediaConfig::class.java.name
-                    )
-                } else if (result.data?.data != null) {
-                    val data = result.data?.data
-                    val filePath = data?.let { FileUtils.getRealPath(this, it) }
-                    setSuccessResult(
-                        fileUri = data,
-                        filePath = filePath,
-                        configType = PickMediaConfig::class.java.name
-                    )
-                } else if (result.data?.clipData != null) {
-                    val uri = result.data?.getClipDataUris()?.firstOrNull()
-                    val filePath = uri?.let { FileUtils.getRealPath(this, it) }
-                    setSuccessResult(
-                        fileUri = uri,
-                        filePath = filePath,
-                        configType = PickMediaConfig::class.java.name
-                    )
-                } else {
-                    setCanceledResult(getString(R.string.media_file_picker_no_data_error))
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val resolveRealPath = mPickMediaConfig?.resolveRealPath != false
+                    if (mPickMediaConfig?.allowMultiple == true && result.data?.clipData != null) {
+                        val uris = result.data?.getClipDataUris()
+                        val filePaths =
+                            if (resolveRealPath) {
+                                uris?.getFilePathList(
+                                    this@MediaFilePickerActivity
+                                )
+                            } else {
+                                null
+                            }
+                        withContext(Dispatchers.Main) {
+                            setSuccessResult(
+                                fileUri = uris,
+                                filePath = filePaths,
+                                configType = PickMediaConfig::class.java.name
+                            )
+                        }
+                    } else if (result.data?.data != null) {
+                        val data = result.data?.data
+                        val filePath =
+                            if (resolveRealPath) {
+                                data?.let {
+                                    FileUtils.getRealPath(
+                                        this@MediaFilePickerActivity,
+                                        it
+                                    )
+                                }
+                            } else {
+                                null
+                            }
+                        withContext(Dispatchers.Main) {
+                            setSuccessResult(
+                                fileUri = data,
+                                filePath = filePath,
+                                configType = PickMediaConfig::class.java.name
+                            )
+                        }
+                    } else if (result.data?.clipData != null) {
+                        val uri = result.data?.getClipDataUris()?.firstOrNull()
+                        val filePath =
+                            if (resolveRealPath) {
+                                uri?.let {
+                                    FileUtils.getRealPath(
+                                        this@MediaFilePickerActivity,
+                                        it
+                                    )
+                                }
+                            } else {
+                                null
+                            }
+                        withContext(Dispatchers.Main) {
+                            setSuccessResult(
+                                fileUri = uri,
+                                filePath = filePath,
+                                configType = PickMediaConfig::class.java.name
+                            )
+                        }
+                    } else {
+                        withContext(Dispatchers.Main) {
+                            setCanceledResult(getString(R.string.media_file_picker_no_data_error))
+                        }
+                    }
                 }
             } else {
                 setCanceledResult("File Picker Result Error: ${result.resultCode}")
@@ -97,27 +139,29 @@ internal class MediaFilePickerActivity : ComponentActivity() {
         var showRationaleDialog by remember { mutableStateOf(false) }
         var showSettingDialog by remember { mutableStateOf(false) }
         val mMediaMultiplePermissionManager =
-            MediaMultiplePermissionManager(
-                activity = activity,
-                permissions = PermissionLists.mediaFilePickerPermissions(),
-                onPermissionsMissing = {
-                    activity.setCanceledResult(
-                        getString(
-                            R.string.err_permission_missing,
-                            it.asString()
+            remember {
+                MediaMultiplePermissionManager(
+                    activity = activity,
+                    permissions = PermissionLists.mediaFilePickerPermissions(),
+                    onPermissionsMissing = {
+                        activity.setCanceledResult(
+                            getString(
+                                R.string.err_permission_missing,
+                                it.asString()
+                            )
                         )
-                    )
-                },
-                onMultiplePermissionsGranted = {
-                    mediaFilePickerLauncher()
-                },
-                onMultiplePermissionsDenied = {
-                    showSettingDialog = true
-                },
-                onShowMultipleRationale = {
-                    showRationaleDialog = true
-                }
-            )
+                    },
+                    onMultiplePermissionsGranted = {
+                        mediaFilePickerLauncher()
+                    },
+                    onMultiplePermissionsDenied = {
+                        showSettingDialog = true
+                    },
+                    onShowMultipleRationale = {
+                        showRationaleDialog = true
+                    }
+                )
+            }
         mMediaMultiplePermissionManager.Check()
 
         if (showSettingDialog) {

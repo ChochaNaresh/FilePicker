@@ -7,6 +7,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
 import com.nareshchocha.filepickerlibrary.R
 import com.nareshchocha.filepickerlibrary.utilities.appConst.Const
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import java.io.File
 
@@ -21,10 +22,14 @@ data class PopUpConfig(
     val chooserTitle: String? = "Choose Option",
     val mPopUpType: PopUpType? = PopUpType.BOTTOM_SHEET,
     val mOrientation: Orientation? = Orientation.VERTICAL,
-    val cornerSize: Float = 8f,
-    val title: @Composable ((title: String) -> Unit)? = null,
-    val item: @Composable ((item: BaseConfig) -> Unit)? = null
-) : Parcelable
+    val cornerSize: Float = 8f
+) : Parcelable {
+    @IgnoredOnParcel
+    var title: @Composable ((title: String) -> Unit)? = null
+
+    @IgnoredOnParcel
+    var item: @Composable ((item: BaseConfig) -> Unit)? = null
+}
 
 enum class Orientation {
     HORIZONTAL,
@@ -48,7 +53,17 @@ data class ImageCaptureConfig(
     override val askPermissionTitle: String? = null,
     override val askPermissionMessage: String? = null,
     override val settingPermissionTitle: String? = null,
-    override val settingPermissionMessage: String? = null
+    override val settingPermissionMessage: String? = null,
+    /**
+     * Whether to resolve the real file-system path after capture.
+     *
+     * - `true` (default): the captured file is copied to the configured folder and
+     *   [com.nareshchocha.filepickerlibrary.models.FilePickerResult.selectedFilePath] is populated.
+     * - `false`: path resolution is skipped; only
+     *   [com.nareshchocha.filepickerlibrary.models.FilePickerResult.selectedFileUri] is returned.
+     *   Use this when you only need the `Uri` and want to avoid the extra I/O.
+     */
+    val resolveRealPath: Boolean = true
 ) : BaseConfig(
         popUpIcon,
         popUpText,
@@ -71,7 +86,17 @@ data class VideoCaptureConfig(
     override val askPermissionTitle: String? = null,
     override val askPermissionMessage: String? = null,
     override val settingPermissionTitle: String? = null,
-    override val settingPermissionMessage: String? = null
+    override val settingPermissionMessage: String? = null,
+    /**
+     * Whether to resolve the real file-system path after recording.
+     *
+     * - `true` (default): the recorded file is copied to the configured folder and
+     *   [com.nareshchocha.filepickerlibrary.models.FilePickerResult.selectedFilePath] is populated.
+     * - `false`: path resolution is skipped; only
+     *   [com.nareshchocha.filepickerlibrary.models.FilePickerResult.selectedFileUri] is returned.
+     *   Use this when you only need the `Uri` and want to avoid the extra I/O.
+     */
+    val resolveRealPath: Boolean = true
 ) : BaseConfig(
         popUpIcon,
         popUpText,
@@ -100,7 +125,19 @@ data class PickMediaConfig(
     override val askPermissionTitle: String? = null,
     override val askPermissionMessage: String? = null,
     override val settingPermissionTitle: String? = null,
-    override val settingPermissionMessage: String? = null
+    override val settingPermissionMessage: String? = null,
+    /**
+     * Whether to resolve the real file-system path after the user picks media.
+     *
+     * - `true` (default): the library queries/copies the file and populates
+     *   [com.nareshchocha.filepickerlibrary.models.FilePickerResult.selectedFilePath] /
+     *   [com.nareshchocha.filepickerlibrary.models.FilePickerResult.selectedFilePaths].
+     * - `false`: path resolution is skipped; only
+     *   [com.nareshchocha.filepickerlibrary.models.FilePickerResult.selectedFileUri] /
+     *   [com.nareshchocha.filepickerlibrary.models.FilePickerResult.selectedFileUris] are returned.
+     *   Use this when you only need the `Uri` and want to avoid the extra I/O.
+     */
+    val resolveRealPath: Boolean = true
 ) : BaseConfig(
         popUpIcon,
         popUpText,
@@ -137,7 +174,19 @@ data class DocumentFilePickerConfig(
     override val askPermissionTitle: String? = null,
     override val askPermissionMessage: String? = null,
     override val settingPermissionTitle: String? = null,
-    override val settingPermissionMessage: String? = null
+    override val settingPermissionMessage: String? = null,
+    /**
+     * Whether to resolve the real file-system path after the user picks a document.
+     *
+     * - `true` (default): the library queries/copies the file and populates
+     *   [com.nareshchocha.filepickerlibrary.models.FilePickerResult.selectedFilePath] /
+     *   [com.nareshchocha.filepickerlibrary.models.FilePickerResult.selectedFilePaths].
+     * - `false`: path resolution is skipped; only
+     *   [com.nareshchocha.filepickerlibrary.models.FilePickerResult.selectedFileUri] /
+     *   [com.nareshchocha.filepickerlibrary.models.FilePickerResult.selectedFileUris] are returned.
+     *   Use this when you only need the `Uri` and want to avoid the extra I/O.
+     */
+    val resolveRealPath: Boolean = true
 ) : BaseConfig(
         popUpIcon,
         popUpText,

@@ -50,15 +50,6 @@ internal class ImageCaptureActivity : ComponentActivity() {
                     mImageCaptureConfig!!.fileName
                         ?: Const.DefaultPaths.defaultImageFile()
             )
-        if (imageFile == null) {
-            imageFile =
-                createMediaFileFolder(
-                    folderFile = mImageCaptureConfig!!.mFolder ?: defaultFolder(),
-                    fileName =
-                        mImageCaptureConfig!!.fileName
-                            ?: Const.DefaultPaths.defaultImageFile()
-                )
-        }
         createFileGetUri(imageFile)
     }
 
@@ -67,9 +58,10 @@ internal class ImageCaptureActivity : ComponentActivity() {
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == RESULT_OK) {
+                val filePath = if (mImageCaptureConfig?.resolveRealPath != false) imageFile?.absolutePath else null
                 setSuccessResult(
                     fileUri = imageFileUri,
-                    filePath = imageFile?.absolutePath,
+                    filePath = filePath,
                     isFromCapture = true,
                     configType = ImageCaptureConfig::class.java.name
                 )
@@ -99,28 +91,30 @@ internal class ImageCaptureActivity : ComponentActivity() {
         var showRationaleDialog by remember { mutableStateOf(false) }
         var showSettingDialog by remember { mutableStateOf(false) }
         val mMultiplePermissionManager =
-            MultiplePermissionManager(
-                activity = activity,
-                permissions = PermissionLists.imageCapturePermissions(activity),
-                onPermissionsMissing = {
-                    imageFile?.delete()
-                    activity.setCanceledResult(
-                        getString(
-                            R.string.err_permission_missing,
-                            it.asString()
+            remember {
+                MultiplePermissionManager(
+                    activity = activity,
+                    permissions = PermissionLists.imageCapturePermissions(activity),
+                    onPermissionsMissing = {
+                        imageFile?.delete()
+                        activity.setCanceledResult(
+                            getString(
+                                R.string.err_permission_missing,
+                                it.asString()
+                            )
                         )
-                    )
-                },
-                onMultiplePermissionsGranted = {
-                    imageCapture()
-                },
-                onMultiplePermissionsDenied = {
-                    showSettingDialog = true
-                },
-                onShowMultipleRationale = {
-                    showRationaleDialog = true
-                }
-            )
+                    },
+                    onMultiplePermissionsGranted = {
+                        imageCapture()
+                    },
+                    onMultiplePermissionsDenied = {
+                        showSettingDialog = true
+                    },
+                    onShowMultipleRationale = {
+                        showRationaleDialog = true
+                    }
+                )
+            }
         mMultiplePermissionManager.Check()
 
         if (showSettingDialog) {

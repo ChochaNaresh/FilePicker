@@ -22,29 +22,11 @@ internal object PickerFileUtils {
     fun createMediaFileFolder(
         folderFile: File,
         fileName: String
-    ): File? =
-        if (!folderFile.exists()) {
+    ): File? {
+        val isFolderExist = folderFile.exists() || folderFile.mkdirs()
+        return if (isFolderExist) {
             try {
-                if (!folderFile.mkdirs()) {
-                    log(
-                        "Failed to create directory: ${folderFile.path}",
-                        priority = LogPriority.ERROR_LOG
-                    )
-                    null
-                } else {
-                    null
-                }
-            } catch (e: SecurityException) {
-                log(
-                    "Security exception creating directory: ${folderFile.path}",
-                    priority = LogPriority.ERROR_LOG,
-                    throwable = e
-                )
-                null
-            }
-        } else {
-            try {
-                File(folderFile.path + File.separator + fileName)
+                File(folderFile, fileName)
             } catch (e: SecurityException) {
                 log(
                     "Security exception creating file: ${folderFile.path + File.separator + fileName}",
@@ -53,7 +35,14 @@ internal object PickerFileUtils {
                 )
                 null
             }
+        } else {
+            log(
+                "Failed to create directory: ${folderFile.path}",
+                priority = LogPriority.ERROR_LOG
+            )
+            null
         }
+    }
 
     /**
      * Creates a file if it doesn't exist and returns its content URI.

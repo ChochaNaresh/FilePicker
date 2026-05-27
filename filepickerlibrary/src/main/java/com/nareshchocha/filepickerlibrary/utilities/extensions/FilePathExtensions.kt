@@ -44,29 +44,31 @@ internal fun getDataColumn(
     selection: String?,
     selectionArgs: Array<String>?
 ): String? {
-    var cursor: Cursor? = null
     val column = "_data"
-    val projection =
-        arrayOf(
-            column
-        )
-    try {
-        cursor =
-            context.contentResolver.query(
+    val projection = arrayOf(column)
+    return try {
+        context.contentResolver
+            .query(
                 uri!!,
                 projection,
                 selection,
                 selectionArgs,
                 null
-            )
-        if (cursor != null && cursor.moveToFirst()) {
-            val index = cursor.getColumnIndexOrThrow(column)
-            return cursor.getString(index)
-        }
-    } finally {
-        cursor?.close()
+            )?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    val index = cursor.getColumnIndexOrThrow(column)
+                    cursor.getString(index)
+                } else {
+                    null
+                }
+            }
+    } catch (e: SecurityException) {
+        log("SecurityException in getDataColumn", priority = LogPriority.ERROR_LOG, throwable = e)
+        null
+    } catch (e: IllegalArgumentException) {
+        log("IllegalArgumentException in getDataColumn", priority = LogPriority.ERROR_LOG, throwable = e)
+        null
     }
-    return null
 }
 
 internal fun Context.getMediaDocumentPath(uri: Uri): String? {
@@ -101,31 +103,30 @@ internal fun Context.getMediaDocumentPath(uri: Uri): String? {
 }
 
 internal fun Context.getDriveFilePath(uri: Uri): String? {
-    val returnCursor: Cursor? =
-        contentResolver.query(
-            uri,
-            null,
-            null,
-            null,
-            null
-        )
-    val nameIndex = returnCursor?.getColumnIndex(OpenableColumns.DISPLAY_NAME) ?: return null
-    returnCursor.moveToFirst()
-    val name = returnCursor.getString(nameIndex)
+    val name =
+        contentResolver
+            .query(
+                uri,
+                null,
+                null,
+                null,
+                null
+            )?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                    if (nameIndex != -1) cursor.getString(nameIndex) else null
+                } else {
+                    null
+                }
+            } ?: "drive_file_${System.currentTimeMillis()}"
+
     val file = File(cacheDir, sanitizeFileName(name))
-    returnCursor.close()
     return try {
-        val inputStream: InputStream? = contentResolver.openInputStream(uri)
-        val outputStream = FileOutputStream(file)
-        var read: Int?
-        val bytesAvailable = inputStream?.available() ?: 0
-        val bufferSize = bytesAvailable.coerceAtMost(Const.MAX_BUFFER_SIZE)
-        val buffers = ByteArray(bufferSize)
-        while (inputStream?.read(buffers).also { read = it } != -1) {
-            read?.let { outputStream.write(buffers, 0, it) }
+        contentResolver.openInputStream(uri)?.use { inputStream ->
+            FileOutputStream(file).use { outputStream ->
+                inputStream.copyTo(outputStream)
+            }
         }
-        inputStream?.close()
-        outputStream.close()
         file.path
     } catch (e: IOException) {
         log(
@@ -172,21 +173,23 @@ internal fun Context.copyFileToInternalStorage(
     uri: Uri,
     newDirName: String = Const.COPY_FILE_FOLDER
 ): String? {
-    val returnCursor: Cursor? =
-        this.contentResolver.query(
-            uri,
-            arrayOf(
-                OpenableColumns.DISPLAY_NAME,
-                OpenableColumns.SIZE
-            ),
-            null,
-            null,
-            null
-        )
-    val nameIndex = returnCursor?.getColumnIndex(OpenableColumns.DISPLAY_NAME) ?: return null
-    returnCursor.moveToFirst()
-    val name = sanitizeFileName(returnCursor.getString(nameIndex))
-    returnCursor.close()
+    val name =
+        this.contentResolver
+            .query(
+                uri,
+                arrayOf(OpenableColumns.DISPLAY_NAME),
+                null,
+                null,
+                null
+            )?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                    if (nameIndex != -1) sanitizeFileName(cursor.getString(nameIndex)) else null
+                } else {
+                    null
+                }
+            } ?: "picked_file_${System.currentTimeMillis()}"
+
     val output: File =
         if (newDirName != "") {
             val dir = File(cacheDir, newDirName)
@@ -198,15 +201,11 @@ internal fun Context.copyFileToInternalStorage(
             File(cacheDir, "/$name")
         }
     return try {
-        val inputStream: InputStream? = contentResolver.openInputStream(uri)
-        val outputStream = FileOutputStream(output)
-        var read: Int?
-        val buffers = ByteArray(Const.BUFFER_SIZE)
-        while (inputStream?.read(buffers).also { read = it } != -1) {
-            read?.let { outputStream.write(buffers, 0, it) }
+        contentResolver.openInputStream(uri)?.use { inputStream ->
+            FileOutputStream(output).use { outputStream ->
+                inputStream.copyTo(outputStream)
+            }
         }
-        inputStream?.close()
-        outputStream.close()
         output.path
     } catch (e: IOException) {
         log(

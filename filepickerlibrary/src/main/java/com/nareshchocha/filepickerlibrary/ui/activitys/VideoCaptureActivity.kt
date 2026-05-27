@@ -48,15 +48,6 @@ internal class VideoCaptureActivity : ComponentActivity() {
                 folderFile = mVideoCaptureConfig?.mFolder ?: defaultFolder(),
                 fileName = mVideoCaptureConfig?.fileName ?: Const.DefaultPaths.defaultVideoFile()
             )
-        if (videoFile == null) {
-            videoFile =
-                createMediaFileFolder(
-                    folderFile = mVideoCaptureConfig?.mFolder ?: defaultFolder(),
-                    fileName =
-                        mVideoCaptureConfig?.fileName
-                            ?: Const.DefaultPaths.defaultVideoFile()
-                )
-        }
         createFileGetUri(videoFile)
     }
 
@@ -65,9 +56,10 @@ internal class VideoCaptureActivity : ComponentActivity() {
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == RESULT_OK) {
+                val filePath = if (mVideoCaptureConfig?.resolveRealPath != false) videoFile?.absolutePath else null
                 setSuccessResult(
                     fileUri = videoFileUri,
-                    filePath = videoFile?.absolutePath,
+                    filePath = filePath,
                     isFromCapture = true,
                     configType = VideoCaptureConfig::class.java.name
                 )
@@ -97,28 +89,30 @@ internal class VideoCaptureActivity : ComponentActivity() {
         var showRationaleDialog by remember { mutableStateOf(false) }
         var showSettingDialog by remember { mutableStateOf(false) }
         val mMultiplePermissionManager =
-            MultiplePermissionManager(
-                activity = activity,
-                permissions = PermissionLists.videoCapturePermissions(activity),
-                onPermissionsMissing = {
-                    videoFile?.delete()
-                    activity.setCanceledResult(
-                        getString(
-                            R.string.err_permission_missing,
-                            it.asString()
+            remember {
+                MultiplePermissionManager(
+                    activity = activity,
+                    permissions = PermissionLists.videoCapturePermissions(activity),
+                    onPermissionsMissing = {
+                        videoFile?.delete()
+                        activity.setCanceledResult(
+                            getString(
+                                R.string.err_permission_missing,
+                                it.asString()
+                            )
                         )
-                    )
-                },
-                onMultiplePermissionsGranted = {
-                    videoCapture()
-                },
-                onMultiplePermissionsDenied = {
-                    showSettingDialog = true
-                },
-                onShowMultipleRationale = {
-                    showRationaleDialog = true
-                }
-            )
+                    },
+                    onMultiplePermissionsGranted = {
+                        videoCapture()
+                    },
+                    onMultiplePermissionsDenied = {
+                        showSettingDialog = true
+                    },
+                    onShowMultipleRationale = {
+                        showRationaleDialog = true
+                    }
+                )
+            }
         mMultiplePermissionManager.Check()
 
         if (showSettingDialog) {

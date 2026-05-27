@@ -16,12 +16,7 @@ internal fun Context.getImageCaptureIntent(
     useRearCamera: Boolean
 ): Intent =
     Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CINNAMON_BUN) {
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-        } else {
-            addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
-        }
+        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
         putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri)
         val facingBack = if (useRearCamera) 1 else 0
         val facingFront = if (useRearCamera) 0 else 1
