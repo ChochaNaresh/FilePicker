@@ -1,7 +1,7 @@
 import com.diffplug.gradle.spotless.SpotlessExtension
 import com.diffplug.gradle.spotless.SpotlessPlugin
-import io.gitlab.arturbosch.detekt.DetektPlugin
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension
+import dev.detekt.gradle.extensions.DetektExtension
+import dev.detekt.gradle.plugin.DetektPlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -50,16 +50,16 @@ fun Project.configureDetektAndSpotless() {
 
     apply<DetektPlugin>()
     configure<DetektExtension> {
-        toolVersion = detektVersion
         config.from("$rootDir/config/detekt/detekt.yml")
         buildUponDefaultConfig = true
     }
 
-    tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    tasks.withType<dev.detekt.gradle.Detekt>().configureEach {
         reports {
-            xml.required.set(false)
+            checkstyle.required.set(false)
+            sarif.required.set(false)
+            markdown.required.set(false)
             html.required.set(true)
-            txt.required.set(false)
         }
     }
 }

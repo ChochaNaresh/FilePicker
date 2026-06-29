@@ -1,23 +1,35 @@
 [versions]
 agp = "9.2.1"
-mavenPublish = "0.36.0"
+mavenPublish = "0.37.0"
 kotlin = "2.3.21"
-detekt = "1.23.8"
-spotless = "8.5.1"
+detekt = "2.0.0-alpha.5"
+spotless = "8.7.0"
 # core
 core-splashscreen = "1.2.0"
 
 # compose
 activityCompose = "1.13.0"
-composeBom = "2026.05.01"
+composeBom = "2026.06.00"
 
 # landscapist
-landscapistBom = "2.9.7"
+landscapistBom = "2.10.0"
+
+# ads
+playServicesAds = "25.4.0"
+userMessagingPlatform = "4.0.0"
+
+# lifecycle
+lifecycleProcess = "2.11.0"
 
 [libraries]
 # core
 core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "core-splashscreen" }
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityCompose" }
+# ads
+play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "playServicesAds" }
+user-messaging-platform = { group = "com.google.android.ump", name = "user-messaging-platform", version.ref = "userMessagingPlatform" }
+# lifecycle
+androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycleProcess" }
 # compose
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
@@ -41,7 +53,7 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 # parcelize
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 # code style review
-arturbosch-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+arturbosch-detekt = { id = "dev.detekt", version.ref = "detekt" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 # maven publish
 maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish" }

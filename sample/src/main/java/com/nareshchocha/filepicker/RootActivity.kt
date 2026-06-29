@@ -20,6 +20,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.nareshchocha.filepicker.ads.AdManager
+import com.nareshchocha.filepicker.ads.BannerAd
+import com.nareshchocha.filepicker.ads.ConsentManager
 import com.nareshchocha.filepicker.components.AllFilePickers
 import com.nareshchocha.filepicker.ui.theme.FilePickerTheme
 import com.nareshchocha.filepickerlibrary.FilePickerResultContracts
@@ -40,11 +43,27 @@ class RootActivity : ComponentActivity() {
                 )
         )
         FilePickerResultContracts.isLoggingEnabled = true
+        // Gather user consent (EEA / UK / Switzerland) before initializing ads.
+        ConsentManager.gatherConsent(this) {
+            if (ConsentManager.canRequestAds(this)) {
+                initializeAdsAfterConsent()
+            }
+        }
         setContent {
             FilePickerTheme {
                 RootUI()
             }
         }
+    }
+
+    /**
+     * Initializes the Mobile Ads SDK and starts requesting ads. Only invoked
+     * once consent has been gathered and [ConsentManager.canRequestAds] is true.
+     */
+    private fun initializeAdsAfterConsent() {
+        AdManager.initialize(this)
+        AdManager.loadInterstitialAd(this)
+        (application as? FilePickerApp)?.appOpenAdManager?.start()
     }
 }
 
@@ -66,6 +85,9 @@ fun RootUI() {
                         containerColor = MaterialTheme.colorScheme.primary
                     )
             )
+        },
+        bottomBar = {
+            BannerAd()
         }
     ) { innerPadding ->
         Column(

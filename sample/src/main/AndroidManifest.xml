@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
@@ -11,6 +12,7 @@
         tools:ignore="ScopedStorage" />
 
     <application
+        android:name=".FilePickerApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true"
@@ -22,6 +24,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FilePicker.Splash"
         tools:targetApi="33">
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="${ADMOB_APP_ID}" />
+
         <activity
             android:name=".RootActivity"
             android:exported="true">

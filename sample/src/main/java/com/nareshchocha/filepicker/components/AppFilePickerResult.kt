@@ -1,5 +1,6 @@
 package com.nareshchocha.filepicker.components
 
+import android.app.Activity
 import android.content.Context
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -25,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.nareshchocha.filepicker.R
+import com.nareshchocha.filepicker.ads.AdManager
 import com.nareshchocha.filepickerlibrary.FilePickerResultContracts
 import com.nareshchocha.filepickerlibrary.models.BaseConfig
 import com.nareshchocha.filepickerlibrary.models.DocumentFilePickerConfig
@@ -42,10 +44,15 @@ import com.nareshchocha.filepickerlibrary.models.VideoCaptureConfig
 fun AllFilePickers() {
     var pickedFiles by remember { mutableStateOf(listOf<PickedFile>()) }
     val context = LocalContext.current
+    val activity = context as? Activity
     val sections =
         rememberPickerSections { result ->
             val new = buildPickedFiles(context, result)
-            if (new.isNotEmpty()) pickedFiles = pickedFiles + new
+            if (new.isNotEmpty()) {
+                pickedFiles = pickedFiles + new
+            }
+            // Show interstitial ad on every 5th return from file picker
+            activity?.let { AdManager.showInterstitialAd(it) }
         }
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 24.dp, vertical = 16.dp),
