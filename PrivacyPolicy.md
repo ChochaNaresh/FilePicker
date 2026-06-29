@@ -11,21 +11,32 @@ The Application collects information when you download and use it. This informat
 *   The time spent on the Application
 *   The operating system you use on your mobile device
 
-The Application does not gather precise information about the location of your mobile device.
-
-The Application collects your device's location, which helps the Service Provider determine your approximate geographical location and make use of in below ways:
-
-*   Geolocation Services: The Service Provider utilizes location data to provide features such as personalized content, relevant recommendations, and location-based services.
-*   Analytics and Improvements: Aggregated and anonymized location data helps the Service Provider to analyze user behavior, identify trends, and improve the overall performance and functionality of the Application.
-*   Third-Party Services: Periodically, the Service Provider may transmit anonymized location data to external services. These services assist them in enhancing the Application and optimizing their offerings.
-
-The Service Provider may use the information you provided to contact you from time to time to provide you with important information, required notices and marketing promotions.
+The Application does not gather precise (GPS) location information about your mobile device. The advertising provider described below may infer an approximate, non-precise location from your IP address in order to deliver relevant ads.
 
 For a better experience, while using the Application, the Service Provider may require you to provide us with certain personally identifiable information. The information that the Service Provider request will be retained by them and used as described in this privacy policy.
 
+**Advertising**
+
+The Application displays advertisements provided by Google AdMob (Google Mobile Ads SDK). To serve ads, Google and its partners may collect and process certain information, which may include:
+
+*   Advertising identifiers (such as the Google Advertising ID)
+*   Device information and your IP address
+*   An approximate (non-precise) location derived from your IP address
+*   Information about your interactions with ads
+
+Google may use this information to deliver personalized or non-personalized advertisements. For details about how Google collects and uses data, please review [Google's Privacy & Terms](https://policies.google.com/technologies/partner-sites) and [How Google uses information from sites or apps that use our services](https://policies.google.com/technologies/partner-sites).
+
+**Consent (European Economic Area, United Kingdom and Switzerland)**
+
+If you are located in the European Economic Area (EEA), the United Kingdom, or Switzerland, the Application uses Google's User Messaging Platform (UMP) to request your consent before personalized advertisements are served, in accordance with the EU General Data Protection Regulation (GDPR) and other applicable laws. When required, you will be presented with a consent form where you can grant or decline consent for the collection and use of your data for advertising purposes. Where consent is declined or not required, only non-personalized ads may be served.
+
 **Third Party Access**
 
-Only aggregated, anonymized data is periodically transmitted to external services to aid the Service Provider in improving the Application and their service. The Service Provider may share your information with third parties in the ways that are described in this privacy statement.
+The Application uses third-party services that may collect information used to identify you. The Service Provider may share your information with third parties in the ways that are described in this privacy statement. The third-party service providers used by the Application include:
+
+*   [Google AdMob / Google Mobile Ads](https://policies.google.com/privacy) — for serving advertisements.
+
+The Service Provider may share your information with third parties in the ways that are described in this privacy statement.
 
 The Service Provider may disclose User Provided and Automatically Collected Information:
 
@@ -55,7 +66,7 @@ The Service Provider is concerned about safeguarding the confidentiality of your
 
 This Privacy Policy may be updated from time to time for any reason. The Service Provider will notify you of any changes to the Privacy Policy by updating this page with the new Privacy Policy. You are advised to consult this Privacy Policy regularly for any changes, as continued use is deemed approval of all changes.
 
-This privacy policy is effective as of 2025-06-24
+This privacy policy is effective as of 2026-06-29
 
 **Your Consent**
 
