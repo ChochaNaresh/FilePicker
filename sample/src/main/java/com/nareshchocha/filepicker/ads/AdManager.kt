@@ -18,7 +18,7 @@ object AdManager {
     private var interstitialAd: InterstitialAd? = null
     private var isInterstitialLoading = false
     private var actionCount = 0
-    private const val INTERSTITIAL_FREQUENCY = 5 // show every 5th action
+    private const val INTERSTITIAL_FREQUENCY = 4 // show every 5th action
     private val isMobileAdsInitialized = AtomicBoolean(false)
 
     /**

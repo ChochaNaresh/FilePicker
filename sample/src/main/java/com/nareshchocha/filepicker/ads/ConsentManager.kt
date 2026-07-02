@@ -25,6 +25,15 @@ object ConsentManager {
     private const val TAG = "ConsentManager"
 
     /**
+     * Cached flag that turns `true` once consent has been gathered and ads may
+     * be requested. Lets callers skip the whole UMP round-trip on subsequent
+     * launches within the same process and initialize ads directly.
+     */
+    @Volatile
+    var adsReady: Boolean = false
+        private set
+
+    /**
      * Replace with your own test device's hashed ID (printed in logcat by the
      * Mobile Ads SDK as `Use ... to get test ads on this device.`) to preview
      * the consent form while developing. Only used in debug builds.
@@ -41,6 +50,12 @@ object ConsentManager {
         activity: Activity,
         onComplete: () -> Unit
     ) {
+        // Already gathered in this process – skip the UMP round-trip entirely.
+        if (adsReady) {
+            onComplete()
+            return
+        }
+
         val params =
             ConsentRequestParameters
                 .Builder()
@@ -81,13 +96,22 @@ object ConsentManager {
      * Whether ads can be requested based on the user's current consent state.
      * Returns `true` when consent has been obtained or is not required.
      */
-    fun canRequestAds(activity: Activity): Boolean =
-        UserMessagingPlatform.getConsentInformation(activity).canRequestAds()
+    fun canRequestAds(activity: Activity): Boolean {
+        val canRequest = UserMessagingPlatform.getConsentInformation(activity).canRequestAds()
+        if (canRequest) {
+            adsReady = true
+            // Persist so FilePickerApp can initialize ads on the next cold start.
+            ConsentPreferences.setAdsReady(activity, true)
+        }
+        return canRequest
+    }
 
     /**
      * Resets the consent state. Useful for testing the form repeatedly.
      */
     fun reset(activity: Activity) {
         UserMessagingPlatform.getConsentInformation(activity).reset()
+        adsReady = false
+        ConsentPreferences.setAdsReady(activity, false)
     }
 }

@@ -7,6 +7,9 @@ spotless = "8.7.0"
 # core
 core-splashscreen = "1.2.0"
 
+# datastore
+datastore = "1.1.7"
+
 # compose
 activityCompose = "1.13.0"
 composeBom = "2026.06.00"
@@ -21,15 +24,22 @@ userMessagingPlatform = "4.0.0"
 # lifecycle
 lifecycleProcess = "2.11.0"
 
+# fragment
+fragment = "1.8.9"
+
 [libraries]
 # core
 core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "core-splashscreen" }
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityCompose" }
+# datastore
+androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 # ads
 play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "playServicesAds" }
 user-messaging-platform = { group = "com.google.android.ump", name = "user-messaging-platform", version.ref = "userMessagingPlatform" }
 # lifecycle
 androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycleProcess" }
+# fragment (force upgrade of the transitive androidx.fragment:fragment pulled in by play-services)
+androidx-fragment = { group = "androidx.fragment", name = "fragment", version.ref = "fragment" }
 # compose
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }

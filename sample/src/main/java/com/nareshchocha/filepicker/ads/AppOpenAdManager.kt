@@ -25,10 +25,16 @@ class AppOpenAdManager(
     private var hasStarted = false
     private var currentActivity: Activity? = null
 
+    init {
+        // Register synchronously in Application.onCreate — before any Activity is
+        // created — so the very first onActivityResumed is captured. Loading is
+        // still gated behind consent via start(); we only track the activity here.
+        application.registerActivityLifecycleCallbacks(this)
+    }
+
     fun start() {
         if (hasStarted) return
         hasStarted = true
-        application.registerActivityLifecycleCallbacks(this)
         loadAd()
     }
 

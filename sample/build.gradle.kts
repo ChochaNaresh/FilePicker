@@ -108,6 +108,9 @@ dependencies {
     implementation(libs.core.splashscreen)
     implementation(libs.androidx.activity.ktx)
 
+    // datastore (persists the consent-ready flag across process restarts)
+    implementation(libs.androidx.datastore.preferences)
+
     // compose
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -128,6 +131,9 @@ dependencies {
 
     // lifecycle (for App Open ads)
     implementation(libs.androidx.lifecycle.process)
+
+    // fragment: force a current version over the outdated 1.1.0 pulled in transitively by play-services
+    implementation(libs.androidx.fragment)
 
     // FilePicker library
     implementation(project(":filepickerlibrary"))
