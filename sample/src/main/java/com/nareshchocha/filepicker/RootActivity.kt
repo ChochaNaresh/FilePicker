@@ -7,6 +7,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -65,9 +67,11 @@ class RootActivity : ComponentActivity() {
      * once consent has been gathered and [ConsentManager.canRequestAds] is true.
      */
     private fun initializeAdsAfterConsent() {
-        AdManager.initialize(this)
-        AdManager.loadInterstitialAd(this)
-        (application as? FilePickerApp)?.appOpenAdManager?.start()
+        lifecycleScope.launch {
+            AdManager.initialize(this@RootActivity)
+            AdManager.loadInterstitialAd()
+            (application as? FilePickerApp)?.appOpenAdManager?.start()
+        }
     }
 }
 
@@ -89,9 +93,6 @@ fun RootUI() {
                         containerColor = MaterialTheme.colorScheme.primary
                     )
             )
-        },
-        bottomBar = {
-            BannerAd()
         }
     ) { innerPadding ->
         Column(
@@ -99,8 +100,15 @@ fun RootUI() {
                 Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
+                    .navigationBarsPadding()
         ) {
-            AllFilePickers()
+            AllFilePickers(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+            )
+            BannerAd()
         }
     }
 }

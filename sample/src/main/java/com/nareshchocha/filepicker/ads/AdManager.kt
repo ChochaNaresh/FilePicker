@@ -3,14 +3,18 @@ package com.nareshchocha.filepicker.ads
 import android.app.Activity
 import android.content.Context
 import android.util.Log
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.FullScreenContentCallback
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.interstitial.InterstitialAd
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.google.android.libraries.ads.mobile.sdk.MobileAds
+import com.google.android.libraries.ads.mobile.sdk.common.AdLoadCallback
+import com.google.android.libraries.ads.mobile.sdk.common.AdRequest
+import com.google.android.libraries.ads.mobile.sdk.common.FullScreenContentError
+import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError
+import com.google.android.libraries.ads.mobile.sdk.initialization.InitializationConfig
+import com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAd
+import com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAdEventCallback
 import com.nareshchocha.filepicker.BuildConfig
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.coroutines.resume
 
 object AdManager {
     private const val TAG = "AdManager"
@@ -22,34 +26,47 @@ object AdManager {
     private val isMobileAdsInitialized = AtomicBoolean(false)
 
     /**
-     * Initializes the Mobile Ads SDK exactly once. Must only be called after
-     * user consent has been gathered (see [ConsentManager]).
+     * Suspends until the Mobile Ads SDK finishes initializing (exactly once).
+     * Must be called after user consent has been gathered.
+     * The next-gen SDK requires initialization on a background thread.
      */
-    fun initialize(context: Context) {
+    suspend fun initialize(context: Context) {
         if (isMobileAdsInitialized.getAndSet(true)) return
-        MobileAds.initialize(context) {
-            Log.d(TAG, "MobileAds initialized")
+        suspendCancellableCoroutine { continuation ->
+            Thread {
+                MobileAds.initialize(
+                    context,
+                    InitializationConfig.Builder(BuildConfig.ADMOB_APP_ID).build()
+                ) { status ->
+                    Log.d(TAG, "MobileAds initialized")
+                    status.adapterStatusMap.forEach { (name, adapterStatus) ->
+                        Log.d(
+                            "Ads",
+                            "$name -> ${adapterStatus.initializationState} : ${adapterStatus.description}"
+                        )
+                    }
+
+                    continuation.resume(Unit)
+                }
+            }.start()
         }
     }
 
-    fun loadInterstitialAd(context: Context) {
+    fun loadInterstitialAd() {
         if (interstitialAd != null || isInterstitialLoading) return
 
         isInterstitialLoading = true
-        val adRequest = AdRequest.Builder().build()
         InterstitialAd.load(
-            context,
-            BuildConfig.ADMOB_INTERSTITIAL_AD_UNIT_ID,
-            adRequest,
-            object : InterstitialAdLoadCallback() {
+            AdRequest.Builder(BuildConfig.ADMOB_INTERSTITIAL_AD_UNIT_ID).build(),
+            object : AdLoadCallback<InterstitialAd> {
                 override fun onAdLoaded(ad: InterstitialAd) {
                     Log.d(TAG, "Interstitial ad loaded")
                     interstitialAd = ad
                     isInterstitialLoading = false
                 }
 
-                override fun onAdFailedToLoad(error: LoadAdError) {
-                    Log.w(TAG, "Interstitial ad failed to load: ${error.message}")
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    Log.w(TAG, "Interstitial ad failed to load: ${adError.message}")
                     interstitialAd = null
                     isInterstitialLoading = false
                 }
@@ -71,25 +88,25 @@ object AdManager {
         if (ad == null) {
             Log.d(TAG, "Interstitial ad not ready, skipping but keeping counter at threshold ($actionCount)")
             onAdDismissed()
-            loadInterstitialAd(activity)
+            loadInterstitialAd()
             return
         }
 
-        ad.fullScreenContentCallback =
-            object : FullScreenContentCallback() {
+        ad.adEventCallback =
+            object : InterstitialAdEventCallback {
                 override fun onAdDismissedFullScreenContent() {
                     Log.d(TAG, "Interstitial ad dismissed")
                     interstitialAd = null
                     actionCount = 0 // Reset counter only when shown successfully!
-                    loadInterstitialAd(activity)
+                    loadInterstitialAd()
                     onAdDismissed()
                 }
 
-                override fun onAdFailedToShowFullScreenContent(error: com.google.android.gms.ads.AdError) {
-                    Log.w(TAG, "Interstitial ad failed to show: ${error.message}")
+                override fun onAdFailedToShowFullScreenContent(fullScreenContentError: FullScreenContentError) {
+                    Log.w(TAG, "Interstitial ad failed to show: ${fullScreenContentError.message}")
                     interstitialAd = null
                     actionCount = 0 // Reset counter on failure to show as well
-                    loadInterstitialAd(activity)
+                    loadInterstitialAd()
                     onAdDismissed()
                 }
 

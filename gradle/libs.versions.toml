@@ -18,7 +18,8 @@ composeBom = "2026.06.00"
 landscapistBom = "2.10.0"
 
 # ads
-playServicesAds = "25.4.0"
+adsMobileSdk = "1.2.1"
+liftoffAdapter = "7.7.4.2"
 userMessagingPlatform = "4.0.0"
 
 # lifecycle
@@ -34,7 +35,8 @@ androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref
 # datastore
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 # ads
-play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "playServicesAds" }
+ads-mobile-sdk = { group = "com.google.android.libraries.ads.mobile.sdk", name = "ads-mobile-sdk", version.ref = "adsMobileSdk" }
+liftoff-adapter = { group = "com.google.ads.mediation", name = "vungle", version.ref = "liftoffAdapter" }
 user-messaging-platform = { group = "com.google.android.ump", name = "user-messaging-platform", version.ref = "userMessagingPlatform" }
 # lifecycle
 androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycleProcess" }

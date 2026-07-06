@@ -26,7 +26,7 @@ class FilePickerApp : Application() {
         appScope.launch {
             if (ConsentPreferences.isAdsReady(this@FilePickerApp)) {
                 AdManager.initialize(this@FilePickerApp)
-                AdManager.loadInterstitialAd(this@FilePickerApp)
+                AdManager.loadInterstitialAd()
                 appOpenAdManager.start()
             }
         }

@@ -6,6 +6,16 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.parcelize)
 }
+
+// The next-gen AdMob SDK (ads-mobile-sdk) already bundles all play-services-ads classes.
+// Mediation adapters pull play-services-ads as a transitive dependency which causes
+// duplicate class errors at build time. Exclude the old SDK modules globally.
+configurations.configureEach {
+    exclude(group = "com.google.android.gms", module = "play-services-ads")
+    exclude(group = "com.google.android.gms", module = "play-services-ads-lite")
+    exclude(group = "com.google.android.gms", module = "play-services-ads-api")
+}
+
 val keystoreProperties =
     Properties().apply {
         val keystorePropertiesFile = rootProject.file("release-keystore.properties")
@@ -37,7 +47,7 @@ android {
 
     defaultConfig {
         applicationId = AppConfig.Sample.APPLICATION_ID
-        minSdk = Versions.MIN_SDK
+        minSdk = 24 // ads-mobile-sdk requires minSdk 24
         targetSdk = Versions.TARGET_SDK
         versionCode = AppConfig.Sample.VERSION_CODE
         versionName = AppConfig.Sample.VERSION_NAME
@@ -50,6 +60,7 @@ android {
         val admobAppOpenId = adProperty("ADMOB_APP_OPEN_AD_UNIT_ID", "ca-app-pub-3940256099942544/9257395921")
 
         manifestPlaceholders["ADMOB_APP_ID"] = admobAppId
+        buildConfigField("String", "ADMOB_APP_ID", "\"$admobAppId\"")
         buildConfigField("String", "ADMOB_BANNER_AD_UNIT_ID", "\"$admobBannerId\"")
         buildConfigField("String", "ADMOB_INTERSTITIAL_AD_UNIT_ID", "\"$admobInterstitialId\"")
         buildConfigField("String", "ADMOB_APP_OPEN_AD_UNIT_ID", "\"$admobAppOpenId\"")
@@ -124,7 +135,8 @@ dependencies {
     implementation(libs.skydoves.landscapist.coil3)
 
     // ads
-    implementation(libs.play.services.ads)
+    implementation(libs.ads.mobile.sdk)
+    implementation(libs.liftoff.adapter)
 
     // user consent (GDPR / UMP) for EEA, UK, Switzerland
     implementation(libs.user.messaging.platform)
@@ -132,7 +144,7 @@ dependencies {
     // lifecycle (for App Open ads)
     implementation(libs.androidx.lifecycle.process)
 
-    // fragment: force a current version over the outdated 1.1.0 pulled in transitively by play-services
+    // fragment: force a current version over the outdated one pulled in transitively by mediation adapters
     implementation(libs.androidx.fragment)
 
     // FilePicker library

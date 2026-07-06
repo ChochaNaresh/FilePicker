@@ -41,7 +41,7 @@ import com.nareshchocha.filepickerlibrary.models.PopUpType
 import com.nareshchocha.filepickerlibrary.models.VideoCaptureConfig
 
 @Composable
-fun AllFilePickers() {
+fun AllFilePickers(modifier: Modifier = Modifier) {
     var pickedFiles by remember { mutableStateOf(listOf<PickedFile>()) }
     val context = LocalContext.current
     val activity = context as? Activity
@@ -56,7 +56,8 @@ fun AllFilePickers() {
         }
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 24.dp, vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        modifier = modifier
     ) {
         sections.forEach { section ->
             item(key = "header_${section.title}") { SectionHeader(section.title) }

@@ -21,7 +21,7 @@ object AppConfig {
     object Sample {
         const val NAMESPACE = "com.nareshchocha.filepicker"
         const val APPLICATION_ID = "com.nareshchocha.filepicker"
-        const val VERSION_CODE = 9
-        const val VERSION_NAME = "1.1.0"
+        const val VERSION_CODE = 10
+        const val VERSION_NAME = "1.1.1"
     }
 }

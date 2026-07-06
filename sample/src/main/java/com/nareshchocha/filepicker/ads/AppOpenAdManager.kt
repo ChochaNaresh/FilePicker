@@ -4,15 +4,17 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import android.util.Log
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.FullScreenContentCallback
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.appopen.AppOpenAd
+import com.google.android.libraries.ads.mobile.sdk.appopen.AppOpenAd
+import com.google.android.libraries.ads.mobile.sdk.appopen.AppOpenAdEventCallback
+import com.google.android.libraries.ads.mobile.sdk.common.AdLoadCallback
+import com.google.android.libraries.ads.mobile.sdk.common.AdRequest
+import com.google.android.libraries.ads.mobile.sdk.common.FullScreenContentError
+import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError
 import com.nareshchocha.filepicker.BuildConfig
 
 @Suppress("TooManyFunctions")
 class AppOpenAdManager(
-    private val application: Application
+    application: Application
 ) : Application.ActivityLifecycleCallbacks {
     companion object {
         private const val TAG = "AppOpenAdManager"
@@ -38,9 +40,6 @@ class AppOpenAdManager(
         loadAd()
     }
 
-    /**
-     * Called from [onActivityResumed] to show the ad once on first launch.
-     */
     private fun showAdIfAvailable(activity: Activity) {
         if (hasShownAd || isShowingAd) return
 
@@ -50,16 +49,16 @@ class AppOpenAdManager(
             return
         }
 
-        ad.fullScreenContentCallback =
-            object : FullScreenContentCallback() {
+        ad.adEventCallback =
+            object : AppOpenAdEventCallback {
                 override fun onAdDismissedFullScreenContent() {
                     Log.d(TAG, "App open ad dismissed")
                     appOpenAd = null
                     isShowingAd = false
                 }
 
-                override fun onAdFailedToShowFullScreenContent(error: com.google.android.gms.ads.AdError) {
-                    Log.w(TAG, "App open ad failed to show: ${error.message}")
+                override fun onAdFailedToShowFullScreenContent(fullScreenContentError: FullScreenContentError) {
+                    Log.w(TAG, "App open ad failed to show: ${fullScreenContentError.message}")
                     appOpenAd = null
                     isShowingAd = false
                 }
@@ -78,24 +77,20 @@ class AppOpenAdManager(
         if (isLoadingAd || appOpenAd != null) return
 
         isLoadingAd = true
-        val request = AdRequest.Builder().build()
         AppOpenAd.load(
-            application,
-            BuildConfig.ADMOB_APP_OPEN_AD_UNIT_ID,
-            request,
-            object : AppOpenAd.AppOpenAdLoadCallback() {
+            AdRequest.Builder(BuildConfig.ADMOB_APP_OPEN_AD_UNIT_ID).build(),
+            object : AdLoadCallback<AppOpenAd> {
                 override fun onAdLoaded(ad: AppOpenAd) {
                     Log.d(TAG, "App open ad loaded")
                     appOpenAd = ad
                     isLoadingAd = false
-                    // If an activity is already resumed, show immediately
                     if (!hasShownAd) {
                         currentActivity?.let { showAdIfAvailable(it) }
                     }
                 }
 
-                override fun onAdFailedToLoad(error: LoadAdError) {
-                    Log.w(TAG, "App open ad failed to load: ${error.message}")
+                override fun onAdFailedToLoad(adError: LoadAdError) {
+                    Log.w(TAG, "App open ad failed to load: ${adError.message}")
                     isLoadingAd = false
                 }
             }
