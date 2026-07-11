@@ -12,7 +12,13 @@ import com.google.android.libraries.ads.mobile.sdk.initialization.Initialization
 import com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAd
 import com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAdEventCallback
 import com.nareshchocha.filepicker.BuildConfig
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.resume
 
@@ -25,17 +31,24 @@ object AdManager {
     private const val INTERSTITIAL_FREQUENCY = 4 // show every 5th action
     private val isMobileAdsInitialized = AtomicBoolean(false)
 
+    private val _isInitialized = MutableStateFlow(false)
+    val isInitialized: StateFlow<Boolean> = _isInitialized.asStateFlow()
+
     /**
      * Suspends until the Mobile Ads SDK finishes initializing (exactly once).
      * Must be called after user consent has been gathered.
      * The next-gen SDK requires initialization on a background thread.
      */
     suspend fun initialize(context: Context) {
-        if (isMobileAdsInitialized.getAndSet(true)) return
-        suspendCancellableCoroutine { continuation ->
-            Thread {
+        if (isMobileAdsInitialized.getAndSet(true)) {
+            // Already started — wait for the in-progress init to complete before returning.
+            _isInitialized.first { it }
+            return
+        }
+        withContext(Dispatchers.IO) {
+            suspendCancellableCoroutine { continuation ->
                 MobileAds.initialize(
-                    context,
+                    context.applicationContext,
                     InitializationConfig.Builder(BuildConfig.ADMOB_APP_ID).build()
                 ) { status ->
                     Log.d(TAG, "MobileAds initialized")
@@ -45,10 +58,10 @@ object AdManager {
                             "$name -> ${adapterStatus.initializationState} : ${adapterStatus.description}"
                         )
                     }
-
+                    _isInitialized.value = true
                     continuation.resume(Unit)
                 }
-            }.start()
+            }
         }
     }
 

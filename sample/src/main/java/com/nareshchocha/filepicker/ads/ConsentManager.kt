@@ -50,12 +50,6 @@ object ConsentManager {
         activity: Activity,
         onComplete: () -> Unit
     ) {
-        // Already gathered in this process – skip the UMP round-trip entirely.
-        if (adsReady) {
-            onComplete()
-            return
-        }
-
         val params =
             ConsentRequestParameters
                 .Builder()

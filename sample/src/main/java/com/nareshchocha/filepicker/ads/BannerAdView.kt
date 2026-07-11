@@ -26,6 +26,8 @@ import com.google.android.libraries.ads.mobile.sdk.banner.BannerAdRequest
 import com.google.android.libraries.ads.mobile.sdk.common.AdLoadCallback
 import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError
 import com.nareshchocha.filepicker.BuildConfig
+import com.nareshchocha.filepicker.ads.AdManager
+import kotlinx.coroutines.flow.first
 
 @Composable
 fun BannerAd(
@@ -53,6 +55,7 @@ fun BannerAd(
     val adView = remember(adUnitId) { AdView(activity) }
 
     LaunchedEffect(adUnitId, screenWidthDp) {
+        AdManager.isInitialized.first { it }
         isLoaded = false
         val adSize = AdSize.getLargeAnchoredAdaptiveBannerAdSize(context, screenWidthDp)
         adView.loadAd(

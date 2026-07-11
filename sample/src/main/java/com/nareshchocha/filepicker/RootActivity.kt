@@ -46,12 +46,18 @@ class RootActivity : ComponentActivity() {
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
         FilePickerResultContracts.isLoggingEnabled = true
         lifecycleScope.launch {
-            if (!ConsentPreferences.isAdsReady(this@RootActivity)) {
-                // Gather user consent (EEA / UK / Switzerland) before initializing ads.
-                ConsentManager.gatherConsent(this@RootActivity) {
-                    if (ConsentManager.canRequestAds(this@RootActivity)) {
-                        initializeAdsAfterConsent()
-                    }
+            // Early-start: if consent was already granted, begin loading ads immediately
+            // without blocking on the UMP network round-trip.
+            if (ConsentPreferences.isAdsReady(this@RootActivity)) {
+                initializeAdsAfterConsent()
+            }
+            // Always refresh consent on every launch so the UMP SDK can detect
+            // revocations, expiry, or new requirements (Google UMP best practice).
+            ConsentManager.gatherConsent(this@RootActivity) {
+                if (ConsentManager.canRequestAds(this@RootActivity)) {
+                    // Safe to call again — AdManager and AppOpenAdManager both guard against
+                    // double-init so a second call is a fast no-op.
+                    lifecycleScope.launch { initializeAdsAfterConsent() }
                 }
             }
         }
@@ -62,16 +68,10 @@ class RootActivity : ComponentActivity() {
         }
     }
 
-    /**
-     * Initializes the Mobile Ads SDK and starts requesting ads. Only invoked
-     * once consent has been gathered and [ConsentManager.canRequestAds] is true.
-     */
-    private fun initializeAdsAfterConsent() {
-        lifecycleScope.launch {
-            AdManager.initialize(this@RootActivity)
-            AdManager.loadInterstitialAd()
-            (application as? FilePickerApp)?.appOpenAdManager?.start()
-        }
+    private suspend fun initializeAdsAfterConsent() {
+        AdManager.initialize(applicationContext)
+        AdManager.loadInterstitialAd()
+        (application as? FilePickerApp)?.appOpenAdManager?.start()
     }
 }
 

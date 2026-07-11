@@ -25,6 +25,11 @@
         android:theme="@style/Theme.FilePicker.Splash"
         tools:targetApi="33">
 
+        <!-- Next-gen ads-mobile-sdk key (primary) -->
+        <meta-data
+            android:name="com.google.android.libraries.ads.mobile.sdk.APPLICATION_ID"
+            android:value="${ADMOB_APP_ID}" />
+        <!-- Legacy GMS key kept for mediation adapters that still check it -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="${ADMOB_APP_ID}" />
